@@ -3,4 +3,4 @@
 # To add messages for specific languages, copy the file from the reference folder to this one, and alter the messages.
 
 # Messages can be added like so: (hint: remove the # to uncomment it)
-#townyresources.plugin_prefix: '&f[&6Towny Resources&f] '
+#customresources.plugin_prefix: '&f[&6Towny Resources&f] '

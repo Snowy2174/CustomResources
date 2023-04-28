@@ -1,5 +1,5 @@
-# TownyResources
-*TownyResources* adds value to towns, by giving each one a unique set of automatically-produced resources which can be collected by players (*e.g. Emeralds, Coal, Oak Log, Wheat etc.*).
+# CustomResources
+*CustomResources* adds value to towns, by giving each one a unique set of automatically-produced resources which can be collected by players (*e.g. Emeralds, Coal, Oak Log, Wheat etc.*).
 
 The plugin also has an optional feature to protect resource value, via daily player extraction limits. This can be enabled in the config if required.
 
@@ -14,30 +14,30 @@ The plugin also has an optional feature to protect resource value, via daily pla
 (*details in the FAQ section below*)
 
 # Installation Guide
-1. Download the latest *TownyResources* Jar from [here](https://github.com/TownyAdvanced/TownyResources/releases), and drop it into your plugins folder.
+1. Download the latest *CustomResources* Jar from [here](https://github.com/TownyAdvanced/CustomResources/releases), and drop it into your plugins folder.
 2. Restart your server.
-3. Edit the *TownyResources* config.yml file, and set `surveys > enabled` to `false` (*this stops players from discovering resources until your settings are ready*).
+3. Edit the *CustomResources* config.yml file, and set `surveys > enabled` to `false` (*this stops players from discovering resources until your settings are ready*).
 4. Run `/ta resources reload`.
-5. Edit the *TownyResources* config.yml file, and change any settings you would like.
+5. Edit the *CustomResources* config.yml file, and change any settings you would like.
    - Note: Do not add Eggs, Honeycomb, or Honey Bottle to the daily-limits list, as these limit types are not yet operational.
 6. Give the permission nodes required to use the plugin using the following commands: 
     ```
-    /ta townyperms group towns.mayor addperm townyresources.command.towncollect
+    /ta townyperms group towns.mayor addperm customresources.command.towncollect
     
-    /ta townyperms group towns.ranks.assistant addperm townyresources.command.towncollect
+    /ta townyperms group towns.ranks.assistant addperm customresources.command.towncollect
     
-    /ta townyperms group nations.king addperm townyresources.command.nationcollect
+    /ta townyperms group nations.king addperm customresources.command.nationcollect
     
-    /ta townyperms group nations.ranks.assistant addperm townyresources.command.nationcollect
+    /ta townyperms group nations.ranks.assistant addperm customresources.command.nationcollect
     ```
 7. Using your permissions plugin, give this to any admins who are not already OP:
-    - `- townyresources.admin.command.*`
-    - Optionally, give your admins `townyresources.bypass` if you would like to never be restricted by extraction limits, without having to use /ta resources bypass.
+    - `- customresources.admin.command.*`
+    - Optionally, give your admins `customresources.bypass` if you would like to never be restricted by extraction limits, without having to use /ta resources bypass.
 8. If you want to show town production on the *Dynmap* (**Recommended**), first ensure you have the [*Dynmap-Towny*](https://github.com/TownyAdvanced/Dynmap-Towny/releases) plugin installed, then add the following to the 'infowindow' section of your *Dynmap-Towny* config file:
     ```
     <br/><span style="font-weight:bold;">Resources&colon; %town_resources%</span>
     ```
-9. If you want to use the [*Slimefun*](https://github.com/Slimefun/Slimefun4/releases) plugin with *TownyResources*:
+9. If you want to use the [*Slimefun*](https://github.com/Slimefun/Slimefun4/releases) plugin with *CustomResources*:
    - Town Production:
      <br>You can add *Slimefun* items to the offers list, simply by using *Slimefun* item ID's. See [here](https://github.com/Slimefun/Slimefun4/blob/master/src/main/java/io/github/thebusybiscuit/slimefun4/implementation/SlimefunItems.java) for *Slimefun* item ID's. Example:
     ```
@@ -46,7 +46,7 @@ The plugin also has an optional feature to protect resource value, via daily pla
     ```
    - Daily Player Limits
      <br>Due to technical limitations, it is currently not possible to have daily-limits for *Slimefun* resources. However, a reasonably good extraction-control configuration can be achieved by first adding the small few raw *Slimefun* resources to the Town Production offers (*Sifted Ore, Oil Bucket, Uranium, Salt, Nether Ice*), and then disabling the small few machines which directly extract these (*gold_pan, oil_pump etc.*).
-10. If you want to use the [*MythicMobs*](https://git.mythiccraft.io/mythiccraft/MythicMobs/-/wikis/Home) plugin with *TownyResources*:
+10. If you want to use the [*MythicMobs*](https://git.mythiccraft.io/mythiccraft/MythicMobs/-/wikis/Home) plugin with *CustomResources*:
     - Town Production:
     <br>You can add *MythicMobs* items to the offers list, simply by using *MythicMobs* item 'internal_name'. See [here](https://git.mythiccraft.io/mythiccraft/MythicMobs/-/wikis/Items). Example:
     ```
@@ -62,15 +62,15 @@ The plugin also has an optional feature to protect resource value, via daily pla
       Data: 0
       Display: '&3Example Item 2'
         ```
-11. If you want to use [*MMOItems*](https://www.spigotmc.org/resources/mmoitems-premium.39267/) plugin with *TownyResources*:
+11. If you want to use [*MMOItems*](https://www.spigotmc.org/resources/mmoitems-premium.39267/) plugin with *CustomResources*:
     - Town Production:
     <br>You can add *MMOItems* items to the offers list, simply by using the following format: TYPE:ID. Example:
     ```
     categories: '{mmo_items, 100, 0.015625, SWORD:CUTLASS}'
     ```
     The above example gives one cutlass per day to a town.
-12. If you want to translate material names into a non-english language, first ensure you have the [*LangUtils*](https://ci.nyaacat.com/job/LanguageUtils/job/1.17/) plugin installed, then set your preferred language in the *TownyResources* Config.yml file.
-13. Edit the *TownyResources* config.yml file, and set `surveys > enabled` to `true`.
+12. If you want to translate material names into a non-english language, first ensure you have the [*LangUtils*](https://ci.nyaacat.com/job/LanguageUtils/job/1.17/) plugin installed, then set your preferred language in the *CustomResources* Config.yml file.
+13. Edit the *CustomResources* config.yml file, and set `surveys > enabled` to `true`.
 14. Run `/ta resources reload`, then `/ta reload`.
 # Player Guide
 ### Town Production
@@ -151,10 +151,10 @@ The plugin also has an optional feature to protect resource value, via daily pla
 # Admin Guide
 ###### Configuration
 - Resource Offers
-  - Resource Offers are configured in the *TownyResources* config.yml file.
+  - Resource Offers are configured in the *CustomResources* config.yml file.
   - ***WARNING***: If you reconfigure the offers list, it will change not only future discoveries, but also existing discoveries. Take particular care if removing an offer category, as this will remove the correponding discovery from any any towns towns which have already paid for it. 
 - Daily Extraction Limits
-  - Daily Extraction Limits are configured in the *TownyResources* config.yml file.
+  - Daily Extraction Limits are configured in the *CustomResources* config.yml file.
 ###### Commands
 - `/ta resources reload` - Reload TownyResouces.
 - `/ta resources bypass` - Turns on and off bypass limits for your player.
@@ -162,7 +162,7 @@ The plugin also has an optional feature to protect resource value, via daily pla
 
 # F.A.Q:
 ###### Question: 
-How will *TownyResources* benefit my server ? 
+How will *CustomResources* benefit my server ? 
 ###### Answer: 
 #### 6 Key Benefits:
 1. Assists **Town Building**:
@@ -176,15 +176,15 @@ How will *TownyResources* benefit my server ?
 3. Assists **Trading**:
     - By turning individual towns into centres for the production of specific goods, trading activities are naturally encouraged.
 4. Reduces **Grind**:
-    - Without *TownyResources*, a multi-hour grind can grant a player a significant economic advantage over other players.
-    - *TownyResources* puts a hard cap on how much can be gained by each grind, thus facilitating a server a economy where extensive grinding simply has no part.
-    - With *TownyResources*, it is still possible to expend extra effort for a resource advantage over other players, but more varied and interesting activities are required to achieve it e.g. farming multiple varieties of crops, cave explorations, ruins explorations, trading, war. 
+    - Without *CustomResources*, a multi-hour grind can grant a player a significant economic advantage over other players.
+    - *CustomResources* puts a hard cap on how much can be gained by each grind, thus facilitating a server a economy where extensive grinding simply has no part.
+    - With *CustomResources*, it is still possible to expend extra effort for a resource advantage over other players, but more varied and interesting activities are required to achieve it e.g. farming multiple varieties of crops, cave explorations, ruins explorations, trading, war. 
 5. Assists **Roleplaying**
     - By giving each town a unique "signature" set of resources, this helps to develop the character of each town.
 6. Improves the [***SiegeWar***](https://github.com/TownyAdvanced/SiegeWar) experience, by adding **a new non-toxic reason for war**: Capturing Resources.
    - Vanilla SiegeWar provides relatively few rewards for victorious attackers - a one-time plunder money steal, climbing the `\n list`, coloring the map, and achieving a higher nation claims bonus
    - Some attacking players may feel that this is not quite enough, that wars 'pointless'; and yet giving them more spoils (e.g. money, sets) would usually result in more punishment for the defender. Although players may selfishly seek to take everything from defeated opponents, clever server owners recognize that this is not a sustainable pattern for the server.
-   - *TownyResources* addresses this issue by giving victorious nations a reward which is useful but which defenders will not miss as much as money or sets.
+   - *CustomResources* addresses this issue by giving victorious nations a reward which is useful but which defenders will not miss as much as money or sets.
    - The general importance of geo-resources in strategy games is illustrated by this this quote from the *Civilization* series of games:
  <br> "***Resources are special commodities found in limited quantities on the map....are extremely important in the game, and the main reason for expansion and territorial wars" ([Civ V Wiki](https://civilization.fandom.com/wiki/Resources_(Civ5)))***
 
@@ -217,6 +217,6 @@ Should I enable the daily-limits feature?
     
   Which group of players do you think is more likely to stay on this server ?
   ```
-- Keep in mind that whatever the pros and cons of the feature, it is no less ***Natural*** than *Towny* block protections, i.e. Just as *Towny* magically prevents-block breaking to protect the **Architectural** value of towns, *TownyResources* magically prevents block-breaking to protect the **Economic** value of towns.
+- Keep in mind that whatever the pros and cons of the feature, it is no less ***Natural*** than *Towny* block protections, i.e. Just as *Towny* magically prevents-block breaking to protect the **Architectural** value of towns, *CustomResources* magically prevents block-breaking to protect the **Economic** value of towns.
 
 -----------

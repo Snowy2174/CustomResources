@@ -2,26 +2,26 @@ name: CustomResources
 main: CustomResources
 version: ${project.version}
 api-version: ${project.bukkitAPIVersion}
-author: 'Goosius, LlmDL'
-website: 'https://github.com/TownyAdvanced/CustomResources'
+author: 'SnowyOwl217'
+website: ' '
 prefix: ${project.artifactId}
 depend: [Towny]
-softdepend: [SiegeWar,Dynmap-Towny,LangUtils,Slimefun,MythicMobs,MMOItems]
+softdepend: [SiegeWar,Dynmap-Towny,LangUtils,Slimefun,MythicMobs,MMOItems,ItemsAdder]
 
 description: This is an add-on plugin for Towny, which gives each town a unique set of automatically-extracted resources, and then protects the economic value of those resources with moderate limits to player resource extraction.
 
 permissions:
-    townyresources.command.survey:
+    customresources.command.survey:
         description: User is able to do a survey.
         default: true
 
-    townyresources.admin.command.*:
+    customresources.admin.command.*:
         description: User is able to do all townyresouces admin commands.
         default: op
         children:
-            townyresources.admin.command.reload: true
-            townyresources.admin.command.bypass: true
+            customresources.admin.command.reload: true
+            customresources.admin.command.bypass: true
 
-    townyresources.bypass:
+    customresources.bypass:
         description: User always bypasses the extraction limits
         default: false

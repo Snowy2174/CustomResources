@@ -3,7 +3,6 @@ package plugin.customresources.util;
 import com.meowj.langutils.lang.LanguageHelper;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import plugin.customresources.CustomResources;
-import plugin.customresources.objects.ResourceExtractionCategory;
 import plugin.customresources.objects.ResourceOfferCategory;
 import plugin.customresources.settings.CustomResourcesSettings;
 import org.apache.commons.lang.WordUtils;
@@ -160,15 +159,7 @@ public class CustomResourcesMessagingUtil {
 		component = component.hoverEvent(HoverEvent.showText(Component.text(StringMgmt.join(resourcesAsFormattedArray, ", "))));
 		return component;
 	}
-    
-    public static String formatExtractionCategoryNameForDisplay(ResourceExtractionCategory resourceExtractionCategory, CommandSender sender) {
-        String categoryName = resourceExtractionCategory.getName();
-        if (categoryNames.contains("resource_category_" + categoryName)) {
-            return Translatable.of("resource_category_" + categoryName).forLocale(sender).split(",")[0];
-        } else {
-            return formatMaterialNameForDisplay(categoryName);
-        }
-    }
+
 
     public static String formatOfferCategoryNameForDisplay(ResourceOfferCategory resourceOfferCategory) {
         String categoryName = resourceOfferCategory.getName();

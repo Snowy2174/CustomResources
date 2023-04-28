@@ -15,7 +15,6 @@ import com.palmergames.util.FileMgmt;
 
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import plugin.customresources.CustomResources;
-import plugin.customresources.objects.ResourceExtractionCategory;
 import plugin.customresources.objects.ResourceOfferCategory;
 import plugin.customresources.util.MMOItemsUtil;
 import plugin.customresources.util.MythicMobsUtil;
@@ -57,75 +56,6 @@ public class CustomResourcesSettings {
 
 	public static int getSumOfAllOfferDiscoveryProbabilityWeights() {
 		return sumOfAllOfferDiscoveryProbabilityWeights;
-	}
-
-	/**
-	 * Get all resource extraction categories
-	 * 
-	 * @return a list of all resource extraction categories
-	 * @throws TownyException a towny exception
-	 */
-	public static List<ResourceExtractionCategory> getResourceExtractionCategories() throws TownyException{
-		List<ResourceExtractionCategory> result = new ArrayList<>();
-		boolean problemLoadingCategories = false;
-
-		String categoriesAsString = getString(CustomResourcesConfigNodes.RESOURCE_EXTRACTION_LIMITS_CATEGORIES);
-		
-		if(!categoriesAsString.isEmpty()) {		
-			Pattern pattern = Pattern.compile("\\{([^}]+)}", Pattern.CASE_INSENSITIVE);
-			Matcher matcher = pattern.matcher(categoriesAsString);
-			String categoryAsString;
-			String[] categoryAsArray;
-			String categoryName;
-			double categoryLimitStacks;
-			int categoryLimitItems;
-			Material material;
-			List<Material> materialsInCategory = new ArrayList<>();
-			ResourceExtractionCategory resourceExtractionCategory;
-			
-			while (matcher.find()) {
-				//Read one resource extraction category
-				categoryAsString = matcher.group(1);
-				   
-				categoryAsArray = categoryAsString.split(",");
-				if(categoryAsArray.length < 2) {
-					CustomResources.severe("Bad configuration for extraction category: " + categoryAsString);
-					problemLoadingCategories = true;
-					continue;
-				}
-				
-				//Read name
-				categoryName = categoryAsArray[0].trim();
-				
-				//Read limit
-				categoryLimitStacks = Double.parseDouble(categoryAsArray[1].trim());
-				categoryLimitItems = (int)((categoryLimitStacks * 64) + 0.5);
-				
-				//Read Materials
-				materialsInCategory = new ArrayList<>();
-				for(int i = 2; i < categoryAsArray.length; i++) {
-					material = Material.getMaterial(categoryAsArray[i].trim());
-					if(material == null) {
-						CustomResources.severe("Unknown material in extraction category. Category: " + categoryName + ". Material: " + categoryAsArray[i]);
-						problemLoadingCategories = true;
-						continue;
-					}
-					materialsInCategory.add(material);
-				}
-				
-				//Construct ResourceExtractionCategory object
-				resourceExtractionCategory = new ResourceExtractionCategory(categoryName, categoryLimitItems, materialsInCategory);
-				
-				//Add to result
-				result.add(resourceExtractionCategory);
-			}		
-		}
-
-		if(problemLoadingCategories) {
-			throw new TownyException("Problem Loading Extraction Categories");
-		} else {
-			return result;
-		}
 	}
 
 	/**
@@ -362,34 +292,6 @@ public class CustomResourcesSettings {
 			normalizedBonuses.add((double)percentageBonus / 100);
 		}
 		return normalizedBonuses;
-	}
-	
-	public static boolean areResourceExtractionLimitsEnabled() {
-		return getBoolean(CustomResourcesConfigNodes.RESOURCE_EXTRACTION_LIMITS_ENABLED);
-	}
-
-	public static boolean areBlocksExtractionLimitsEnabled() {
-		return getBoolean(CustomResourcesConfigNodes.RESOURCE_EXTRACTION_LIMITS_BLOCKS);
-	}
-
-	public static boolean areDropsExtractionLimitsEnabled() {
-		return getBoolean(CustomResourcesConfigNodes.RESOURCE_EXTRACTION_LIMITS_DROPS);
-	}
-
-	public static boolean areShearingExtractionLimitsEnabled() {
-		return getBoolean(CustomResourcesConfigNodes.RESOURCE_EXTRACTION_LIMITS_SHEARING);
-	}
-
-	public static boolean areFishingExtractionLimitsEnabled() {
-		return getBoolean(CustomResourcesConfigNodes.RESOURCE_EXTRACTION_LIMITS_FISHING);
-	}
-
-	public static int getCooldownAfterDailyLimitWarningMessageMillis() {
-		return getInt(CustomResourcesConfigNodes.RESOURCE_EXTRACTION_LIMITS_COOLDOWN_AFTER_DAILY_LIMIT_WARNING_MESSAGE_MILLIS);
-	}
-
-	public static boolean isUnbreakableWhenExtractionLimitHit(String material) {
-		return getStrArr(CustomResourcesConfigNodes.RESOURCE_EXTRACTION_LIMITS_UNBREAKABLES).contains(material);
 	}
 
 	public static boolean isNonDynamicAmountMaterial(String material) {

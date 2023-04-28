@@ -18,17 +18,15 @@ public class Machine {
     private final int outputAmount;
     private final int ticksPerOutput;
     private int ticksUntilOutput;
-    private final MachineStructure building;
     private boolean isActivated;
     private boolean isBroken;
 
-    public Machine(String name, Material output, int outputAmount, int ticksPerOutput, MachineStructure machineStructure, CustomResources plugin) {
+    public Machine(String name, Material output, int outputAmount, int ticksPerOutput, CustomResources plugin) {
         this.name = name;
         this.output = output;
         this.outputAmount = outputAmount;
         this.ticksPerOutput = ticksPerOutput;
         this.ticksUntilOutput = ticksPerOutput;
-        this.building = machineStructure;
         this.isActivated = false;
         this.isBroken = false;
         this.plugin = plugin;
@@ -65,65 +63,10 @@ public class Machine {
         return isBroken;
     }
 
-    public boolean isComplete() {
-        return building.isComplete();
-    }
-
-    public Location getOutputLocation() {
-        return building.getOutputLocation();
-    }
-
-    public boolean isPartOfMachine(Location location) {
-        return building.isPartOfMachine(location);
-    }
-
-    public boolean canBuildBlock(Location location, List<Location> existingBlocks) {
-        if (location.getBlock().getType() != Material.AIR) {
-            return false;
-        }
-
-        Location above = location.clone().add(0, 1, 0);
-        if (above.getBlock().getType() != Material.AIR) {
-            return false;
-        }
-
-        // Check if block is adjacent to any existing blocks in the machine
-        for (Location block : existingBlocks) {
-            if (location.distance(block) <= 1) {
-                return true;
-            }
-        }
-
-        return true;
-    }
-
-    public Location getCenterLocation(List<Location> blocks) {
-        int centerX = 0;
-        int centerY = 0;
-        int centerZ = 0;
-
-        for (Location block : blocks) {
-            centerX += block.getBlockX();
-            centerY += block.getBlockY();
-            centerZ += block.getBlockZ();
-        }
-
-        int size = blocks.size();
-        centerX /= size;
-        centerY /= size;
-        centerZ /= size;
-
-        return new Location(blocks.get(0).getWorld(), centerX, centerY, centerZ);
-    }
-
 
     public boolean onInteract(Player player, Block clickedBlock) {
         if (building.isPartOfMachine(clickedBlock.getLocation())) {
             // Player has interacted with a block in the machine
-            if (!isComplete()) {
-                player.sendMessage(ChatColor.RED + "This machine is not complete yet.");
-                return true;
-            }
             if (isBroken()) {
                 player.sendMessage(ChatColor.RED + "This machine is broken.");
                 return true;
@@ -131,18 +74,6 @@ public class Machine {
             if (isActivated()) {
                 player.sendMessage(ChatColor.RED + "This machine is already activated.");
                 return true;
-            }
-            // Check if the player has the required materials
-            ItemStack[] materials = building.getMaterials();
-            for (ItemStack material : materials) {
-                if (!player.getInventory().contains(material)) {
-                    player.sendMessage(ChatColor.RED + "You don't have all the materials to activate this machine.");
-                    return true;
-                }
-            }
-            // Remove the required materials from the player's inventory
-            for (ItemStack material : materials) {
-                player.getInventory().removeItem(material);
             }
             activate();
             player.sendMessage(ChatColor.GREEN + "Machine activated.");

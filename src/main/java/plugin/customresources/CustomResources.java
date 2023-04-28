@@ -11,7 +11,6 @@ import com.palmergames.bukkit.util.Version;
 import plugin.customresources.commands.NationCollectAddon;
 import plugin.customresources.commands.TownResourcesAddon;
 import plugin.customresources.commands.TownyAdminResourcesAddon;
-import plugin.customresources.controllers.PlayerExtractionLimitsController;
 import plugin.customresources.controllers.TownResourceOffersController;
 import plugin.customresources.controllers.TownResourceProductionController;
 import plugin.customresources.listeners.*;
@@ -61,7 +60,7 @@ public class CustomResources extends JavaPlugin {
 	}
 
 	/**
-	 * Load towny resources
+	 * Load custom resources
 	 * 
 	 * @return true if load succeeded
 	 */
@@ -79,7 +78,6 @@ public class CustomResources extends JavaPlugin {
 			//Load controllers
 			TownResourceOffersController.loadAllResourceOfferCategories();
 			//WARNING: Do not try to recalculate production here, because unless SW has been loaded first, the results will be incorrect.
-			PlayerExtractionLimitsController.loadAllResourceExtractionCategories();
 			//Load commands and listeners
 			registerCommands();
 			registerListeners();
@@ -98,7 +96,7 @@ public class CustomResources extends JavaPlugin {
 	}
 
 	/**
-	 * Re-Load towny resources
+	 * Re-Load custom resources
 	 * 
 	 * @return true if reload succeeded
 	 */
@@ -111,8 +109,6 @@ public class CustomResources extends JavaPlugin {
 			//Load controllers
 			TownResourceOffersController.loadAllResourceOfferCategories();
 			TownResourceProductionController.recalculateAllProduction();
-			PlayerExtractionLimitsController.loadAllResourceExtractionCategories();
-			PlayerExtractionLimitsController.reloadAllExtractionRecordsForLoggedInPlayers();
 		} catch (Exception e) {
             e.printStackTrace();
 			severe(e.getMessage());
@@ -160,7 +156,7 @@ public class CustomResources extends JavaPlugin {
 
 	private void registerListeners() {
 		PluginManager pm = Bukkit.getServer().getPluginManager();
-		pm.registerEvents(new CustomResourcesBukkitEventListener(), this);
+		pm.registerEvents(new CustomResourcesFurnitureListener(), this);
 		pm.registerEvents(new CustomResourcesTownyEventListener(), this);
 		pm.registerEvents(new CustomResourcesTownEventListener(), this);
 		pm.registerEvents(new CustomResourcesNationEventListener(), this);
