@@ -1,9 +1,9 @@
 package plugin.customresources.controllers;
 
 import com.palmergames.bukkit.towny.exceptions.TownyException;
-import plugin.customresources.TownyResources;
+import plugin.customresources.CustomResources;
 import plugin.customresources.objects.ResourceOfferCategory;
-import plugin.customresources.settings.TownyResourcesSettings;
+import plugin.customresources.settings.CustomResourcesSettings;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +16,7 @@ public class TownResourceOffersController {
 
     public static void loadAllResourceOfferCategories() throws TownyException {
          //Load all categories
-         resourceOfferCategoryList = TownyResourcesSettings.getResourceOfferCategories();
+         resourceOfferCategoryList = CustomResourcesSettings.getResourceOfferCategories();
          //Clear the map
          materialToResourceOfferCategoryMap.clear();
          //Put each material on the map
@@ -25,7 +25,7 @@ public class TownResourceOffersController {
                  materialToResourceOfferCategoryMap.put(material, category);
              }
          }
-         TownyResources.info("All Resource Offer Categories Loaded");
+         CustomResources.info("All Resource Offer Categories Loaded");
     }
     
     public static List<ResourceOfferCategory> getResourceOfferCategoryList() {

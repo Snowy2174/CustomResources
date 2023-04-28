@@ -1,7 +1,7 @@
 package plugin.customresources.objects;
 
 import org.bukkit.entity.Player;
-import plugin.customresources.util.TownyResourcesMessagingUtil;
+import plugin.customresources.util.CustomResourcesMessagingUtil;
 
 /**
  * This class represents an extraction record in a particular category, for just one player.
@@ -61,7 +61,7 @@ public class CategoryExtractionRecord {
     }
 
     public String getTranslatedCategoryName(Player player) {
-        return TownyResourcesMessagingUtil.formatExtractionCategoryNameForDisplay(getResourceExtractionCategory(), player);
+        return CustomResourcesMessagingUtil.formatExtractionCategoryNameForDisplay(getResourceExtractionCategory(), player);
     }
 
     public long getNextLimitWarningTime() {

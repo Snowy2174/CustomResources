@@ -5,11 +5,11 @@ import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.Translatable;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import plugin.customresources.TownyResources;
-import plugin.customresources.metadata.TownyResourcesGovernmentMetaDataController;
+import plugin.customresources.CustomResources;
+import plugin.customresources.metadata.CustomResourcesGovernmentMetaDataController;
 import plugin.customresources.util.MMOItemsUtil;
 import plugin.customresources.util.MythicMobsUtil;
-import plugin.customresources.util.TownyResourcesMessagingUtil;
+import plugin.customresources.util.CustomResourcesMessagingUtil;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -31,7 +31,7 @@ public class TownResourceCollectionController {
         if (!collectAvailableGovernmentResources(player, town, availableForCollection))
             return;
         //Notify Player
-        TownyResourcesMessagingUtil.sendMsg(player, Translatable.of("townyresources.resource.towncollect.success"));
+        CustomResourcesMessagingUtil.sendMsg(player, Translatable.of("customresources.resource.towncollect.success"));
     }
     
     public static synchronized void collectAvailableNationResources(Player player, Nation nation, Map<String,Integer> availableForCollection) {
@@ -39,7 +39,7 @@ public class TownResourceCollectionController {
         if (!collectAvailableGovernmentResources(player, nation, availableForCollection))
             return;
         //Notify Player
-        TownyResourcesMessagingUtil.sendMsg(player, Translatable.of("townyresources.resource.nationcollect.success"));
+        CustomResourcesMessagingUtil.sendMsg(player, Translatable.of("customresources.resource.nationcollect.success"));
     }
     
     /**
@@ -58,7 +58,7 @@ public class TownResourceCollectionController {
         //See if player can hold any items at all.
         PlayerInventory inv = player.getInventory();
         if (inv.firstEmpty() == -1) {
-        	TownyResourcesMessagingUtil.sendMsg(player, Translatable.of("townyresources.resource.you_have_no_room_in_your_inventory"));
+        	CustomResourcesMessagingUtil.sendMsg(player, Translatable.of("customresources.resource.you_have_no_room_in_your_inventory"));
             return false;
         }
 
@@ -74,10 +74,10 @@ public class TownResourceCollectionController {
                 	remainder.put(stack.getType().name(), stack.getAmount());
                 }
             }
-            TownyResourcesGovernmentMetaDataController.setAvailableForCollection(government, remainder);
+            CustomResourcesGovernmentMetaDataController.setAvailableForCollection(government, remainder);
         } else {
             //Clear available list
-            TownyResourcesGovernmentMetaDataController.setAvailableForCollection(government, Collections.emptyMap());
+            CustomResourcesGovernmentMetaDataController.setAvailableForCollection(government, Collections.emptyMap());
         }
 
         //Save government
@@ -108,7 +108,7 @@ public class TownResourceCollectionController {
             }
             
             //Try creating a slimefun itemstack
-            if(TownyResources.getPlugin().isSlimeFunInstalled()) {
+            if(CustomResources.getPlugin().isSlimeFunInstalled()) {
                 SlimefunItem slimeFunItem = SlimefunItem.getById(materialName);
                 if(slimeFunItem != null) {
                     itemStack = slimeFunItem.getRecipeOutput();
@@ -119,7 +119,7 @@ public class TownResourceCollectionController {
             }
 
             // mythicmobs integration
-            if (TownyResources.getPlugin().isMythicMobsInstalled()) {
+            if (CustomResources.getPlugin().isMythicMobsInstalled()) {
                 ItemStack mythicItem = MythicMobsUtil.getMythicItemStack(materialName);
                 if (mythicItem != null) {
                     itemStack = mythicItem;
@@ -130,7 +130,7 @@ public class TownResourceCollectionController {
             }
 
             // MMOItems integration
-            if (TownyResources.getPlugin().isMMOItemsInstalled() && materialName.contains(":")) {
+            if (CustomResources.getPlugin().isMMOItemsInstalled() && materialName.contains(":")) {
             	ItemStack mmoItem = MMOItemsUtil.getMMOItemsItemStack(materialName, player);
             	if (mmoItem != null) {
             		itemStack = mmoItem;
@@ -140,7 +140,7 @@ public class TownResourceCollectionController {
             	}
             }
             //Unknown material. Send error message
-            TownyResourcesMessagingUtil.sendErrorMsg(player, Translatable.of("townyresources.msg_err_cannot_collect_unknown_material", materialName));
+            CustomResourcesMessagingUtil.sendErrorMsg(player, Translatable.of("customresources.msg_err_cannot_collect_unknown_material", materialName));
         }
 		return itemStackList;
 	}

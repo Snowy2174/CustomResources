@@ -5,7 +5,8 @@ import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.metadata.StringDataField;
 import com.palmergames.bukkit.towny.utils.MetaDataUtil;
 
-import plugin.customresources.TownyResources;
+import plugin.customresources.CustomResources;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -14,19 +15,19 @@ import java.util.stream.Collectors;
  * @author Goosius
  *
  */
-public class TownyResourcesGovernmentMetaDataController {
+public class CustomResourcesGovernmentMetaDataController {
 
 	@SuppressWarnings("unused")
-	private TownyResources plugin;
+	private CustomResources plugin;
 
-	public TownyResourcesGovernmentMetaDataController(TownyResources plugin) {
+	public CustomResourcesGovernmentMetaDataController(CustomResources plugin) {
 		this.plugin = plugin;
 	}
 
     private static String
-        discoveredMetadataKey = "townyresources_discovered",  //e.g.   OAK_LOG, SUGAR
-        dailyProductionMetadataKey = "townyresources_dailyproduction",  //e.g.   32-OAK_LOG, 32-SUGAR
-        availableForCollectionMetadataKey = "townyresources_availableforcollection";  //e.g.  64-OAK_LOG, 64-SUGAR
+        discoveredMetadataKey = "customresources_discovered",  //e.g.   OAK_LOG, SUGAR
+        dailyProductionMetadataKey = "customresources_dailyproduction",  //e.g.   32-OAK_LOG, 32-SUGAR
+        availableForCollectionMetadataKey = "customresources_availableforcollection";  //e.g.  64-OAK_LOG, 64-SUGAR
 	private static StringDataField discoveredSDF = new StringDataField(discoveredMetadataKey, "");
 	private static StringDataField dailyProductionSDF = new StringDataField(dailyProductionMetadataKey, "");
 	private static StringDataField availableForCollectionSDF = new StringDataField(availableForCollectionMetadataKey, "");

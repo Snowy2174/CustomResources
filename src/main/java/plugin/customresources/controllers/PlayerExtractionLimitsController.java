@@ -6,14 +6,14 @@ import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.TownBlock;
 import com.palmergames.bukkit.towny.object.Translatable;
-import plugin.customresources.TownyResources;
+import plugin.customresources.CustomResources;
 import plugin.customresources.metadata.BypassEntries;
-import plugin.customresources.metadata.TownyResourcesResidentMetaDataController;
+import plugin.customresources.metadata.CustomResourcesResidentMetaDataController;
 import plugin.customresources.objects.CategoryExtractionRecord;
 import plugin.customresources.objects.ResourceExtractionCategory;
-import plugin.customresources.settings.TownyResourcesSettings;
+import plugin.customresources.settings.CustomResourcesSettings;
 import plugin.customresources.util.ActionBarUtil;
-import plugin.customresources.util.TownyResourcesMessagingUtil;
+import plugin.customresources.util.CustomResourcesMessagingUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
@@ -46,7 +46,7 @@ public class PlayerExtractionLimitsController {
     private static final String PLAYER_EXTRACTION_RECORD_DATA_LOCK = "LOCK";
 
     public static void resetMobsDamagedByPlayers() {
-        if(!TownyResourcesSettings.areResourceExtractionLimitsEnabled())
+        if(!CustomResourcesSettings.areResourceExtractionLimitsEnabled())
             return;
 
         mobsDamagedByPlayersLastShortTick.clear();
@@ -55,12 +55,12 @@ public class PlayerExtractionLimitsController {
     }
     
     public static void loadAllResourceExtractionCategories() throws Exception{
-        if(!TownyResourcesSettings.areResourceExtractionLimitsEnabled())
+        if(!CustomResourcesSettings.areResourceExtractionLimitsEnabled())
             return;
         //Load the message delay
-        cooldownAfterDailyLimitWarningMessageMillis = TownyResourcesSettings.getCooldownAfterDailyLimitWarningMessageMillis();
+        cooldownAfterDailyLimitWarningMessageMillis = CustomResourcesSettings.getCooldownAfterDailyLimitWarningMessageMillis();
         //Load all categories
-        resourceExtractionCategories = TownyResourcesSettings.getResourceExtractionCategories();
+        resourceExtractionCategories = CustomResourcesSettings.getResourceExtractionCategories();
         //Clear the map
         materialToResourceExtractionCategoryMap.clear();
         //Put each material on the map
@@ -69,7 +69,7 @@ public class PlayerExtractionLimitsController {
                 materialToResourceExtractionCategoryMap.put(material, category);
             }
         }
-        TownyResources.info("All Resource Extraction Categories Loaded");        
+        CustomResources.info("All Resource Extraction Categories Loaded");
     }
 
     /**
@@ -78,7 +78,7 @@ public class PlayerExtractionLimitsController {
      * @param event the event
      */
     public static void processEntityDamageByEntityEvent(EntityDamageByEntityEvent event) {
-        if(!TownyResourcesSettings.areResourceExtractionLimitsEnabled() || !TownyResourcesSettings.areDropsExtractionLimitsEnabled())
+        if(!CustomResourcesSettings.areResourceExtractionLimitsEnabled() || !CustomResourcesSettings.areDropsExtractionLimitsEnabled())
             return;
     
         //Return if not a mob
@@ -101,7 +101,7 @@ public class PlayerExtractionLimitsController {
      * @param event the event
      */
     public static void processEntityDeathEvent(EntityDeathEvent event) {
-        if(!TownyResourcesSettings.areResourceExtractionLimitsEnabled() || !TownyResourcesSettings.areDropsExtractionLimitsEnabled())
+        if(!CustomResourcesSettings.areResourceExtractionLimitsEnabled() || !CustomResourcesSettings.areDropsExtractionLimitsEnabled())
             return;
 
         if(event.getEntity() instanceof Mob) {
@@ -157,7 +157,7 @@ public class PlayerExtractionLimitsController {
      * @param event the event - this event is only called for Players (not entities)
      */
     public static void processBlockBreakEvent(BlockBreakEvent event) {
-        if(!TownyResourcesSettings.areResourceExtractionLimitsEnabled() || !TownyResourcesSettings.areBlocksExtractionLimitsEnabled())
+        if(!CustomResourcesSettings.areResourceExtractionLimitsEnabled() || !CustomResourcesSettings.areBlocksExtractionLimitsEnabled())
             return;
 
         if(isPlayerNotExtractLimited(event.getPlayer()))
@@ -182,7 +182,7 @@ public class PlayerExtractionLimitsController {
              * If player is not at the limit, add extracted amount to record.                    
              */
             if(categoryExtractionRecord.isExtractionLimitReached()) {
-                if (TownyResourcesSettings.isUnbreakableWhenExtractionLimitHit(drop.getType().name())) {
+                if (CustomResourcesSettings.isUnbreakableWhenExtractionLimitHit(drop.getType().name())) {
                     event.setCancelled(true);                    
                 } else {
                     event.setDropItems(false);                    
@@ -255,7 +255,7 @@ public class PlayerExtractionLimitsController {
      * @param event event
      *
      * Method currently returns immediately and does nothing, due to
-     * https://github.com/TownyAdvanced/TownyResources/issues/32
+     * https://github.com/TownyAdvanced/CustomResources/issues/32
      */
     @SuppressWarnings("unused")
 	public static void processItemSpawnEvent(ItemSpawnEvent event) {
@@ -313,7 +313,7 @@ public class PlayerExtractionLimitsController {
      * @param event event
      */
     public static void processPlayerFishEvent(PlayerFishEvent event) {
-        if(!TownyResourcesSettings.areResourceExtractionLimitsEnabled() || !TownyResourcesSettings.areFishingExtractionLimitsEnabled())
+        if(!CustomResourcesSettings.areResourceExtractionLimitsEnabled() || !CustomResourcesSettings.areFishingExtractionLimitsEnabled())
             return;
 
         if(isPlayerNotExtractLimited(event.getPlayer()))
@@ -401,13 +401,13 @@ public class PlayerExtractionLimitsController {
 
     private static void sendLimitReachedWarningMessage(Player player, CategoryExtractionRecord categoryExtractionRecord) {
         if(System.currentTimeMillis() > categoryExtractionRecord.getNextLimitWarningTime()) {
-            String errorString = Translatable.of("townyresources.msg_error_daily_extraction_limit_reached",
+            String errorString = Translatable.of("customresources.msg_error_daily_extraction_limit_reached",
                     categoryExtractionRecord.getTranslatedCategoryName(player), 
                     categoryExtractionRecord.getResourceExtractionCategory().getCategoryExtractionLimitItems()).forLocale(player);
             //Send temporary action bar message
             ActionBarUtil.sendActionBarErrorMessage(player, errorString);
             //Send longer-lasting chat message
-            TownyResourcesMessagingUtil.sendErrorMsg(player, errorString);
+            CustomResourcesMessagingUtil.sendErrorMsg(player, errorString);
             categoryExtractionRecord.setNextLimitWarningTime(System.currentTimeMillis() + cooldownAfterDailyLimitWarningMessageMillis);
         }
     }
@@ -427,11 +427,11 @@ public class PlayerExtractionLimitsController {
      * @param event the login event
      */
     public static void processPlayerLoginEvent(PlayerLoginEvent event) {
-        if(!TownyResourcesSettings.areResourceExtractionLimitsEnabled())
+        if(!CustomResourcesSettings.areResourceExtractionLimitsEnabled())
             return;
 
         synchronized (PLAYER_EXTRACTION_RECORD_DATA_LOCK) {
-            Map<Material, CategoryExtractionRecord> playerExtractionRecord = TownyResourcesResidentMetaDataController.getPlayerExtractionRecord(event.getPlayer());
+            Map<Material, CategoryExtractionRecord> playerExtractionRecord = CustomResourcesResidentMetaDataController.getPlayerExtractionRecord(event.getPlayer());
             if(!playerExtractionRecord.isEmpty()) {
                 allPlayerExtractionRecords.put(event.getPlayer().getUniqueId(), playerExtractionRecord);
             }
@@ -445,7 +445,7 @@ public class PlayerExtractionLimitsController {
      * @param event player quit event
      */
     public static void processPlayerQuitEvent(PlayerQuitEvent event) {
-        if(!TownyResourcesSettings.areResourceExtractionLimitsEnabled())
+        if(!CustomResourcesSettings.areResourceExtractionLimitsEnabled())
             return;
 
         synchronized (PLAYER_EXTRACTION_RECORD_DATA_LOCK) {
@@ -454,7 +454,7 @@ public class PlayerExtractionLimitsController {
                 //Save record to db
                 Resident resident = TownyUniverse.getInstance().getResident(event.getPlayer().getUniqueId());
                 if(resident != null) {
-                    TownyResourcesResidentMetaDataController.setPlayerExtractionRecord(resident, playerExtractionRecord);
+                    CustomResourcesResidentMetaDataController.setPlayerExtractionRecord(resident, playerExtractionRecord);
                     resident.save();
                 }
                 //Remove entry from map
@@ -467,18 +467,18 @@ public class PlayerExtractionLimitsController {
      * Reset the daily extraction limits for all residents (even the ones who are offline)
      */
     public static void resetDailyExtractionLimits() {
-        if(!TownyResourcesSettings.areResourceExtractionLimitsEnabled())
+        if(!CustomResourcesSettings.areResourceExtractionLimitsEnabled())
             return;
 
         synchronized (PLAYER_EXTRACTION_RECORD_DATA_LOCK) {
             //Reset records in db
             for(Resident resident: TownyUniverse.getInstance().getResidents())
-                TownyResourcesResidentMetaDataController.removePlayerExtractionRecord(resident);
+                CustomResourcesResidentMetaDataController.removePlayerExtractionRecord(resident);
 
             //Clear any records which are in memory.
             allPlayerExtractionRecords.clear();
             //Send global message            
-            TownyResourcesMessagingUtil.sendGlobalMessage(Translatable.of("townyresources.daily_extraction_limits_reset"));
+            CustomResourcesMessagingUtil.sendGlobalMessage(Translatable.of("customresources.daily_extraction_limits_reset"));
         }
     }
 
@@ -486,7 +486,7 @@ public class PlayerExtractionLimitsController {
      * Save the extraction records of all online residents
      */
     public static void saveExtractionRecordsForOnlinePlayers() {
-        if(!TownyResourcesSettings.areResourceExtractionLimitsEnabled())
+        if(!CustomResourcesSettings.areResourceExtractionLimitsEnabled())
             return;
 
         synchronized (PLAYER_EXTRACTION_RECORD_DATA_LOCK) {
@@ -497,7 +497,7 @@ public class PlayerExtractionLimitsController {
                 if(playerExtractionRecord != null) {
                     resident = TownyUniverse.getInstance().getResident(player.getUniqueId());
                     if(resident != null)
-                        TownyResourcesResidentMetaDataController.setPlayerExtractionRecord(resident, playerExtractionRecord);
+                        CustomResourcesResidentMetaDataController.setPlayerExtractionRecord(resident, playerExtractionRecord);
                 }
             }
         }
@@ -511,7 +511,7 @@ public class PlayerExtractionLimitsController {
      *   unless an admin had increased the configured resource limit prior to running this method.
      */
     public static void reloadAllExtractionRecordsForLoggedInPlayers() {
-        if(!TownyResourcesSettings.areResourceExtractionLimitsEnabled())
+        if(!CustomResourcesSettings.areResourceExtractionLimitsEnabled())
             return;
 
         synchronized (PLAYER_EXTRACTION_RECORD_DATA_LOCK) {
@@ -524,16 +524,16 @@ public class PlayerExtractionLimitsController {
             for(Player player: Bukkit.getOnlinePlayers()) {
                 resident = TownyUniverse.getInstance().getResident(player.getUniqueId());
                 if(resident != null)
-                    allPlayerExtractionRecords.put(player.getUniqueId(), TownyResourcesResidentMetaDataController.getPlayerExtractionRecord(player));
+                    allPlayerExtractionRecords.put(player.getUniqueId(), CustomResourcesResidentMetaDataController.getPlayerExtractionRecord(player));
             }
         }    
-        TownyResources.info("All extraction records reloaded for logged in players");  
+        CustomResources.info("All extraction records reloaded for logged in players");
     }
 
     private static boolean isPlayerNotExtractLimited(Player player) {
-        return (!TownyResourcesSettings.areResourceExtractionLimitsEnabled()
+        return (!CustomResourcesSettings.areResourceExtractionLimitsEnabled()
                 || BypassEntries.bypassData.contains(player.getUniqueId())
                 || player.getGameMode() == GameMode.CREATIVE
-                || player.hasPermission("townyresources.bypass"));
+                || player.hasPermission("customresources.bypass"));
     }
 }

@@ -13,8 +13,8 @@ import com.palmergames.bukkit.towny.object.Translatable;
 import com.palmergames.bukkit.towny.object.Translator;
 import com.palmergames.bukkit.util.ChatTools;
 import plugin.customresources.controllers.TownResourceCollectionController;
-import plugin.customresources.metadata.TownyResourcesGovernmentMetaDataController;
-import plugin.customresources.util.TownyResourcesMessagingUtil;
+import plugin.customresources.metadata.CustomResourcesGovernmentMetaDataController;
+import plugin.customresources.util.CustomResourcesMessagingUtil;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -36,32 +36,32 @@ public class NationCollectAddon extends BaseCommand implements TabExecutor {
 		return Collections.emptyList();
 	}
 
-	private void showTownyResourcesHelp(CommandSender sender) {
+	private void showCustomResourcesHelp(CommandSender sender) {
 		Translator translator = Translator.locale(sender);
 		sender.sendMessage(ChatTools.formatTitle("/nation collectresources"));
-		sender.sendMessage(ChatTools.formatCommand("Eg", "/nation", "collectresources", translator.of("townyresources.help_nationcollect")));
+		sender.sendMessage(ChatTools.formatCommand("Eg", "/nation", "collectresources", translator.of("customresources.help_nationcollect")));
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		if (sender instanceof Player player)
 			parseNationCollectResourcesCommand(player);
 		else 
-			showTownyResourcesHelp(sender);
+			showCustomResourcesHelp(sender);
 		return true;
 	}
 
 	private void parseNationCollectResourcesCommand(Player player) {
 		try {
 
-			checkPermOrThrow(player, "townyresources.command.nationcollect");
+			checkPermOrThrow(player, "customresources.command.nationcollect");
 			parseNationCollectCommand(player);
 
 		} catch (TownyException te) {
 			//Expected type of exception (e.g. not enough money)
-			TownyResourcesMessagingUtil.sendErrorMsg(player, te.getMessage(player));
+			CustomResourcesMessagingUtil.sendErrorMsg(player, te.getMessage(player));
 		} catch (Exception e) {
 			//Unexpected exception
-			TownyResourcesMessagingUtil.sendErrorMsg(player, e.getMessage());
+			CustomResourcesMessagingUtil.sendErrorMsg(player, e.getMessage());
 		}
 	}
 
@@ -69,23 +69,23 @@ public class NationCollectAddon extends BaseCommand implements TabExecutor {
 		//Ensure player a town member
 		Resident resident = TownyAPI.getInstance().getResident(player.getUniqueId());
 		if(!resident.hasTown()) 
-			throw new TownyException(Translatable.of("townyresources.msg_err_cannot_nationcollect_not_a_town_member"));
+			throw new TownyException(Translatable.of("customresources.msg_err_cannot_nationcollect_not_a_town_member"));
 
 		//Ensure player is a nation member
 		if(!resident.hasNation())
-			throw new TownyException(Translatable.of("townyresources.msg_err_cannot_nationcollect_not_a_nation_member"));
+			throw new TownyException(Translatable.of("customresources.msg_err_cannot_nationcollect_not_a_nation_member"));
 		
 		Nation nation = resident.getNationOrNull();
 		
 		//Ensure player is actually in the capital.
 		Town town = TownyAPI.getInstance().getTown(player.getLocation());
 		if(town == null || !(nation.hasTown(town) && town.isCapital()))
-			throw new TownyException(Translatable.of("townyresources.msg_err_cannot_nationcollect_not_in_capital"));
+			throw new TownyException(Translatable.of("customresources.msg_err_cannot_nationcollect_not_in_capital"));
 		
 		//Ensure some resources are available
-		Map<String, Integer> availableForCollection = TownyResourcesGovernmentMetaDataController.getAvailableForCollectionAsMap(nation);
+		Map<String, Integer> availableForCollection = CustomResourcesGovernmentMetaDataController.getAvailableForCollectionAsMap(nation);
 		if(availableForCollection.isEmpty())
-			throw new TownyException(Translatable.of("townyresources.msg_err_cannot_nationcollect_no_resources_available"));
+			throw new TownyException(Translatable.of("customresources.msg_err_cannot_nationcollect_no_resources_available"));
 		
 		//Collect resources
 		TownResourceCollectionController.collectAvailableNationResources(player, nation, availableForCollection);

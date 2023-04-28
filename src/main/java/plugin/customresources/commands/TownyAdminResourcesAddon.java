@@ -14,11 +14,11 @@ import com.palmergames.bukkit.towny.utils.NameUtil;
 import com.palmergames.bukkit.util.ChatTools;
 import com.palmergames.util.StringMgmt;
 
-import plugin.customresources.TownyResources;
+import plugin.customresources.CustomResources;
 import plugin.customresources.controllers.TownResourceDiscoveryController;
-import plugin.customresources.enums.TownyResourcesPermissionNodes;
+import plugin.customresources.enums.CustomResourcesPermissionNodes;
 import plugin.customresources.metadata.BypassEntries;
-import plugin.customresources.util.TownyResourcesMessagingUtil;
+import plugin.customresources.util.CustomResourcesMessagingUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -67,7 +67,7 @@ public class TownyAdminResourcesAddon extends BaseCommand implements CommandExec
 	 	try {
 			//This permission check handles all the perms checks
 			if (sender instanceof Player)
-				checkPermOrThrow(sender, TownyResourcesPermissionNodes.TOWNY_RESOURCES_ADMIN_COMMAND.getNode(args[0]));
+				checkPermOrThrow(sender, CustomResourcesPermissionNodes.TOWNY_RESOURCES_ADMIN_COMMAND.getNode(args[0]));
 
 			switch (args[0]) {
 				case "reload" -> parseReloadCommand(sender);
@@ -79,34 +79,34 @@ public class TownyAdminResourcesAddon extends BaseCommand implements CommandExec
 				default -> showHelp(sender);
 			}
 		} catch (TownyException e) {
-			TownyResourcesMessagingUtil.sendErrorMsg(sender, e.getMessage(sender));
+			CustomResourcesMessagingUtil.sendErrorMsg(sender, e.getMessage(sender));
 		}
 	}
 	
 	private void showHelp(CommandSender sender) {
 		Translator translator = Translator.locale(sender);
 		sender.sendMessage(ChatTools.formatTitle("/townyadmin resources"));
-		sender.sendMessage(ChatTools.formatCommand("Eg", "/ta resources", "reload", translator.of("townyresources.admin_help_reload")));
-		sender.sendMessage(ChatTools.formatCommand("Eg", "/ta resources", "reroll_all_resources", translator.of("townyresources.admin_help_reroll")));
-		sender.sendMessage(ChatTools.formatCommand("Eg", "/ta resources", "reroll_all_resources [townname]", translator.of("townyresources.admin_help_reroll_one_town")));
-		sender.sendMessage(ChatTools.formatCommand("Eg", "/ta resources", "bypass", translator.of("townyresources.admin_help_bypass")));
+		sender.sendMessage(ChatTools.formatCommand("Eg", "/ta resources", "reload", translator.of("customresources.admin_help_reload")));
+		sender.sendMessage(ChatTools.formatCommand("Eg", "/ta resources", "reroll_all_resources", translator.of("customresources.admin_help_reroll")));
+		sender.sendMessage(ChatTools.formatCommand("Eg", "/ta resources", "reroll_all_resources [townname]", translator.of("customresources.admin_help_reroll_one_town")));
+		sender.sendMessage(ChatTools.formatCommand("Eg", "/ta resources", "bypass", translator.of("customresources.admin_help_bypass")));
 	}
 
 	private void parseReloadCommand(CommandSender sender) {
-		if (TownyResources.getPlugin().reloadAll()) {
-			TownyResourcesMessagingUtil.sendMsg(sender, Translatable.of("townyresources.townyresources_reloaded_successfully"));
+		if (CustomResources.getPlugin().reloadAll()) {
+			CustomResourcesMessagingUtil.sendMsg(sender, Translatable.of("customresources.customresources_reloaded_successfully"));
 			return;
 		}
-		TownyResourcesMessagingUtil.sendErrorMsg(sender, Translatable.of("townyresources.townyresources_failed_to_reload"));
+		CustomResourcesMessagingUtil.sendErrorMsg(sender, Translatable.of("customresources.customresources_failed_to_reload"));
 	}
 
 	private void parseReRollCommand(CommandSender sender, String[] args) throws TownyException {
 		if (args.length == 0) {
 			Confirmation.runOnAcceptAsync(() -> {
 				TownResourceDiscoveryController.reRollAllExistingResources();
-				TownyResourcesMessagingUtil.sendGlobalMessage(Translatable.of("townyresources.all_resources_rerolled"));
+				CustomResourcesMessagingUtil.sendGlobalMessage(Translatable.of("customresources.all_resources_rerolled"));
 			})
-			.setTitle(Translatable.of("townyresources.msg_confirm_reroll"))
+			.setTitle(Translatable.of("customresources.msg_confirm_reroll"))
 			.sendTo(sender);
 			return;
 		}
@@ -114,10 +114,10 @@ public class TownyAdminResourcesAddon extends BaseCommand implements CommandExec
 		Town town = getTownOrThrow(args[0]);
 		Confirmation.runOnAcceptAsync(() -> {
 			TownResourceDiscoveryController.reRollExistingResources(town, false);
-			TownyMessaging.sendPrefixedTownMessage(town, Translatable.of("townyresources.all_resources_rerolled"));
-			TownyResourcesMessagingUtil.sendMsg(sender, Translatable.of("townyresources.all_resources_rerolled"));
+			TownyMessaging.sendPrefixedTownMessage(town, Translatable.of("customresources.all_resources_rerolled"));
+			CustomResourcesMessagingUtil.sendMsg(sender, Translatable.of("customresources.all_resources_rerolled"));
 		})
-		.setTitle(Translatable.of("townyresources.msg_confirm_reroll_town"))
+		.setTitle(Translatable.of("customresources.msg_confirm_reroll_town"))
 		.sendTo(sender);
 	}
 
@@ -126,10 +126,10 @@ public class TownyAdminResourcesAddon extends BaseCommand implements CommandExec
 
 		if (BypassEntries.bypassData.contains(playerUUID)) {
 			BypassEntries.bypassData.remove(playerUUID);
-			TownyResourcesMessagingUtil.sendMsg(sender, Translatable.of("townyresources.bypass_off"));
+			CustomResourcesMessagingUtil.sendMsg(sender, Translatable.of("customresources.bypass_off"));
 		} else {
 			BypassEntries.bypassData.add(playerUUID);
-			TownyResourcesMessagingUtil.sendMsg(sender, Translatable.of("townyresources.bypass_on"));
+			CustomResourcesMessagingUtil.sendMsg(sender, Translatable.of("customresources.bypass_on"));
 		}
 	}
 }

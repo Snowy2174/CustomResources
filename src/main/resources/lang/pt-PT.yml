@@ -1,8 +1,8 @@
-name: TownyResources
+name: CustomResources
 version: 0.10
 language: Português - Brasil
 author: YuriGG_
-website: 'https://github.com/TownyAdvanced/TownyResources'
+website: 'https://github.com/TownyAdvanced/CustomResources'
 description: >
     Language file for all game messages for this Locale.
 
@@ -48,9 +48,9 @@ description: >
 townyresources.plugin_prefix: '&f[&6Towny Resources&f] '
 
 ### Reloading
-townyresources.townyresources_reloaded_successfully: "TownyResources foi reiniciado com sucesso."
-townyresources.townyresources_failed_to_reload: "TownyResources falhou ao reinciar."
-townyresources.admin_help_reload: 'Reload TownyResources.'
+townyresources.townyresources_reloaded_successfully: "CustomResources foi reiniciado com sucesso."
+townyresources.townyresources_failed_to_reload: "CustomResources falhou ao reinciar."
+townyresources.admin_help_reload: 'Reload CustomResources.'
 
 ### Town Screen
 townyresources.town.screen.header: "&2Recursos:"

@@ -7,11 +7,11 @@ import com.palmergames.bukkit.towny.exceptions.TownyException;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.Translatable;
-import plugin.customresources.TownyResources;
-import plugin.customresources.metadata.TownyResourcesGovernmentMetaDataController;
+import plugin.customresources.CustomResources;
+import plugin.customresources.metadata.CustomResourcesGovernmentMetaDataController;
 import plugin.customresources.objects.ResourceOfferCategory;
-import plugin.customresources.settings.TownyResourcesSettings;
-import plugin.customresources.util.TownyResourcesMessagingUtil;
+import plugin.customresources.settings.CustomResourcesSettings;
+import plugin.customresources.util.CustomResourcesMessagingUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,15 +39,15 @@ public class TownResourceDiscoveryController {
                                             List<String> alreadyDiscoveredMaterials) throws TownyException{
 
         //Ensure the resource at this level has not already been discovered
-        List<String> discoveredResources = TownyResourcesGovernmentMetaDataController.getDiscoveredAsList(town);
+        List<String> discoveredResources = CustomResourcesGovernmentMetaDataController.getDiscoveredAsList(town);
         if(surveyLevel <= discoveredResources.size()) {
-            throw new TownyException(Translatable.of("townyresources.msg_err_level_x_resource_already_discovered", surveyLevel));
+            throw new TownyException(Translatable.of("customresources.msg_err_level_x_resource_already_discovered", surveyLevel));
         }
 
         //Ensure the player can afford this survey
         if (TownyEconomyHandler.isActive()) {
             if(!resident.getAccount().canPayFromHoldings(surveyCost)) {
-			    throw new TownyException(Translatable.of("townyresources.msg_err_survey_too_expensive",
+			    throw new TownyException(Translatable.of("customresources.msg_err_survey_too_expensive",
                     TownyEconomyHandler.getFormattedBalance(surveyCost), resident.getAccount().getHoldingFormattedBalance()));
             }
 
@@ -61,14 +61,14 @@ public class TownResourceDiscoveryController {
         String winningMaterial = calculateWinningMaterial(winningCategory);
         //Discover the resource
         discoveredMaterials.add(winningMaterial);
-        TownyResourcesGovernmentMetaDataController.setDiscovered(town, discoveredMaterials);
+        CustomResourcesGovernmentMetaDataController.setDiscovered(town, discoveredMaterials);
         town.save();
 
         //Recalculate Town Production
         TownResourceProductionController.recalculateProductionForOneTown(town);
 
         //Recalculate Nation Production
-        if(TownyResources.getPlugin().isSiegeWarInstalled() && TownOccupationController.isTownOccupied(town)) {
+        if(CustomResources.getPlugin().isSiegeWarInstalled() && TownOccupationController.isTownOccupied(town)) {
             TownResourceProductionController.recalculateProductionForOneNation(TownOccupationController.getTownOccupier(town));
         } else if (town.hasNation()) {
             TownResourceProductionController.recalculateProductionForOneNation(town.getNation());
@@ -77,14 +77,14 @@ public class TownResourceDiscoveryController {
          //Send global message
         int levelOfNewResource = discoveredMaterials.size();
         double productivityModifierNormalized;
-		if (TownyResourcesSettings.isNonDynamicAmountMaterial(winningMaterial))
+		if (CustomResourcesSettings.isNonDynamicAmountMaterial(winningMaterial))
 			productivityModifierNormalized = 1.0;
 		else
-			productivityModifierNormalized = (double) TownyResourcesSettings.getProductionPercentagesPerResourceLevel().get(levelOfNewResource - 1) / 100;
+			productivityModifierNormalized = (double) CustomResourcesSettings.getProductionPercentagesPerResourceLevel().get(levelOfNewResource - 1) / 100;
         int preTaxProduction = (int)((winningCategory.getBaseAmountItems() * productivityModifierNormalized) + 0.5); 
-        String categoryName = TownyResourcesMessagingUtil.formatOfferCategoryNameForDisplay(winningCategory);
-        String materialName = TownyResourcesMessagingUtil.formatMaterialNameForDisplay(winningMaterial);
-        TownyResourcesMessagingUtil.sendGlobalMessage(Translatable.of("townyresources.discovery.success", resident.getName(), categoryName, town.getName(), preTaxProduction, materialName));
+        String categoryName = CustomResourcesMessagingUtil.formatOfferCategoryNameForDisplay(winningCategory);
+        String materialName = CustomResourcesMessagingUtil.formatMaterialNameForDisplay(winningMaterial);
+        CustomResourcesMessagingUtil.sendGlobalMessage(Translatable.of("customresources.discovery.success", resident.getName(), categoryName, town.getName(), preTaxProduction, materialName));
     }
 
     private static ResourceOfferCategory calculateWinningCategory(List<String> alreadyDiscoveredMaterials) throws TownyException{
@@ -105,7 +105,7 @@ public class TownResourceDiscoveryController {
         }
  		//Ensure there are enough candidates left for a new discovery
         if(candidateCategories.size() < 1)
-            throw new TownyException(Translatable.of("townyresources.msg_err_not_enough_offers_left"));
+            throw new TownyException(Translatable.of("customresources.msg_err_not_enough_offers_left"));
 
         /*
          * Generate a discovery map which will allow us to pick a winning offer
@@ -146,7 +146,7 @@ public class TownResourceDiscoveryController {
     }
 
 	public static void reRollExistingResources(Town town, boolean alltowns) {
-		int numTownResources = TownyResourcesGovernmentMetaDataController.getDiscoveredAsList(town).size();
+		int numTownResources = CustomResourcesGovernmentMetaDataController.getDiscoveredAsList(town).size();
 		if (numTownResources > 0) {
 			List<String> discoveredTownResources = new ArrayList<>();
 			try {
@@ -159,7 +159,7 @@ public class TownResourceDiscoveryController {
 				// But we assume that is intended and do not throw.
 			}
 			// Set the new list of town resources
-			TownyResourcesGovernmentMetaDataController.setDiscovered(town, discoveredTownResources);
+			CustomResourcesGovernmentMetaDataController.setDiscovered(town, discoveredTownResources);
 			// Save town
 			town.save();
 			

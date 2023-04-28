@@ -8,8 +8,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import plugin.customresources.TownyResources;
-import plugin.customresources.settings.TownyResourcesSettings;
+import plugin.customresources.CustomResources;
+import plugin.customresources.settings.CustomResourcesSettings;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.Type;
 import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
@@ -33,7 +33,7 @@ public class MMOItemsUtil {
 	}
 
 	public static ItemStack getMMOItemsItemStack(String materialName, Player player) {
-		if (!TownyResourcesSettings.areMMOItemsGivenLeveledTowardsThePlayer())
+		if (!CustomResourcesSettings.areMMOItemsGivenLeveledTowardsThePlayer())
 			return getMMOItemsItemStack(materialName);
 		return MMOItems.plugin.getItem(getType(materialName), getID(materialName), PlayerData.get(player));
 	}
@@ -46,7 +46,7 @@ public class MMOItemsUtil {
 		MMOItem mmoItem = getMMOItemsMMOItem(materialName);
 		if (mmoItem == null)
 			return null;
-		Future<ItemStack> future = Bukkit.getScheduler().callSyncMethod(TownyResources.getPlugin(), new MMOItemGetter(mmoItem));
+		Future<ItemStack> future = Bukkit.getScheduler().callSyncMethod(CustomResources.getPlugin(), new MMOItemGetter(mmoItem));
 		ItemStack item = null;
 		try {
 			item = future.get();

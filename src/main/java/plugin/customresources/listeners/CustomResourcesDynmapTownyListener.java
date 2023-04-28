@@ -1,13 +1,13 @@
 package plugin.customresources.listeners;
 
-import plugin.customresources.metadata.TownyResourcesGovernmentMetaDataController;
-import plugin.customresources.settings.TownyResourcesSettings;
-import plugin.customresources.util.TownyResourcesMessagingUtil;
+import plugin.customresources.metadata.CustomResourcesGovernmentMetaDataController;
+import plugin.customresources.settings.CustomResourcesSettings;
+import plugin.customresources.util.CustomResourcesMessagingUtil;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.dynmap.towny.events.BuildTownMarkerDescriptionEvent;
 
-public class TownyResourcesDynmapTownyListener implements Listener {
+public class CustomResourcesDynmapTownyListener implements Listener {
 
     /**
      * This method updates the town popup box on Dynmap-Towny
@@ -17,11 +17,11 @@ public class TownyResourcesDynmapTownyListener implements Listener {
      */
     @EventHandler
     public void on(BuildTownMarkerDescriptionEvent event) {
-        if (TownyResourcesSettings.isEnabled()) {
+        if (CustomResourcesSettings.isEnabled()) {
             if (event.getDescription().contains("%town_resources%")) {
-                String productionAsString = TownyResourcesGovernmentMetaDataController.getDailyProduction(event.getTown());
-                productionAsString = TownyResourcesMessagingUtil.adjustAmountsForTownLevelModifier(event.getTown(), productionAsString);
-                String formattedProductionAsString = TownyResourcesMessagingUtil.formatProductionStringForDynmapTownyDisplay(productionAsString);
+                String productionAsString = CustomResourcesGovernmentMetaDataController.getDailyProduction(event.getTown());
+                productionAsString = CustomResourcesMessagingUtil.adjustAmountsForTownLevelModifier(event.getTown(), productionAsString);
+                String formattedProductionAsString = CustomResourcesMessagingUtil.formatProductionStringForDynmapTownyDisplay(productionAsString);
                 String finalDescription = event.getDescription().replace("%town_resources%", formattedProductionAsString);
                 event.setDescription(finalDescription);
             }

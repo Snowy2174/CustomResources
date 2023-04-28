@@ -2,9 +2,10 @@ package plugin.customresources.util;
 
 import com.meowj.langutils.lang.LanguageHelper;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import plugin.customresources.CustomResources;
 import plugin.customresources.objects.ResourceExtractionCategory;
 import plugin.customresources.objects.ResourceOfferCategory;
-import plugin.customresources.settings.TownyResourcesSettings;
+import plugin.customresources.settings.CustomResourcesSettings;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -24,7 +25,6 @@ import com.palmergames.bukkit.towny.utils.TownyComponents;
 import com.palmergames.bukkit.util.Colors;
 import com.palmergames.util.StringMgmt;
 
-import plugin.customresources.TownyResources;
 import org.bukkit.inventory.ItemStack;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -37,10 +37,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class TownyResourcesMessagingUtil {
+public class CustomResourcesMessagingUtil {
 	private static List<String> categoryNames;
 
-	public TownyResourcesMessagingUtil(TownyResources plugin) {
+	public CustomResourcesMessagingUtil(CustomResources plugin) {
 		List<String> categoryNames = new ArrayList<>();
 		try (InputStream is = plugin.getClass().getResourceAsStream("/lang/en-US.yml")) {
 			Map<String, Object> values = new Yaml(new SafeConstructor(new LoaderOptions())).load(is);
@@ -51,29 +51,29 @@ public class TownyResourcesMessagingUtil {
 			is.close();
 		} catch (IOException ignored) {
 		}
-		TownyResourcesMessagingUtil.categoryNames = categoryNames;
+		CustomResourcesMessagingUtil.categoryNames = categoryNames;
 	}
 
 	public static void sendErrorMsg(CommandSender sender, String message) {
         //Ensure the sender is not null (i.e. is an online player who is not an npc)
         if(sender != null)
-            TownyMessaging.sendMessage(sender, Translatable.of("townyresources.plugin_prefix").append(Component.text("", NamedTextColor.RED)).append(message));
+            TownyMessaging.sendMessage(sender, Translatable.of("customresources.plugin_prefix").append(Component.text("", NamedTextColor.RED)).append(message));
 	}
 
     public static void sendErrorMsg(CommandSender sender, Translatable message) {
         //Ensure the sender is not null (i.e. is an online player who is not an npc)
         if(sender != null)
-            TownyMessaging.sendMessage(sender, Translatable.of("townyresources.plugin_prefix").append(Component.text("", NamedTextColor.RED)).append(message));
+            TownyMessaging.sendMessage(sender, Translatable.of("customresources.plugin_prefix").append(Component.text("", NamedTextColor.RED)).append(message));
     }
 
     public static void sendMsg(CommandSender sender, Translatable message) {
         //Ensure the sender is not null (i.e. is an online player who is not an npc)
         if(sender != null)
-        	TownyMessaging.sendMessage(sender, Translatable.of("townyresources.plugin_prefix").append(Component.text("", NamedTextColor.WHITE)).append(message));
+        	TownyMessaging.sendMessage(sender, Translatable.of("customresources.plugin_prefix").append(Component.text("", NamedTextColor.WHITE)).append(message));
     }
 
     public static void sendGlobalMessage(Translatable message) {
-        TownyResources.info(message.defaultLocale());
+        CustomResources.info(message.defaultLocale());
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (player != null && TownyAPI.getInstance().isTownyWorld(player.getWorld()))
                 sendMsg(player, message);
@@ -182,7 +182,7 @@ public class TownyResourcesMessagingUtil {
     public static String formatMaterialNameForDisplay(String materialName) {
         Material material = Material.getMaterial(materialName);
         if(material == null) {
-            if(TownyResources.getPlugin().isSlimeFunInstalled()) {
+            if(CustomResources.getPlugin().isSlimeFunInstalled()) {
                 SlimefunItem slimefunItem = SlimefunItem.getById(materialName);
                 if(slimefunItem != null) {
                     return slimefunItem.getItemName().replaceAll("[^\\w\\s]\\w","");
@@ -190,7 +190,7 @@ public class TownyResourcesMessagingUtil {
             }
 
             // mythicmobs integration
-            if(TownyResources.getPlugin().isMythicMobsInstalled()) {
+            if(CustomResources.getPlugin().isMythicMobsInstalled()) {
             	String mmName = MythicMobsUtil.getMaterialNameForDisplay(materialName); 
             	if (mmName != null) {
             		return mmName;
@@ -198,15 +198,15 @@ public class TownyResourcesMessagingUtil {
             }
 
             // MMOItems integration
-            if (TownyResources.getPlugin().isMMOItemsInstalled() && materialName.contains(":")) {
+            if (CustomResources.getPlugin().isMMOItemsInstalled() && materialName.contains(":")) {
             	String miName = MMOItemsUtil.getMaterialNameForDisplay(materialName);
             	if (miName != null)
             		return miName;
             }
         } else {
-            if(TownyResources.getPlugin().isLanguageUtilsInstalled()) {           
+            if(CustomResources.getPlugin().isLanguageUtilsInstalled()) {
                 ItemStack fakeItemStack = new ItemStack(material);
-                String translatedMaterialName = LanguageHelper.getItemDisplayName(fakeItemStack, TownyResourcesSettings.getMaterialsDisplayLanguage());
+                String translatedMaterialName = LanguageHelper.getItemDisplayName(fakeItemStack, CustomResourcesSettings.getMaterialsDisplayLanguage());
                 return translatedMaterialName;
             }
         }
@@ -228,7 +228,7 @@ public class TownyResourcesMessagingUtil {
                 continue;
             amountAndMaterialName = resourceAsString.split("-");
             materialName = amountAndMaterialName[1];
-            multiplier = TownyResourcesSettings.isNonDynamicAmountMaterial(materialName) ? 1.0 : TownySettings.getTownLevel(town).resourceProductionModifier(); 
+            multiplier = CustomResourcesSettings.isNonDynamicAmountMaterial(materialName) ? 1.0 : TownySettings.getTownLevel(town).resourceProductionModifier(); 
             amount = String.valueOf((int) (Integer.valueOf(amountAndMaterialName[0]) * multiplier));
             resourcesAsFormattedList.add(amount + "-" + materialName);
         }

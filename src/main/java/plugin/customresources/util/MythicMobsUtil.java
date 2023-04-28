@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.bukkit.inventory.ItemStack;
 
-import plugin.customresources.TownyResources;
+import plugin.customresources.CustomResources;
 import io.lumine.xikage.mythicmobs.items.MythicItem;
 
 public class MythicMobsUtil {
@@ -12,9 +12,9 @@ public class MythicMobsUtil {
 
 	public static ItemStack getMythicItemStack(String materialName) {
 		ItemStack mythicItem = null;
-		if (TownyResources.getPlugin().isMythicMobsLegacy()) {
+		if (CustomResources.getPlugin().isMythicMobsLegacy()) {
 			mythicItem = io.lumine.xikage.mythicmobs.MythicMobs.inst().getItemManager().getItemStack(materialName);
-		} else if (TownyResources.getPlugin().isMythicMobsV5()) {
+		} else if (CustomResources.getPlugin().isMythicMobsV5()) {
 			mythicItem = io.lumine.mythic.bukkit.MythicBukkit.inst().getItemManager().getItemStack(materialName);
 		}
 		return mythicItem;
@@ -29,7 +29,7 @@ public class MythicMobsUtil {
 
 	public static String getMaterialNameForDisplay(String materialName) {
 		String name = null;
-		if (TownyResources.getPlugin().isMythicMobsLegacy()) {
+		if (CustomResources.getPlugin().isMythicMobsLegacy()) {
 			Optional<MythicItem> maybeMythicItem = io.lumine.xikage.mythicmobs.MythicMobs.inst().getItemManager()
 					.getItem(materialName);
 
@@ -49,7 +49,7 @@ public class MythicMobsUtil {
 					}
 				}
 			}
-		} else if (TownyResources.getPlugin().isMythicMobsV5()) {
+		} else if (CustomResources.getPlugin().isMythicMobsV5()) {
 			Optional<io.lumine.mythic.core.items.MythicItem> maybeMythicItem = io.lumine.mythic.bukkit.MythicBukkit
 					.inst().getItemManager().getItem(materialName);
 			if (maybeMythicItem.isPresent()) {

@@ -1,8 +1,8 @@
-name: TownyResources
+name: CustomResources
 version: 0.10
 language: chinese
 author: Nailm
-website: 'https://github.com/TownyAdvanced/TownyResources'
+website: 'https://github.com/TownyAdvanced/CustomResources'
 description: >
     Language file for all game messages for this Locale.
 

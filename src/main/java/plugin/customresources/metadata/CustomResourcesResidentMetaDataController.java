@@ -5,7 +5,7 @@ import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.metadata.StringDataField;
 import com.palmergames.bukkit.towny.utils.MetaDataUtil;
 
-import plugin.customresources.TownyResources;
+import plugin.customresources.CustomResources;
 import plugin.customresources.controllers.PlayerExtractionLimitsController;
 import plugin.customresources.objects.CategoryExtractionRecord;
 import plugin.customresources.objects.ResourceExtractionCategory;
@@ -19,18 +19,18 @@ import java.util.*;
  * @author Goosius
  *
  */
-public class TownyResourcesResidentMetaDataController {
+public class CustomResourcesResidentMetaDataController {
 
 
 	@SuppressWarnings("unused")
-	private TownyResources plugin;
+	private CustomResources plugin;
 
-	public TownyResourcesResidentMetaDataController(TownyResources plugin) {
+	public CustomResourcesResidentMetaDataController(CustomResources plugin) {
 		this.plugin = plugin;
 	}
 
     private final static String
-        extractionRecordMetadataKey = "townyresources_extractionRecord";  //e.g.   "25-common_rocks, 64-wheat"
+        extractionRecordMetadataKey = "customresources_extractionRecord";  //e.g.   "25-common_rocks, 64-wheat"
     private final static StringDataField extractionRecordSDF = new StringDataField(extractionRecordMetadataKey, ""); 
 
 

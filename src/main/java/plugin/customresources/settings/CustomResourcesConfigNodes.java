@@ -1,6 +1,6 @@
 package plugin.customresources.settings;
 
-public enum TownyResourcesConfigNodes {
+public enum CustomResourcesConfigNodes {
 	
 	VERSION_HEADER("version", "", ""),
 	VERSION(
@@ -11,8 +11,8 @@ public enum TownyResourcesConfigNodes {
 			"enabled",
 			"true",
 			"",
-			"# If true, the TownyResources system is enabled.",
-			"# if false, the TownyResources system is disabled."),		
+			"# If true, the CustomResources system is enabled.",
+			"# if false, the CustomResources system is disabled."),
 	RESOURCE_EXTRACTION_LIMITS(
 			"resource_extraction_limits",
 			"",
@@ -303,7 +303,7 @@ public enum TownyResourcesConfigNodes {
 			"# This gives each survey approx. 70% chance to discover a strategic resources, and a 30% to discover a non-strategic resource.",
 			"# ",
 			"# This list supports Slimefun, MythicMobs and MMOItems items as well. When entering an MMOItem use the TYPE:ID format,",
-			"# ie: SWORD:CUTLASS where TownyResources expects a material."),
+			"# ie: SWORD:CUTLASS where CustomResources expects a material."),
 	TOWN_RESOURCES_OFFERS_MATERIALS_WITH_NON_DYNAMIC_AMMOUNTS(
 			"town_resources.offers.categories_with_fixed_amounts",
 			"somematerial,someitem",
@@ -327,7 +327,7 @@ public enum TownyResourcesConfigNodes {
 	private final String Default;
 	private String[] comments;
 
-	TownyResourcesConfigNodes(String root, String def, String... comments) {
+	CustomResourcesConfigNodes(String root, String def, String... comments) {
 
 		this.Root = root;
 		this.Default = def;

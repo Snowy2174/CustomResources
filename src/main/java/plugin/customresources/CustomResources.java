@@ -15,8 +15,8 @@ import plugin.customresources.controllers.PlayerExtractionLimitsController;
 import plugin.customresources.controllers.TownResourceOffersController;
 import plugin.customresources.controllers.TownResourceProductionController;
 import plugin.customresources.listeners.*;
-import plugin.customresources.settings.TownyResourcesSettings;
-import plugin.customresources.util.TownyResourcesMessagingUtil;
+import plugin.customresources.settings.CustomResourcesSettings;
+import plugin.customresources.util.CustomResourcesMessagingUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -25,9 +25,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class TownyResources extends JavaPlugin {
+public class CustomResources extends JavaPlugin {
 	
-	private static TownyResources plugin;
+	private static CustomResources plugin;
 	private static Version requiredTownyVersion = Version.fromString("0.98.6.3");
 	private static boolean siegeWarInstalled;
 	private static boolean dynmapTownyInstalled; 
@@ -52,7 +52,7 @@ public class TownyResources extends JavaPlugin {
 		return this.getDescription().getVersion();
 	}
 
-	public static TownyResources getPlugin() {
+	public static CustomResources getPlugin() {
 		return plugin;
 	}
 
@@ -72,9 +72,9 @@ public class TownyResources extends JavaPlugin {
 			//Setup integrations with other plugins
 			setupIntegrationsWithOtherPlugins();
 			//Load settings and languages
-			TownyResourcesSettings.loadConfig();
+			CustomResourcesSettings.loadConfig();
 			loadLocalization(false);
-			new TownyResourcesMessagingUtil(this);
+			new CustomResourcesMessagingUtil(this);
 
 			//Load controllers
 			TownResourceOffersController.loadAllResourceOfferCategories();
@@ -85,15 +85,15 @@ public class TownyResources extends JavaPlugin {
 			registerListeners();
 		} catch (TownyException te) {
 			severe(te.getMessage());
-            severe("TownyResources failed to load! Disabling!");
+            severe("CustomResources failed to load! Disabling!");
             return false;
 		} catch (Exception e) {
 			severe(e.getMessage());
             e.printStackTrace();
-            severe("TownyResources failed to load! Disabling!");
+            severe("CustomResources failed to load! Disabling!");
             return false;
         }
-		info("TownyResources loaded successfully.");
+		info("CustomResources loaded successfully.");
 		return true;
 	}
 
@@ -105,9 +105,9 @@ public class TownyResources extends JavaPlugin {
 	public boolean reloadAll() {
 		try {
 			//Load settings and languages
-			TownyResourcesSettings.loadConfig();
+			CustomResourcesSettings.loadConfig();
 			loadLocalization(true);
-			new TownyResourcesMessagingUtil(this);
+			new CustomResourcesMessagingUtil(this);
 			//Load controllers
 			TownResourceOffersController.loadAllResourceOfferCategories();
 			TownResourceProductionController.recalculateAllProduction();
@@ -116,10 +116,10 @@ public class TownyResources extends JavaPlugin {
 		} catch (Exception e) {
             e.printStackTrace();
 			severe(e.getMessage());
-            severe("TownyResources failed to reload!");
+            severe("CustomResources failed to reload!");
             return false;
         }
-		info("TownyResources reloaded successfully.");
+		info("CustomResources reloaded successfully.");
 		return true;
 	}
 
@@ -127,7 +127,7 @@ public class TownyResources extends JavaPlugin {
 		try {
 			Plugin plugin = getPlugin(); 
 			Path langFolderPath = Paths.get(plugin.getDataFolder().getPath()).resolve("lang");
-			TranslationLoader loader = new TranslationLoader(langFolderPath, plugin, TownyResources.class);
+			TranslationLoader loader = new TranslationLoader(langFolderPath, plugin, CustomResources.class);
 			loader.load();
 			TownyAPI.getInstance().addTranslations(plugin, loader.getTranslations());
 		} catch (TownyInitException e) {
@@ -160,12 +160,12 @@ public class TownyResources extends JavaPlugin {
 
 	private void registerListeners() {
 		PluginManager pm = Bukkit.getServer().getPluginManager();
-		pm.registerEvents(new TownyResourcesBukkitEventListener(), this);
-		pm.registerEvents(new TownyResourcesTownyEventListener(), this);
-		pm.registerEvents(new TownyResourcesTownEventListener(), this);
-		pm.registerEvents(new TownyResourcesNationEventListener(), this);
+		pm.registerEvents(new CustomResourcesBukkitEventListener(), this);
+		pm.registerEvents(new CustomResourcesTownyEventListener(), this);
+		pm.registerEvents(new CustomResourcesTownEventListener(), this);
+		pm.registerEvents(new CustomResourcesNationEventListener(), this);
 		if(isDynmapTownyInstalled())
-			pm.registerEvents(new TownyResourcesDynmapTownyListener(), this);
+			pm.registerEvents(new CustomResourcesDynmapTownyListener(), this);
 	}
 
 	private void registerCommands() {
@@ -181,7 +181,7 @@ public class TownyResources extends JavaPlugin {
 	/**
 	* This method is used before checking for the effects of occupation on resources.
 	* Ideally we would also like to check if siegewar is enabled before doing this.
-	* However to do that, we would need to load siegewar before townyresources,
+	* However to do that, we would need to load siegewar before customresources,
 	* which would change the position of resources on the town screen.
 	* Maybe this will be added in future, especially if someone actually needs it. 
 	*/

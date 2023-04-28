@@ -8,7 +8,7 @@ import com.palmergames.bukkit.towny.TownyMessaging;
 
 /**
  * FYI if the MC version is not high enough this class may fail to load with a "java.lang.noClassDefFound" error
- * But its ok because TownyResources always sends a text window message anyway
+ * But its ok because CustomResources always sends a text window message anyway
  */
 public class ActionBarUtil {
 

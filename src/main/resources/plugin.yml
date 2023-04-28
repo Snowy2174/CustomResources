@@ -1,9 +1,9 @@
-name: TownyResources
-main: TownyResources
+name: CustomResources
+main: CustomResources
 version: ${project.version}
 api-version: ${project.bukkitAPIVersion}
 author: 'Goosius, LlmDL'
-website: 'https://github.com/TownyAdvanced/TownyResources'
+website: 'https://github.com/TownyAdvanced/CustomResources'
 prefix: ${project.artifactId}
 depend: [Towny]
 softdepend: [SiegeWar,Dynmap-Towny,LangUtils,Slimefun,MythicMobs,MMOItems]
