@@ -187,7 +187,12 @@ public class CustomResourcesMessagingUtil {
             		return mmName;
             	}
             }
-
+            // ItemsAdder integration
+            if (CustomResources.getPlugin().isItemsAdderInstalled() && materialName.contains(":")) {
+                String iaName = ItemsAdderUtil.getMaterialNameForDisplay(materialName);
+                if (iaName != null)
+                    return iaName;
+            }
             // MMOItems integration
             if (CustomResources.getPlugin().isMMOItemsInstalled() && materialName.contains(":")) {
             	String miName = MMOItemsUtil.getMaterialNameForDisplay(materialName);

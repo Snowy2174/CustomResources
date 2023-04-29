@@ -11,6 +11,7 @@ import com.palmergames.bukkit.util.Version;
 import plugin.customresources.commands.NationCollectAddon;
 import plugin.customresources.commands.TownResourcesAddon;
 import plugin.customresources.commands.TownyAdminResourcesAddon;
+import plugin.customresources.controllers.TownMachineManager;
 import plugin.customresources.controllers.TownResourceOffersController;
 import plugin.customresources.controllers.TownResourceProductionController;
 import plugin.customresources.listeners.*;
@@ -36,6 +37,7 @@ public class CustomResources extends JavaPlugin {
 	private static boolean mythicMobsInstalled;
 	private static boolean mmmoItemsInstalled;
 	private static boolean itemsAdderInstalled;
+	private static boolean holographicDisplaysInstalled;
 	
     @Override
     public void onEnable() {
@@ -77,6 +79,8 @@ public class CustomResources extends JavaPlugin {
 
 			//Load controllers
 			TownResourceOffersController.loadAllResourceOfferCategories();
+			//Load machines
+			TownMachineManager.loadMachines();
 			//WARNING: Do not try to recalculate production here, because unless SW has been loaded first, the results will be incorrect.
 			//Load commands and listeners
 			registerCommands();
@@ -206,6 +210,13 @@ public class CustomResources extends JavaPlugin {
 	public boolean isMMOItemsInstalled() {
 		return mmmoItemsInstalled;
 	}
+	public boolean isItemsAdderInstalled() {
+		return itemsAdderInstalled;
+	}
+
+	public boolean isHolographicDisplaysInstalled() {
+		return holographicDisplaysInstalled;
+	}
 
 	private String getTownyVersion() {
         return Bukkit.getPluginManager().getPlugin("Towny").getDescription().getVersion();
@@ -247,6 +258,15 @@ public class CustomResources extends JavaPlugin {
 				severe("Problem enabling mythic mobs");
 			}
 		}
+		Plugin holographicDisplays = Bukkit.getPluginManager().getPlugin("HolographicDisplays");
+		holographicDisplaysInstalled = holographicDisplays != null;
+		if (holographicDisplaysInstalled)
+			info("  Hologram Integration Enabled");
+
+		Plugin itemsAdder = Bukkit.getPluginManager().getPlugin("ItemsAdder");
+		itemsAdderInstalled = holographicDisplays != null;
+		if (itemsAdderInstalled)
+			info("  ItemsAdder Integration Enabled");
 
 		Plugin mmmoItems = Bukkit.getPluginManager().getPlugin("MMOItems");
 		mmmoItemsInstalled = mmmoItems != null;

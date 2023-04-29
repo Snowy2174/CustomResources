@@ -7,6 +7,7 @@ import com.palmergames.bukkit.towny.object.Translatable;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import plugin.customresources.CustomResources;
 import plugin.customresources.metadata.CustomResourcesGovernmentMetaDataController;
+import plugin.customresources.util.ItemsAdderUtil;
 import plugin.customresources.util.MMOItemsUtil;
 import plugin.customresources.util.MythicMobsUtil;
 import plugin.customresources.util.CustomResourcesMessagingUtil;
@@ -128,7 +129,16 @@ public class TownResourceCollectionController {
                     continue;
                 }
             }
-
+            // Itemsadder integration
+            if (CustomResources.getPlugin().isItemsAdderInstalled() && materialName.contains(":")) {
+                ItemStack iaItem = ItemsAdderUtil.getItemsAdderItemStack(materialName);
+                if (iaItem != null) {
+                    itemStack = iaItem;
+                    itemStack.setAmount(amount);
+                    itemStackList.add(itemStack);
+                    continue;
+                }
+            }
             // MMOItems integration
             if (CustomResources.getPlugin().isMMOItemsInstalled() && materialName.contains(":")) {
             	ItemStack mmoItem = MMOItemsUtil.getMMOItemsItemStack(materialName, player);
