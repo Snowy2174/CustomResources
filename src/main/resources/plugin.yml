@@ -10,6 +10,11 @@ softdepend: [SiegeWar,Dynmap-Towny,LangUtils,Slimefun,MythicMobs,MMOItems,ItemsA
 
 description: This is an add-on plugin for Towny, which gives each town a unique set of automatically-extracted resources, and then protects the economic value of those resources with moderate limits to player resource extraction.
 
+commands:
+    placeMachine:
+        description: The command to place a machine
+        permission: customresources.admin.command.construct
+
 permissions:
     customresources.command.survey:
         description: User is able to do a survey.
@@ -21,3 +26,4 @@ permissions:
         children:
             customresources.admin.command.reload: true
             customresources.admin.command.bypass: true
+            customresources.admin.command.construct: true

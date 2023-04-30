@@ -9,6 +9,7 @@ import com.palmergames.bukkit.towny.object.TranslationLoader;
 import com.palmergames.bukkit.util.Colors;
 import com.palmergames.bukkit.util.Version;
 
+import io.lumine.xikage.mythicmobs.utils.commands.Command;
 import plugin.customresources.commands.MachineAddon;
 import plugin.customresources.commands.NationCollectAddon;
 import plugin.customresources.commands.TownResourcesAddon;
@@ -77,6 +78,7 @@ public class CustomResources extends JavaPlugin {
 			setupIntegrationsWithOtherPlugins();
 			//Load settings and languages
 			CustomResourcesSettings.loadConfig();
+			CustomResourcesMachineConfig.load();
 			loadLocalization(false);
 			new CustomResourcesMessagingUtil(this);
 
@@ -84,7 +86,6 @@ public class CustomResources extends JavaPlugin {
 			TownResourceOffersController.loadAllResourceOfferCategories();
 			//Load machines
 			TownMachineManager.loadMachines();
-			CustomResourcesMachineConfig.load();
 			//WARNING: Do not try to recalculate production here, because unless SW has been loaded first, the results will be incorrect.
 			//Load commands and listeners
 			registerCommands();
@@ -180,7 +181,7 @@ public class CustomResources extends JavaPlugin {
 		new TownResourcesAddon();
 		new NationCollectAddon();
 		new TownyAdminResourcesAddon();
-		new MachineAddon();
+		getCommand("placeMachine").setExecutor(new MachineAddon());
 	}
 
 	public boolean isDynmapTownyInstalled() {
@@ -273,7 +274,7 @@ public class CustomResources extends JavaPlugin {
 			info("  Hologram Integration Enabled");
 
 		Plugin itemsAdder = Bukkit.getPluginManager().getPlugin("ItemsAdder");
-		itemsAdderInstalled = holographicDisplays != null;
+		itemsAdderInstalled = itemsAdder != null;
 		if (itemsAdderInstalled)
 			info("  ItemsAdder Integration Enabled");
 

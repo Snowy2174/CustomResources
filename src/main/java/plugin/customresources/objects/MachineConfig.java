@@ -47,7 +47,7 @@ public class MachineConfig {
         return tiers;
     }
 
-    public ItemStack getIcon() {
-        return null;
+    public String getIcon() {
+        return icon;
     }
 }

@@ -1,5 +1,8 @@
 package plugin.customresources.settings;
 
+import com.palmergames.bukkit.config.CommentedConfiguration;
+import com.palmergames.bukkit.towny.exceptions.TownyException;
+import com.palmergames.util.FileMgmt;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -8,36 +11,38 @@ import plugin.customresources.objects.MachineConfig;
 import plugin.customresources.objects.MachineTier;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.palmergames.bukkit.towny.TownyMessaging.sendMsg;
+import static plugin.customresources.CustomResources.info;
 
 public class CustomResourcesMachineConfig {
 
     private final CustomResources plugin;
-    private static File configFile;
-
     public static HashMap<String, MachineConfig> MACHINES;
 
     public CustomResourcesMachineConfig(CustomResources plugin) {
         this.plugin = plugin;
-        this.configFile = new File(plugin.getDataFolder(), "machines.yml");
     }
 
     public static void load() {
         HashMap<String, MachineConfig> machines = new HashMap<>();
-        if (!configFile.exists()) CustomResources.getPlugin().saveResource("machines.yml", false);
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
+        File file = new File(CustomResources.getPlugin().getDataFolder(), "machines.yml" );
+        if (!file.exists()){
+            CustomResources.getPlugin().saveResource("machines.yml", false);
+        }
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 
         for (String key : config.getKeys(false)) {
             MachineConfig machine = createMachineFromConfig(config, key);
             machines.put(key, machine);
-            sendMsg("[CustomResources] Loaded <green>" + machine.getName() + " <gray>and<green> " + machine.getTiers().size() + " <gray>tiers");
+            info("[CustomResources] Loaded <green>" + machine.getName() + " <gray>and<green> " + machine.getTiers().size() + " <gray>tiers");
         }
 
         CustomResourcesMachineConfig.MACHINES = machines;
-        sendMsg("[CustomResources] Loaded <green>" + machines.size() + " <gray>machines");
+        info("[CustomResources] Loaded <green>" + machines.size() + " <gray>machines");
     }
 
     private static MachineConfig createMachineFromConfig(YamlConfiguration config, String key) {
@@ -54,7 +59,7 @@ public class CustomResourcesMachineConfig {
     }
 
     private static List<MachineTier> createTiersFromConfig(YamlConfiguration config, String key) {
-        return config.getConfigurationSection(key + ".tiers")
+        return Objects.requireNonNull(config.getConfigurationSection(key + ".tiers"))
                 .getKeys(false)
                 .stream()
                 .map(Integer::parseInt)
@@ -64,7 +69,10 @@ public class CustomResourcesMachineConfig {
     }
 
     private static MachineTier createTierFromConfig(YamlConfiguration config, String key, int tierLevel) {
-        List<String> tierResources = config.getStringList(key + ".tiers." + tierLevel + ".resources");
+        List<String> tierInputs = config.isSet(key + ".tiers." + tierLevel + ".input")
+                ? config.getStringList(key + ".tiers." + tierLevel + ".input")
+                : new ArrayList<>();
+
         Map<String, Integer> tierOutput = config.getStringList(key + ".tiers." + tierLevel + ".output")
                 .stream()
                 .map(outputString -> outputString.split(" "))
@@ -89,8 +97,9 @@ public class CustomResourcesMachineConfig {
                 .collect(Collectors.toList());
         int tierUpgradeCost = config.getInt(key + ".tiers." + tierLevel + ".upgrade_cost", 0);
 
-        return new MachineTier(tierLevel, tierResources, outputMaterialNames, outputMaterialAmounts, upgradeMaterials, tierUpgradeCost);
+        return new MachineTier(tierLevel, tierInputs, outputMaterialNames, outputMaterialAmounts, upgradeMaterials, tierUpgradeCost);
     }
+
 
 
 

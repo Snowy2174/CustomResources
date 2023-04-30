@@ -1,46 +1,21 @@
 package plugin.customresources.controllers;
 
-import com.google.gson.reflect.TypeToken;
-import com.palmergames.bukkit.towny.TownyAPI;
-import com.palmergames.bukkit.towny.TownyEconomyHandler;
-import com.palmergames.bukkit.towny.TownyUniverse;
-import com.palmergames.bukkit.towny.confirmations.Confirmation;
-import com.palmergames.bukkit.towny.exceptions.TownyException;
-import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.towny.object.Town;
-import com.palmergames.bukkit.towny.object.Translatable;
 import dev.lone.itemsadder.api.CustomFurniture;
 import dev.lone.itemsadder.api.Events.FurnitureBreakEvent;
 import dev.lone.itemsadder.api.Events.FurnitureInteractEvent;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
-import org.bukkit.*;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
+import org.yaml.snakeyaml.Yaml;
 import plugin.customresources.enums.CustomResourcesMachineState;
-import plugin.customresources.enums.CustomResourcesPermissionNodes;
-import plugin.customresources.metadata.CustomResourcesGovernmentMetaDataController;
 import plugin.customresources.objects.Machine;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import plugin.customresources.settings.CustomResourcesSettings;
-import plugin.customresources.util.CustomResourcesMessagingUtil;
-import plugin.customresources.util.MachineGuiUtil;
 
 
 import java.io.*;
 import java.util.*;
 
 import static com.palmergames.bukkit.towny.TownyMessaging.sendMsg;
-import static com.palmergames.bukkit.towny.command.BaseCommand.checkPermOrThrow;
 import static org.bukkit.Bukkit.getEntity;
 import static plugin.customresources.controllers.MachinePlacementController.breakMachine;
-import static plugin.customresources.util.HologramUtil.*;
+import static plugin.customresources.util.MachineHologramUtil.*;
 import static plugin.customresources.util.MachineGuiUtil.createMachineInterface;
 import static plugin.customresources.util.MachineGuiUtil.openInventory;
 
@@ -48,17 +23,20 @@ public class TownMachineManager {
 
 
     private static final String DATA_FOLDER = "plugins/ResourceGeneratorPlugin/data";
-    private static final String MACHINES_FILE = "machines.yml";
+    private static final String MACHINES_FILE = "machines.json";
 
     private static Map<UUID, Machine> machineMap = new HashMap<>();
 
     public static void loadMachines() {
-        File machinesFile = new File(DATA_FOLDER + "/" + MACHINES_FILE);
+        File dataFolder = new File(DATA_FOLDER);
+        if (!dataFolder.exists()) {
+            dataFolder.mkdirs();
+        }
+        File machinesFile = new File(DATA_FOLDER + "/" + MACHINES_FILE + ".yml");
         if (machinesFile.exists()) {
-            try (Reader reader = new FileReader(machinesFile)) {
-                Gson gson = new GsonBuilder().create();
-                Map<String, Machine> machineMap = gson.fromJson(reader, new TypeToken<Map<String, Machine>>() {
-                }.getType());
+            Yaml yaml = new Yaml();
+            try (FileInputStream input = new FileInputStream(machinesFile)) {
+                Map<String, Machine> machineMap = yaml.load(input);
                 machineMap.values().forEach(machine -> TownMachineManager.machineMap.put(machine.getId(), machine));
             } catch (IOException e) {
                 e.printStackTrace();
@@ -71,14 +49,15 @@ public class TownMachineManager {
         if (!dataFolder.exists()) {
             dataFolder.mkdirs();
         }
-        File machinesFile = new File(DATA_FOLDER + "/" + MACHINES_FILE);
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        try (Writer writer = new FileWriter(machinesFile)) {
-            gson.toJson(machineMap, writer);
+        File machinesFile = new File(DATA_FOLDER + "/" + MACHINES_FILE + ".yml");
+        Yaml yaml = new Yaml();
+        try (FileWriter writer = new FileWriter(machinesFile)) {
+            yaml.dump(machineMap, writer);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
     public static void createMachine(String type, UUID id) {
         Machine machine = new Machine(id, type, 0);
         machineMap.put(machine.getId(), machine);
@@ -108,35 +87,40 @@ public class TownMachineManager {
         saveMachines();
     }
 
-    public void onMachineInteract(FurnitureInteractEvent event) {
+    public static void onMachineInteract(FurnitureInteractEvent event) {
         Player player = event.getPlayer();
-        CustomFurniture clickedFurniture = event.getFurniture();
+        CustomFurniture customFurniture = event.getFurniture();
 
-        // Check if the clicked entity is part of CustomResources
-        if (clickedFurniture.getNamespace().equals("customresources")) {
-            // Check if the clicked block is a machine
-            Machine machine = TownMachineManager.getMachine(clickedFurniture.getArmorstand().getUniqueId());
-            if (machine != null) {
-                if (!player.isSneaking()) {
-                    if (machine.getState() == CustomResourcesMachineState.Finshed) {
-                        // TODO: give resources + remove from town Meta
-                        removeHologram(String.valueOf(machine.getId()));
-                    } else {
-                        //Create hologram (autoremoved) on right click
-                        createInfoHologram(machine, clickedFurniture.getArmorstand().getLocation());
-                    }
-                } else {
-                    // Create new GUI inventory on shift right click
-                    createMachineInterface(player, machine);
-                    openInventory(player);
-                    // TODO: Pass the machine instance for removal/upgrade/repair
-                }
+        if (!Objects.equals(customFurniture.getNamespace(), "customresources")) {
+            System.out.println("Not part of CustomResources");
+            return;
+        }
+
+        Machine machine = TownMachineManager.getMachine(customFurniture.getArmorstand().getUniqueId());
+        if (machine == null) {
+            System.out.println("No Machine Matching found in Datafile");
+            return;
+        }
+
+        if (!player.isSneaking()) {
+            if (machine.getState() == CustomResourcesMachineState.Finshed) {
+                // Give resources and remove from town Meta
+                removeHologram(String.valueOf(machine.getId()));
+            } else {
+                // Create hologram (autoremoved) on right click
+                createInfoHologram(machine, customFurniture.getArmorstand().getLocation());
             }
+        } else {
+            // Create new GUI inventory on shift right click
+            createMachineInterface(player, machine);
+            openInventory(player);
+            // Pass the machine instance for removal/upgrade/repair
         }
     }
 
 
-    public void onMachineDestroy(FurnitureBreakEvent event) {
+
+    public static void onMachineDestroy(FurnitureBreakEvent event) {
         Player player = event.getPlayer();
         CustomFurniture clickedFurniture = event.getFurniture();
 

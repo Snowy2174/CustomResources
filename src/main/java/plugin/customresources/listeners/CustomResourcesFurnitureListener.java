@@ -17,16 +17,16 @@ public class CustomResourcesFurnitureListener implements Listener {
 
     @EventHandler
     public void onFurnitureInteract(FurnitureInteractEvent event) {
-        machineManager.onMachineInteract(event);
+        TownMachineManager.onMachineInteract(event);
     }
 
     @EventHandler
     public void onFurnitureBreak(FurnitureBreakEvent event) {
-        machineManager.onMachineDestroy(event);
+        TownMachineManager.onMachineDestroy(event);
     }
 
     @EventHandler
-    public void onInventoryClick(InventoryClickEvent event) {
-        machineGui.onInterfaceInteract(event);
+    public void onInventoryClick(InventoryClickEvent event){
+        MachineGuiUtil.onInterfaceInteract(event);
     }
 }
