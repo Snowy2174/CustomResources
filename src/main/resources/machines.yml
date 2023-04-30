@@ -1,0 +1,31 @@
+machines:
+  mine:
+    name: Mineshaft
+    icon: IRON_PICKAXE
+    structure: customresources:mine
+    cost: 1000
+    town_level: 1
+    prefered_biomes:
+      - mountain
+      #- lush cave ...ect
+    tiers:
+      0:
+        output:
+          - COAL 5 #MATERIAl/namespace:id
+        upgrade_materials: #if nothing set assume 0
+          - IRON_INGOT 5
+          - STONE 5
+          #- customresources:example_item
+        upgrade_cost: 100
+      1:
+        output:
+          - RAW_COPPER 5 #MATERIAl/namespace:id
+        upgrade_materials: #if nothing set assume none
+          - IRON_INGOT 5
+          - STONE 5
+          #- customresources:example_item
+        upgrade_cost: 100 #if nothing set assume 0
+      2:
+        output:
+          - RAW_IRON 5
+          - RAW_GOLD 5

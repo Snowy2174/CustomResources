@@ -6,19 +6,15 @@ import com.palmergames.bukkit.towny.exceptions.TownyException;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.Translatable;
-import org.bukkit.inventory.ItemStack;
 import plugin.customresources.CustomResources;
 import plugin.customresources.metadata.CustomResourcesGovernmentMetaDataController;
-import plugin.customresources.objects.MachineConfig;
-import plugin.customresources.objects.MachineTier;
-import plugin.customresources.settings.CustomResourceMachineConfig;
 import plugin.customresources.settings.CustomResourcesSettings;
 import plugin.customresources.util.CustomResourcesMessagingUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static plugin.customresources.settings.CustomResourceMachineConfig.MACHINES;
+import static plugin.customresources.settings.CustomResourcesMachineConfig.MACHINES;
 
 public class TownResourceDiscoveryController {
     /**

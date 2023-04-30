@@ -3,11 +3,13 @@ package plugin.customresources;
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.exceptions.TownyException;
 import com.palmergames.bukkit.towny.exceptions.initialization.TownyInitException;
+import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.Translatable;
 import com.palmergames.bukkit.towny.object.TranslationLoader;
 import com.palmergames.bukkit.util.Colors;
 import com.palmergames.bukkit.util.Version;
 
+import plugin.customresources.commands.MachineAddon;
 import plugin.customresources.commands.NationCollectAddon;
 import plugin.customresources.commands.TownResourcesAddon;
 import plugin.customresources.commands.TownyAdminResourcesAddon;
@@ -15,6 +17,7 @@ import plugin.customresources.controllers.TownMachineManager;
 import plugin.customresources.controllers.TownResourceOffersController;
 import plugin.customresources.controllers.TownResourceProductionController;
 import plugin.customresources.listeners.*;
+import plugin.customresources.settings.CustomResourcesMachineConfig;
 import plugin.customresources.settings.CustomResourcesSettings;
 import plugin.customresources.util.CustomResourcesMessagingUtil;
 import org.bukkit.Bukkit;
@@ -81,6 +84,7 @@ public class CustomResources extends JavaPlugin {
 			TownResourceOffersController.loadAllResourceOfferCategories();
 			//Load machines
 			TownMachineManager.loadMachines();
+			CustomResourcesMachineConfig.load();
 			//WARNING: Do not try to recalculate production here, because unless SW has been loaded first, the results will be incorrect.
 			//Load commands and listeners
 			registerCommands();
@@ -113,6 +117,10 @@ public class CustomResources extends JavaPlugin {
 			//Load controllers
 			TownResourceOffersController.loadAllResourceOfferCategories();
 			TownResourceProductionController.recalculateAllProduction();
+			//Load Machines
+			TownMachineManager.loadMachines();
+			CustomResourcesMachineConfig.unload();
+			CustomResourcesMachineConfig.load();
 		} catch (Exception e) {
             e.printStackTrace();
 			severe(e.getMessage());
@@ -172,6 +180,7 @@ public class CustomResources extends JavaPlugin {
 		new TownResourcesAddon();
 		new NationCollectAddon();
 		new TownyAdminResourcesAddon();
+		new MachineAddon();
 	}
 
 	public boolean isDynmapTownyInstalled() {

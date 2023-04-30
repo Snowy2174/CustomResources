@@ -1,18 +1,13 @@
 package plugin.customresources.controllers;
 
-import com.palmergames.bukkit.towny.exceptions.TownyException;
 import dev.lone.itemsadder.api.CustomFurniture;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Player;
 import plugin.customresources.objects.Machine;
 
 import static plugin.customresources.controllers.TownMachineManager.*;
-import static plugin.customresources.settings.CustomResourceMachineConfig.MACHINES;
+import static plugin.customresources.settings.CustomResourcesMachineConfig.MACHINES;
 
 public class MachinePlacementController {
 

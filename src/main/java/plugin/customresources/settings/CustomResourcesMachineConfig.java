@@ -13,20 +13,21 @@ import java.util.stream.Collectors;
 
 import static com.palmergames.bukkit.towny.TownyMessaging.sendMsg;
 
-public class CustomResourceMachineConfig {
+public class CustomResourcesMachineConfig {
 
     private final CustomResources plugin;
-    private final File configFile;
+    private static File configFile;
 
     public static HashMap<String, MachineConfig> MACHINES;
 
-    public CustomResourceMachineConfig(CustomResources plugin) {
+    public CustomResourcesMachineConfig(CustomResources plugin) {
         this.plugin = plugin;
         this.configFile = new File(plugin.getDataFolder(), "machines.yml");
     }
 
-    public void load() {
+    public static void load() {
         HashMap<String, MachineConfig> machines = new HashMap<>();
+        if (!configFile.exists()) CustomResources.getPlugin().saveResource("machines.yml", false);
         YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
 
         for (String key : config.getKeys(false)) {
@@ -35,11 +36,11 @@ public class CustomResourceMachineConfig {
             sendMsg("[CustomResources] Loaded <green>" + machine.getName() + " <gray>and<green> " + machine.getTiers().size() + " <gray>tiers");
         }
 
-        CustomResourceMachineConfig.MACHINES = machines;
+        CustomResourcesMachineConfig.MACHINES = machines;
         sendMsg("[CustomResources] Loaded <green>" + machines.size() + " <gray>machines");
     }
 
-    private MachineConfig createMachineFromConfig(YamlConfiguration config, String key) {
+    private static MachineConfig createMachineFromConfig(YamlConfiguration config, String key) {
         String name = config.getString(key + ".name");
         String icon = config.getString(key + ".icon");
         String structure = config.getString(key + ".structure");
@@ -52,7 +53,7 @@ public class CustomResourceMachineConfig {
         return new MachineConfig(name, structure, icon, machineCost, machineTownLevel, machinePreferredBiomes, tiers);
     }
 
-    private List<MachineTier> createTiersFromConfig(YamlConfiguration config, String key) {
+    private static List<MachineTier> createTiersFromConfig(YamlConfiguration config, String key) {
         return config.getConfigurationSection(key + ".tiers")
                 .getKeys(false)
                 .stream()
@@ -62,7 +63,7 @@ public class CustomResourceMachineConfig {
                 .collect(Collectors.toList());
     }
 
-    private MachineTier createTierFromConfig(YamlConfiguration config, String key, int tierLevel) {
+    private static MachineTier createTierFromConfig(YamlConfiguration config, String key, int tierLevel) {
         List<String> tierResources = config.getStringList(key + ".tiers." + tierLevel + ".resources");
         Map<String, Integer> tierOutput = config.getStringList(key + ".tiers." + tierLevel + ".output")
                 .stream()
@@ -93,7 +94,7 @@ public class CustomResourceMachineConfig {
 
 
 
-    public void unload() {
-        CustomResourceMachineConfig.MACHINES = null;
+    public static void unload() {
+        CustomResourcesMachineConfig.MACHINES = null;
     }
 }

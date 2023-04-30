@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.bukkit.Bukkit.getServer;
-import static plugin.customresources.settings.CustomResourceMachineConfig.MACHINES;
+import static plugin.customresources.settings.CustomResourcesMachineConfig.MACHINES;
 
 public class HologramUtil {
 

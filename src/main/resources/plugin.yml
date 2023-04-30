@@ -1,5 +1,5 @@
 name: CustomResources
-main: CustomResources
+main: plugin.customresources.CustomResources
 version: ${project.version}
 api-version: ${project.bukkitAPIVersion}
 author: 'SnowyOwl217'
@@ -21,7 +21,3 @@ permissions:
         children:
             customresources.admin.command.reload: true
             customresources.admin.command.bypass: true
-
-    customresources.bypass:
-        description: User always bypasses the extraction limits
-        default: false
