@@ -9,6 +9,9 @@ import com.palmergames.bukkit.towny.object.Translatable;
 import org.bukkit.inventory.ItemStack;
 import plugin.customresources.CustomResources;
 import plugin.customresources.metadata.CustomResourcesGovernmentMetaDataController;
+import plugin.customresources.objects.MachineConfig;
+import plugin.customresources.objects.MachineTier;
+import plugin.customresources.settings.CustomResourceMachineConfig;
 import plugin.customresources.settings.CustomResourcesSettings;
 import plugin.customresources.util.CustomResourcesMessagingUtil;
 
@@ -58,8 +61,8 @@ public class TownResourceDiscoveryController {
         //Calculate a new category and material for discovery
         List<String> discoveredMaterials = new ArrayList<>(alreadyDiscoveredMaterials);
         //Discover the resource
-        Integer material = MACHINES.get(machine).getTiers().get(0).getOutput().get(0);
-        discoveredMaterials.add(String.valueOf(material.getType()));
+        String material = MACHINES.get(machine).getTiers().get(0).getOutputMaterials().get(0);
+        discoveredMaterials.add(material);
         CustomResourcesGovernmentMetaDataController.setDiscovered(town, discoveredMaterials);
         town.save();
 
@@ -77,8 +80,8 @@ public class TownResourceDiscoveryController {
         int levelOfNewResource = discoveredMaterials.size();
         double productivityModifierNormalized;
         productivityModifierNormalized = (double) CustomResourcesSettings.getProductionPercentagesPerResourceLevel().get(levelOfNewResource - 1) / 100;
-        int preTaxProduction = (int)((material.getAmount() * productivityModifierNormalized) + 0.5);
-        String materialName = CustomResourcesMessagingUtil.formatMaterialNameForDisplay(String.valueOf(material.getType()));
+        int preTaxProduction = (int)((MACHINES.get(machine).getTiers().get(0).getOutputAmounts().get(0) * productivityModifierNormalized) + 0.5);
+        String materialName = CustomResourcesMessagingUtil.formatMaterialNameForDisplay(material);
         CustomResourcesMessagingUtil.sendGlobalMessage(Translatable.of("customresources.discovery.success", resident.getName(), town.getName(), preTaxProduction, materialName));
     }
 }

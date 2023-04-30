@@ -20,12 +20,6 @@ public class MachineGuiUtil {
     // Main interface inventory
     public static Inventory inventory;
 
-    // On machine interaction, create new GUI (MIGHT NOT USE THIS EXACT METHOD/EVENT)
-    @EventHandler
-    public void playerInteract(PlayerInteractEvent event){
-
-    }
-
     // Create new GUI inventory
     public static void createMachineInterface(Player player, Machine machine){
         String type = machine.getType();

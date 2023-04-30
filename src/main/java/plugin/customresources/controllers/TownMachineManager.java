@@ -118,23 +118,18 @@ public class TownMachineManager {
             Machine machine = TownMachineManager.getMachine(clickedFurniture.getArmorstand().getUniqueId());
             if (machine != null) {
                 if (!player.isSneaking()) {
-
                     if (machine.getState() == CustomResourcesMachineState.Finshed) {
-                        // TODO: Add logic to check if the machine is in the storing state then give resources
+                        // TODO: give resources + remove from town Meta
                         removeHologram(String.valueOf(machine.getId()));
-
                     } else {
-                        //Create hologram
+                        //Create hologram (autoremoved) on right click
                         createInfoHologram(machine, clickedFurniture.getArmorstand().getLocation());
-                        // TODO: add Logic to modify the hologram
-
                     }
                 } else {
-                    // Create new GUI inventory
+                    // Create new GUI inventory on shift right click
                     createMachineInterface(player, machine);
                     openInventory(player);
-                    // Pass the machine instance for removal/upgrade/repair
-
+                    // TODO: Pass the machine instance for removal/upgrade/repair
                 }
             }
         }

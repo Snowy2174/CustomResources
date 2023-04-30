@@ -30,13 +30,12 @@ public class HologramUtil {
 
         MachineConfig config = MACHINES.get(machine.getType());
         MachineTier tierConfig = config.getTiers().get(machine.getTier());
-        Map<String, Integer> output = tierConfig.getOutput();
 
         machineInfo.getLines().appendItem(new ItemStack(config.getIcon()));
         machineInfo.getLines().appendText("&a" + machine.getState() + " &7" + config.getName());
         machineInfo.getLines().appendText("&7Tier [ " + machine.getTier() + "]");
         machineInfo.getLines().appendText("");
-        machineInfo.getLines().appendText("&7Produces &a" + output.getMaterial() + "&7x&a" + output.getAmount() );
+        machineInfo.getLines().appendText("&7Produces &a" + tierConfig.getOutputMaterials().get(0) + "&7x&a" + tierConfig.getOutputAmounts().get(0) );
         machineInfo.getLines().appendText("&6[%townyadvanced_time_until_new_day_hours_raw%:%townyadvanced_time_until_new_day_minutes_raw% Remaining]");
 
         holograms.put(String.valueOf(machine.getId()), machineInfo);
@@ -65,13 +64,12 @@ public class HologramUtil {
 
         MachineConfig config = MACHINES.get(machine.getType());
         MachineTier tierConfig = config.getTiers().get(machine.getTier());
-        Integer output = tierConfig.getOutput().get(machine.getTier());
 
         machineInfo.getLines().appendItem(new ItemStack(config.getIcon()));
         machineInfo.getLines().appendText("&6" + machine.getState() + " &7" + config.getName());
         machineInfo.getLines().appendText("&7Tier [ " + machine.getTier() + "]");
         machineInfo.getLines().appendText("");
-        machineInfo.getLines().appendText("&7Produced &6" + output.getType() + "&7x&6" + output.getAmount() );
+        machineInfo.getLines().appendText("&7Produced &6" + tierConfig.getOutputMaterials().get(0)+ "&7x&6" + tierConfig.getOutputAmounts().get(0) );
         machineInfo.getLines().appendText("&6[ Ready to Collect ]");
 
         holograms.put(String.valueOf(machine.getId()), machineInfo);

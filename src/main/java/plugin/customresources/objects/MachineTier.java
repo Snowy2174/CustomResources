@@ -9,18 +9,21 @@ public class MachineTier {
 
     private final int level;
     private final List<String> requiredResources;
-    private final Map<String, Integer> output;
+    private final List<String> outputMaterials;
+    private final List<Integer> outputAmounts;
     private final List<ItemStack> upgradeMaterials;
     private final int upgradeCost;
 
-    public MachineTier(int level, List<String> requiredResources, Map<String, Integer> output,
+    public MachineTier(int level, List<String> requiredResources, List<String> outputMaterials, List<Integer> outputAmounts,
                        List<ItemStack> upgradeMaterials, int upgradeCost) {
         this.level = level;
         this.requiredResources = requiredResources;
-        this.output = output;
+        this.outputMaterials = outputMaterials;
+        this.outputAmounts = outputAmounts;
         this.upgradeMaterials = upgradeMaterials;
         this.upgradeCost = upgradeCost;
     }
+
 
     public int getLevel() {
         return level;
@@ -30,8 +33,12 @@ public class MachineTier {
         return requiredResources;
     }
 
-    public Map<String, Integer> getOutput() {
-        return output;
+    public List<String> getOutputMaterials() {
+        return outputMaterials;
+    }
+
+    public List<Integer> getOutputAmounts() {
+        return outputAmounts;
     }
 
     public List<ItemStack> getUpgradeMaterials() {
