@@ -2,12 +2,11 @@ package plugin.customresources.util;
 
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
-import me.filoghost.holographicdisplays.api.hologram.line.ItemHologramLine;
-import me.filoghost.holographicdisplays.api.hologram.line.TextHologramLine;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.scheduler.BukkitTask;
 import plugin.customresources.CustomResources;
 import plugin.customresources.objects.Machine;
 import plugin.customresources.objects.MachineConfig;
@@ -16,38 +15,70 @@ import plugin.customresources.objects.MachineTier;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.bukkit.Bukkit.getServer;
 import static plugin.customresources.settings.CustomResourceMachineConfig.MACHINES;
 
 public class HologramUtil {
 
     private static Map<String, Hologram> holograms = new HashMap<>();
-    public static void createInfoHologram(Machine machine){
+    public static void createInfoHologram(Machine machine, Location location){
+
+        String id = String.valueOf(machine.getId());
         
         HolographicDisplaysAPI api = HolographicDisplaysAPI.get(CustomResources.getPlugin());
-        Hologram machineInfo = api.createHologram(machine.getLocation().add(0.0, 0.6, 0.0));
+        Hologram machineInfo = api.createHologram(location.add(0.0, 1, 0.0));
 
         MachineConfig config = MACHINES.get(machine.getType());
         MachineTier tierConfig = config.getTiers().get(machine.getTier());
-        ItemStack output = tierConfig.getOutput().get(machine.getTier());
+        Map<String, Integer> output = tierConfig.getOutput();
 
         machineInfo.getLines().appendItem(new ItemStack(config.getIcon()));
         machineInfo.getLines().appendText("&a" + machine.getState() + " &7" + config.getName());
         machineInfo.getLines().appendText("&7Tier [ " + machine.getTier() + "]");
-        machineInfo.getLines().appendText(" ");
-        machineInfo.getLines().appendText("&7Produces &a" + output.getType() + "&7x&a" + output.getAmount() );
-        machineInfo.getLines().appendText("A hologram line");
+        machineInfo.getLines().appendText("");
+        machineInfo.getLines().appendText("&7Produces &a" + output.getMaterial() + "&7x&a" + output.getAmount() );
+        machineInfo.getLines().appendText("&6[%townyadvanced_time_until_new_day_hours_raw%:%townyadvanced_time_until_new_day_minutes_raw% Remaining]");
+
+        holograms.put(String.valueOf(machine.getId()), machineInfo);
+
+        removeHologramTask(machineInfo, id);
+
+    }
+
+    public static void removeHologramTask(Hologram hologram, String id){
+
+        BukkitScheduler scheduler = getServer().getScheduler();
+        BukkitTask task = scheduler.runTaskLaterAsynchronously(CustomResources.getPlugin(), new BukkitRunnable() {
+            @Override
+            public void run() {
+                hologram.delete();
+                holograms.remove(id);
+            }
+        }, 60 * 20L);}
+
+
+
+    public static void createReadyHologram(Machine machine, Location location){
+
+        HolographicDisplaysAPI api = HolographicDisplaysAPI.get(CustomResources.getPlugin());
+        Hologram machineInfo = api.createHologram(location.add(0.0, 1, 0.0));
+
+        MachineConfig config = MACHINES.get(machine.getType());
+        MachineTier tierConfig = config.getTiers().get(machine.getTier());
+        Integer output = tierConfig.getOutput().get(machine.getTier());
+
+        machineInfo.getLines().appendItem(new ItemStack(config.getIcon()));
+        machineInfo.getLines().appendText("&6" + machine.getState() + " &7" + config.getName());
+        machineInfo.getLines().appendText("&7Tier [ " + machine.getTier() + "]");
+        machineInfo.getLines().appendText("");
+        machineInfo.getLines().appendText("&7Produced &6" + output.getType() + "&7x&6" + output.getAmount() );
+        machineInfo.getLines().appendText("&6[ Ready to Collect ]");
 
         holograms.put(String.valueOf(machine.getId()), machineInfo);
     }
 
-
-    public static void removeInfoHologram(Machine machine){
-        String id = String.valueOf(machine.getId());
-        if (holograms.containsKey(id)) {
-            Hologram hologram = holograms.get(id);
-            hologram.delete();
-            // Remove from map
-            holograms.remove(id);
-                }
-            }
+    public static void removeHologram(String id) {
+        holograms.get(id).delete();
+        holograms.remove(id);
+    }
 }

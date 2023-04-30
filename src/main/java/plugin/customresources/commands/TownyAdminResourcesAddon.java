@@ -71,7 +71,6 @@ public class TownyAdminResourcesAddon extends BaseCommand implements CommandExec
 
 			switch (args[0]) {
 				case "reload" -> parseReloadCommand(sender);
-				case "reroll_all_resources" -> parseReRollCommand(sender, StringMgmt.remFirstArg(args));
 				case "bypass" -> bypassExtractionLimitCommand(sender);
 				/*
 				 * Show help if no command found.
@@ -98,27 +97,6 @@ public class TownyAdminResourcesAddon extends BaseCommand implements CommandExec
 			return;
 		}
 		CustomResourcesMessagingUtil.sendErrorMsg(sender, Translatable.of("customresources.customresources_failed_to_reload"));
-	}
-
-	private void parseReRollCommand(CommandSender sender, String[] args) throws TownyException {
-		if (args.length == 0) {
-			Confirmation.runOnAcceptAsync(() -> {
-				TownResourceDiscoveryController.reRollAllExistingResources();
-				CustomResourcesMessagingUtil.sendGlobalMessage(Translatable.of("customresources.all_resources_rerolled"));
-			})
-			.setTitle(Translatable.of("customresources.msg_confirm_reroll"))
-			.sendTo(sender);
-			return;
-		}
-		
-		Town town = getTownOrThrow(args[0]);
-		Confirmation.runOnAcceptAsync(() -> {
-			TownResourceDiscoveryController.reRollExistingResources(town, false);
-			TownyMessaging.sendPrefixedTownMessage(town, Translatable.of("customresources.all_resources_rerolled"));
-			CustomResourcesMessagingUtil.sendMsg(sender, Translatable.of("customresources.all_resources_rerolled"));
-		})
-		.setTitle(Translatable.of("customresources.msg_confirm_reroll_town"))
-		.sendTo(sender);
 	}
 
 	private void bypassExtractionLimitCommand(CommandSender sender) {

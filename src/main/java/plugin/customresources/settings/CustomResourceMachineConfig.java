@@ -44,11 +44,11 @@ public class CustomResourceMachineConfig {
                     .sorted()
                     .forEach(tierLevel -> {
                         List<String> tierResources = config.getStringList(key + ".tiers." + tierLevel + ".resources");
-                        Map<Material, Integer> tierOutput = new HashMap<>();
+                        Map<String, Integer> tierOutput = new HashMap<>();
                         config.getStringList(key + ".tiers." + tierLevel + ".output")
                                 .forEach(outputString -> {
                                     String[] outputParts = outputString.split(" ");
-                                    Material outputMaterial = Material.getMaterial(outputParts[0].toUpperCase());
+                                    String outputMaterial = outputParts[0].toUpperCase();
                                     int outputAmount = Integer.parseInt(outputParts[1]);
                                     tierOutput.put(outputMaterial, outputAmount);
                                 });
@@ -61,9 +61,7 @@ public class CustomResourceMachineConfig {
                                     upgradeMaterials.add(new ItemStack(upgradeMaterial, upgradeAmount));
                                 });
                         int tierUpgradeCost = config.getInt(key + ".tiers." + tierLevel + ".upgrade_cost", 0);
-                        Map<Integer, ItemStack> tierOutputMap = new HashMap<>();
-                        tierOutputMap.put(tierLevel, (ItemStack) tierOutput);
-                        tiers.add(new MachineTier(tierLevel, tierResources, tierOutputMap, upgradeMaterials, tierUpgradeCost));
+                        tiers.add(new MachineTier(tierLevel, tierResources, tierOutput, upgradeMaterials, tierUpgradeCost));
                     });
 
             MachineConfig machine = new MachineConfig(name, structure, icon, machineCost, machineTownLevel, machinePreferredBiomes, tiers);

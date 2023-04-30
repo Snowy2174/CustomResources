@@ -67,7 +67,6 @@ public class TownResourcesAddon extends BaseCommand implements TabExecutor {
 		try {
 
 			switch (args[0].toLowerCase(Locale.ROOT)) {
-			case "survey" -> parseSurveyCommand(player);
 			case "collect" -> parseTownCollectCommand(player);
 			default -> showTownResourcesHelp(player);
 			}
@@ -79,66 +78,6 @@ public class TownResourcesAddon extends BaseCommand implements TabExecutor {
 			//Unexpected exception
 			CustomResourcesMessagingUtil.sendErrorMsg(player, e.getMessage());
 		}
-	}
-
-	private void parseSurveyCommand(Player player) throws TownyException{
-		checkPermOrThrow(player, CustomResourcesPermissionNodes.TOWNY_RESOURCES_COMMAND_SURVEY.getNode());
-
-		//Check if surveys are enabled
-		if(!CustomResourcesSettings.areSurveysEnabled())
-			throw new TownyException(Translatable.of("msg_err_command_disable"));
-
-		Town town = TownyAPI.getInstance().getTown(player.getLocation());
-		//Check if there is a town here
-		if(town == null)
-			throw new TownyException(Translatable.of("customresources.msg_err_survey_no_town"));
-
-		if (!town.hasResident(player))
-			throw new TownyException(Translatable.of("customresources.not_your_town"));
-
-		//Check if there are resources left to discover at the town
-		List<String> discoveredResources = CustomResourcesGovernmentMetaDataController.getDiscoveredAsList(town);
-		List<Integer> costPerResourceLevel = CustomResourcesSettings.getSurveyCostsPerResourceLevel();
-		List<Integer> requiredNumTownblocksPerResourceLevel = CustomResourcesSettings.getSurveyNumTownblocksRequirementsPerResourceLevel();
-		if(discoveredResources.size() >= costPerResourceLevel.size())
-			throw new TownyException(Translatable.of("customresources.msg_err_survey_all_resources_already_discovered"));
-		if(discoveredResources.size() >= requiredNumTownblocksPerResourceLevel.size())
-			throw new TownyException(Translatable.of("customresources.msg_err_survey_all_resources_already_discovered"));
-		
-		//Check if the town has enough townblocks
-		int indexOfNextResourceLevel = discoveredResources.size();
-		int requiredNumTownblocks = requiredNumTownblocksPerResourceLevel.get(indexOfNextResourceLevel);
-		int currentNumTownblocks = town.getTownBlocks().size();
-		if(currentNumTownblocks < requiredNumTownblocks)
-			throw new TownyException(Translatable.of("customresources.msg_err_survey_not_enough_townblocks", 
-				requiredNumTownblocks, currentNumTownblocks));
-		
-		//Get survey level & cost
-		int surveyLevel = indexOfNextResourceLevel+1;
-		double surveyCost = costPerResourceLevel.get(indexOfNextResourceLevel);
-
-		//Send confirmation request message
-		String surveyCostFormatted = "0";
-		if(TownyEconomyHandler.isActive())
-			surveyCostFormatted = TownyEconomyHandler.getFormattedBalance(surveyCost);
-
-		CustomResourcesMessagingUtil.sendMsg(player, Translatable.of("customresources.msg_confirm_survey", town.getName(), surveyLevel, surveyCostFormatted));
-
-		//Send warning message if town level is too low
-		int requiredTownLevel = CustomResourcesSettings.getProductionTownLevelRequirementPerResourceLevel().get(indexOfNextResourceLevel);
-		int actualTownLevel = town.getLevel();
-		if(actualTownLevel < requiredTownLevel) {
-			CustomResourcesMessagingUtil.sendMsg(player, Translatable.of("customresources.msg_confirm_survey_town_level_warning", requiredTownLevel, actualTownLevel));
-		}
-		Resident resident = TownyUniverse.getInstance().getResident(player.getUniqueId());
-		Confirmation.runOnAcceptAsync(() -> {
-			try {
-				TownResourceDiscoveryController.discoverNewResource(resident, town, surveyLevel, surveyCost, discoveredResources);
-			} catch (TownyException te) {
-				CustomResourcesMessagingUtil.sendErrorMsg(player, te.getMessage(player));
-			}
-		})
-		.sendTo(player);
 	}
 	
 	private static void parseTownCollectCommand(Player player) throws TownyException {

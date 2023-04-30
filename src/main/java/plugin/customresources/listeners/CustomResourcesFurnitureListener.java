@@ -1,12 +1,16 @@
 package plugin.customresources.listeners;
 
+import dev.lone.itemsadder.api.Events.FurnitureBreakEvent;
 import dev.lone.itemsadder.api.Events.FurnitureInteractEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import plugin.customresources.controllers.TownMachineManager;
+import plugin.customresources.util.MachineGuiUtil;
 
 public class CustomResourcesFurnitureListener implements Listener {
     private TownMachineManager machineManager;
+    private MachineGuiUtil machineGui;
 
     public CustomResourcesFurnitureListener() {
     }
@@ -14,5 +18,15 @@ public class CustomResourcesFurnitureListener implements Listener {
     @EventHandler
     public void onFurnitureInteract(FurnitureInteractEvent event) {
         machineManager.onMachineInteract(event);
+    }
+
+    @EventHandler
+    public void onFurnitureBreak(FurnitureBreakEvent event) {
+        machineManager.onMachineDestroy(event);
+    }
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event) {
+        machineGui.onInterfaceInteract(event);
     }
 }

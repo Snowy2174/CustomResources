@@ -14,16 +14,14 @@ public class Machine {
     private final String type;
     private final CustomResourcesMachineState state;
     private final UUID id;
-    private final Location location;
     private final Integer tier;
     private boolean isActivated = false;
     private boolean isBroken = false;
 
-    public Machine(UUID id, String type, Location location, Integer tier) {
+    public Machine(UUID id, String type, Integer tier) {
         this.type = type;
-        this.location = location;
         this.tier = tier;
-        this.state = CustomResourcesMachineState.ACTIVE;
+        this.state = CustomResourcesMachineState.Active;
         this.id = id;
         this.plugin = CustomResources.getPlugin();
     }
@@ -53,15 +51,6 @@ public class Machine {
      */
     public CustomResourcesMachineState getState() {
         return state;
-    }
-
-    /**
-     * Get the location of the machine.
-     *
-     * @return The location of the machine.
-     */
-    public Location getLocation() {
-        return location;
     }
 
     /**

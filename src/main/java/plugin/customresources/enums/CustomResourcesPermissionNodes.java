@@ -14,7 +14,8 @@ public enum CustomResourcesPermissionNodes {
 	TOWNY_RESOURCES_ADMIN_COMMAND("customresources.admin.command.*"),
 	TOWNY_RESOURCES_ADMIN_COMMAND_RELOAD("customresources.admin.command.reload"),
 	TOWNY_RESOURCES_ADMIN_COMMAND_BYPASS("customresources.admin.command.bypass"),
-	TOWNY_RESOURCES_BYPASS("customresources.bypass");
+	TOWNY_RESOURCES_BYPASS("customresources.bypass"),
+	CUSTOM_RESOURCES_SURVEY("customresources.construct");
 
 	private String value;
 

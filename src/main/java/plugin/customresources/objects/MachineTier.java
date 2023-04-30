@@ -9,11 +9,11 @@ public class MachineTier {
 
     private final int level;
     private final List<String> requiredResources;
-    private final Map<Integer, ItemStack> output;
+    private final Map<String, Integer> output;
     private final List<ItemStack> upgradeMaterials;
     private final int upgradeCost;
 
-    public MachineTier(int level, List<String> requiredResources, Map<Integer, ItemStack> output,
+    public MachineTier(int level, List<String> requiredResources, Map<String, Integer> output,
                        List<ItemStack> upgradeMaterials, int upgradeCost) {
         this.level = level;
         this.requiredResources = requiredResources;
@@ -30,7 +30,7 @@ public class MachineTier {
         return requiredResources;
     }
 
-    public Map<Integer, ItemStack> getOutput() {
+    public Map<String, Integer> getOutput() {
         return output;
     }
 

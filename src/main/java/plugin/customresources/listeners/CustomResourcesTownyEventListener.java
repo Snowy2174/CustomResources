@@ -4,6 +4,7 @@ import com.palmergames.bukkit.towny.event.PreNewDayEvent;
 import com.palmergames.bukkit.towny.event.TownyLoadedDatabaseEvent;
 import com.palmergames.bukkit.towny.event.time.NewShortTimeEvent;
 import plugin.customresources.CustomResources;
+import plugin.customresources.controllers.TownMachineManager;
 import plugin.customresources.controllers.TownResourceProductionController;
 import plugin.customresources.settings.CustomResourcesSettings;
 import org.bukkit.event.EventHandler;
@@ -37,6 +38,7 @@ public class CustomResourcesTownyEventListener implements Listener {
     public void onNewDay(PreNewDayEvent event) {
         if(CustomResourcesSettings.isEnabled()) {
             TownResourceProductionController.produceAllResources();
+            TownMachineManager.machineGenerateResources();
         }
     }
        
@@ -48,7 +50,8 @@ public class CustomResourcesTownyEventListener implements Listener {
     @EventHandler
     public void onNewShortTime(NewShortTimeEvent event) {
             if(System.currentTimeMillis() > nextProductionRecalculationTime) {
-                nextProductionRecalculationTime = System.currentTimeMillis() + PRODUCTION_RECALCULATION_INTERVAL_MILLIS; 
+                nextProductionRecalculationTime = System.currentTimeMillis() + PRODUCTION_RECALCULATION_INTERVAL_MILLIS;
+                TownMachineManager.saveMachines();
                 TownResourceProductionController.recalculateAllProduction();
             }
     }
