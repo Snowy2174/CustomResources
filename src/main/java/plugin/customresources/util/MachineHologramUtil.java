@@ -1,5 +1,8 @@
 package plugin.customresources.util;
 
+import com.palmergames.bukkit.towny.Towny;
+import com.palmergames.bukkit.towny.TownyAPI;
+import com.palmergames.util.TimeMgmt;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import org.bukkit.ChatColor;
@@ -34,7 +37,7 @@ public class MachineHologramUtil {
         }
         
         HolographicDisplaysAPI api = HolographicDisplaysAPI.get(CustomResources.getPlugin());
-        Hologram machineInfo = api.createHologram(location.add(0.0, 2, 0.0));
+        Hologram machineInfo = api.createHologram(location.add(0.0, 3, 0.0));
 
         MachineConfig config = MACHINES.get(machine.getType());
         MachineTier tierConfig = config.getTiers().get(machine.getTier());
@@ -45,7 +48,7 @@ public class MachineHologramUtil {
         machineInfo.getLines().appendText(ChatColor.GRAY + "Tier [ " + ChatColor.GOLD + machine.getTier() + ChatColor.GRAY + " ]");
         machineInfo.getLines().appendText("");
         machineInfo.getLines().appendText(ChatColor.GRAY + "Produces " + ChatColor.GREEN + tierConfig.getOutputMaterials().get(0) + ChatColor.GRAY + "x" + ChatColor.GREEN + tierConfig.getOutputAmounts().get(0) );
-        machineInfo.getLines().appendText(ChatColor.GRAY + "[%townyadvanced_time_until_new_day_hours_raw%:%townyadvanced_time_until_new_day_minutes_raw% Remaining]");
+        machineInfo.getLines().appendText(ChatColor.GOLD + "[ " + TimeMgmt.countdownTimeHoursRaw(TimeMgmt.townyTime(true)) + "h Remaining]");
 
         holograms.put(String.valueOf(machine.getId()), machineInfo);
 
@@ -69,7 +72,7 @@ public class MachineHologramUtil {
     public static void createReadyHologram(Machine machine, Location location){
 
         HolographicDisplaysAPI api = HolographicDisplaysAPI.get(CustomResources.getPlugin());
-        Hologram machineInfo = api.createHologram(location.add(0.0, 1, 0.0));
+        Hologram machineInfo = api.createHologram(location.add(0.0, 3, 0.0));
 
         MachineConfig config = MACHINES.get(machine.getType());
         MachineTier tierConfig = config.getTiers().get(machine.getTier());

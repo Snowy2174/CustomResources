@@ -36,7 +36,18 @@ public class MachineGuiUtil {
     // Fill interface with items
     private static void populateMachineInterface(Inventory inventory){
         inventory.addItem(createGuiItem(Material.DIAMOND_SWORD, "Example Item", "§aFirst line of the lore", "§bSecond line of the lore"));
-        // populate inventory with items
+
+        // Add destroy machine button
+        ItemStack destroyMachine = createGuiItem(Material.REDSTONE_BLOCK, "Destroy Machine", "§cClick to destroy this machine");
+        inventory.setItem(31, destroyMachine);
+
+        // Add upgrade machine button
+        ItemStack upgradeMachine = createGuiItem(Material.ANVIL, "Upgrade Machine", "§aClick to upgrade this machine");
+        inventory.setItem(32, upgradeMachine);
+
+        // Add item input slot
+        ItemStack inputSlot = createGuiItem(Material.HOPPER, "Input Slot", "§7Drag and drop items here to input them");
+        inventory.setItem(13, inputSlot);
     }
 
     protected static ItemStack createGuiItem(final Material material, final String name, final String... lore) {
@@ -70,7 +81,22 @@ public class MachineGuiUtil {
 
         Player player = (Player) event.getWhoClicked();
 
-        player.sendMessage("You clicked at slot " + event.getRawSlot());
+        // Destroy machine button
+        if (clickedItem.getType() == Material.REDSTONE_BLOCK) {
+            // Code to destroy machine
+            player.closeInventory();
+        }
+
+        // Upgrade machine button
+        if (clickedItem.getType() == Material.ANVIL) {
+            // Code to upgrade machine
+            player.closeInventory();
+        }
+
+        // Input slot
+        if (event.getRawSlot() == 13) {
+            // Code to handle inputting items
+        }
     }
 
     // On click inside own inventory, cancel event
