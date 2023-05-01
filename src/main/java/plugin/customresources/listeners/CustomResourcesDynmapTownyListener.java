@@ -1,11 +1,11 @@
 package plugin.customresources.listeners;
 
-import plugin.customresources.metadata.CustomResourcesGovernmentMetaDataController;
-import plugin.customresources.settings.CustomResourcesSettings;
-import plugin.customresources.util.CustomResourcesMessagingUtil;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.dynmap.towny.events.BuildTownMarkerDescriptionEvent;
+import plugin.customresources.metadata.CustomResourcesGovernmentMetaDataController;
+import plugin.customresources.settings.CustomResourcesSettings;
+import plugin.customresources.util.CustomResourcesMessagingUtil;
 
 public class CustomResourcesDynmapTownyListener implements Listener {
 

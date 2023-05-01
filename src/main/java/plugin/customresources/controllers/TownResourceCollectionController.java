@@ -5,25 +5,19 @@ import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.Translatable;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import plugin.customresources.CustomResources;
-import plugin.customresources.metadata.CustomResourcesGovernmentMetaDataController;
-import plugin.customresources.util.ItemsAdderUtil;
-import plugin.customresources.util.MMOItemsUtil;
-import plugin.customresources.util.MythicMobsUtil;
-import plugin.customresources.util.CustomResourcesMessagingUtil;
-
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import plugin.customresources.CustomResources;
+import plugin.customresources.metadata.CustomResourcesGovernmentMetaDataController;
+import plugin.customresources.util.CustomResourcesMessagingUtil;
+import plugin.customresources.util.ItemsAdderUtil;
+import plugin.customresources.util.MMOItemsUtil;
+import plugin.customresources.util.MythicMobsUtil;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 public class TownResourceCollectionController {
 
@@ -34,7 +28,7 @@ public class TownResourceCollectionController {
         //Notify Player
         CustomResourcesMessagingUtil.sendMsg(player, Translatable.of("customresources.resource.towncollect.success"));
     }
-    
+
     public static synchronized void collectAvailableNationResources(Player player, Nation nation, Map<String,Integer> availableForCollection) {
         //Collect resources
         if (!collectAvailableGovernmentResources(player, nation, availableForCollection))
@@ -42,12 +36,12 @@ public class TownResourceCollectionController {
         //Notify Player
         CustomResourcesMessagingUtil.sendMsg(player, Translatable.of("customresources.resource.nationcollect.success"));
     }
-    
+
     /**
-     * Utility Method 
+     * Utility Method
      * Collect all available resources of a government
-     * Synchronized to avoid possibility of duping by 2 players collecting at same time.... 
-     * 
+     * Synchronized to avoid possibility of duping by 2 players collecting at same time....
+     *
      * @param player the player collecting
      * @param government the government
      * @param availableForCollection the list of currently available resources
@@ -95,7 +89,7 @@ public class TownResourceCollectionController {
         for(Map.Entry<String,Integer> mapEntry: availableForCollection) {
             materialName = mapEntry.getKey();
             amount = mapEntry.getValue();
-            
+
             //Don't attempt pickup if amount is less than 1
             if(amount < 1)
                 continue;
@@ -104,10 +98,10 @@ public class TownResourceCollectionController {
             material = Material.getMaterial(materialName);
             if(material != null) {
                 itemStack = new ItemStack(material, amount);
-                itemStackList.add(itemStack); 
+                itemStackList.add(itemStack);
                 continue;
             }
-            
+
             //Try creating a slimefun itemstack
             if(CustomResources.getPlugin().isSlimeFunInstalled()) {
                 SlimefunItem slimeFunItem = SlimefunItem.getById(materialName);
@@ -154,5 +148,5 @@ public class TownResourceCollectionController {
         }
 		return itemStackList;
 	}
-    
+
 }

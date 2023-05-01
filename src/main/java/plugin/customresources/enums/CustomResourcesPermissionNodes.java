@@ -1,7 +1,7 @@
 package plugin.customresources.enums;
 
 /**
- * 
+ *
  * @author Goosius
  *
  */
@@ -17,11 +17,11 @@ public enum CustomResourcesPermissionNodes {
 	TOWNY_RESOURCES_BYPASS("customresources.bypass"),
 	CUSTOM_RESOURCES_SURVEY("customresources.construct");
 
-	private String value;
+	private final String value;
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param permission - Permission.
 	 */
 	CustomResourcesPermissionNodes(String permission) {
@@ -31,7 +31,7 @@ public enum CustomResourcesPermissionNodes {
 
 	/**
 	 * Retrieves the permission node
-	 * 
+	 *
 	 * @return The permission node
 	 */
 	public String getNode() {
@@ -42,7 +42,7 @@ public enum CustomResourcesPermissionNodes {
 	/**
 	 * Retrieves the permission node
 	 * replacing the character *
-	 * 
+	 *
 	 * @param replace - String
 	 * @return The permission node
 	 */

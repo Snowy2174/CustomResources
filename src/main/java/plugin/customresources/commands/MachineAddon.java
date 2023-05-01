@@ -1,36 +1,28 @@
 package plugin.customresources.commands;
 
 import com.palmergames.bukkit.towny.TownyAPI;
-import com.palmergames.bukkit.towny.TownyCommandAddonAPI;
 import com.palmergames.bukkit.towny.TownyEconomyHandler;
 import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.command.BaseCommand;
 import com.palmergames.bukkit.towny.confirmations.Confirmation;
 import com.palmergames.bukkit.towny.exceptions.TownyException;
-import com.palmergames.bukkit.towny.object.AddonCommand;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.Translatable;
-import com.palmergames.bukkit.towny.utils.NameUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.command.*;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import plugin.customresources.controllers.MachinePlacementController;
-import plugin.customresources.controllers.TownMachineManager;
 import plugin.customresources.controllers.TownResourceDiscoveryController;
 import plugin.customresources.enums.CustomResourcesPermissionNodes;
 import plugin.customresources.metadata.CustomResourcesGovernmentMetaDataController;
 import plugin.customresources.settings.CustomResourcesSettings;
 import plugin.customresources.util.CustomResourcesMessagingUtil;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
-
-import static com.palmergames.bukkit.towny.command.BaseCommand.checkPermOrThrow;
-import static plugin.customresources.controllers.MachinePlacementController.placeMachine;
 
 public class MachineAddon extends BaseCommand implements CommandExecutor {
 

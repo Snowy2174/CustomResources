@@ -1,16 +1,6 @@
 package plugin.customresources.util;
 
 import com.meowj.langutils.lang.LanguageHelper;
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import plugin.customresources.CustomResources;
-import plugin.customresources.objects.ResourceOfferCategory;
-import plugin.customresources.settings.CustomResourcesSettings;
-import org.apache.commons.lang.WordUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import com.palmergames.adventure.text.Component;
 import com.palmergames.adventure.text.event.HoverEvent;
 import com.palmergames.adventure.text.format.NamedTextColor;
@@ -23,11 +13,19 @@ import com.palmergames.bukkit.towny.object.Translator;
 import com.palmergames.bukkit.towny.utils.TownyComponents;
 import com.palmergames.bukkit.util.Colors;
 import com.palmergames.util.StringMgmt;
-
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import org.apache.commons.lang.WordUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
+import plugin.customresources.CustomResources;
+import plugin.customresources.objects.ResourceOfferCategory;
+import plugin.customresources.settings.CustomResourcesSettings;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -97,14 +95,14 @@ public class CustomResourcesMessagingUtil {
             return resourcesAsFormattedArray;
         }
     }
-    
+
     /**
      *  Format resource string to something we can send to the dynmap
      *
      * @param resourcesAsString resource string
      * @return a string we can show on the dynmap e.g. "64 Wheat, 32 Iron"
      */
-    public static String formatProductionStringForDynmapTownyDisplay(String resourcesAsString) {    
+    public static String formatProductionStringForDynmapTownyDisplay(String resourcesAsString) {
         if(resourcesAsString.isEmpty()) {
             return "";
         } else {
@@ -115,9 +113,9 @@ public class CustomResourcesMessagingUtil {
 
     /**
      * Convert a resource amount string formatted array
-     * 
+     *
      * NOTE: Do not pass in an empty string
-     * 
+     *
      * @param resourcesAmountsString e.g. "64-WHEAT,64-COAL"
      * @return e.g. ["64 Wheat","64 Coal"]
      */
@@ -140,11 +138,11 @@ public class CustomResourcesMessagingUtil {
         }
         return resourcesAsFormattedList.toArray(new String[0]);
     }
-    
-    
+
+
     /**
      * Used in the Government StatusScreen events to make the production/available components.
-     * 
+     *
      * @param translator Translator used for localization
      * @param resourcesAsString String representing the Resources due.
      * @param langString The language string which will be applied to the Component.
@@ -177,12 +175,12 @@ public class CustomResourcesMessagingUtil {
                 SlimefunItem slimefunItem = SlimefunItem.getById(materialName);
                 if(slimefunItem != null) {
                     return slimefunItem.getItemName().replaceAll("[^\\w\\s]\\w","");
-                }                
+                }
             }
 
             // mythicmobs integration
             if(CustomResources.getPlugin().isMythicMobsInstalled()) {
-            	String mmName = MythicMobsUtil.getMaterialNameForDisplay(materialName); 
+            	String mmName = MythicMobsUtil.getMaterialNameForDisplay(materialName);
             	if (mmName != null) {
             		return mmName;
             	}
@@ -206,7 +204,7 @@ public class CustomResourcesMessagingUtil {
                 return translatedMaterialName;
             }
         }
-        
+
         materialName = Colors.strip(materialName);
         //Couldn't find a translation. Return un-translated material name
         return WordUtils.capitalizeFully(materialName.replaceAll("_", " "));
@@ -224,7 +222,7 @@ public class CustomResourcesMessagingUtil {
                 continue;
             amountAndMaterialName = resourceAsString.split("-");
             materialName = amountAndMaterialName[1];
-            multiplier = CustomResourcesSettings.isNonDynamicAmountMaterial(materialName) ? 1.0 : TownySettings.getTownLevel(town).resourceProductionModifier(); 
+            multiplier = CustomResourcesSettings.isNonDynamicAmountMaterial(materialName) ? 1.0 : TownySettings.getTownLevel(town).resourceProductionModifier();
             amount = String.valueOf((int) (Integer.valueOf(amountAndMaterialName[0]) * multiplier));
             resourcesAsFormattedList.add(amount + "-" + materialName);
         }

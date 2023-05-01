@@ -1,5 +1,15 @@
 package plugin.customresources.settings;
 
+import com.palmergames.bukkit.config.CommentedConfiguration;
+import com.palmergames.bukkit.towny.exceptions.TownyException;
+import com.palmergames.util.FileMgmt;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import org.bukkit.Material;
+import plugin.customresources.CustomResources;
+import plugin.customresources.objects.ResourceOfferCategory;
+import plugin.customresources.util.MMOItemsUtil;
+import plugin.customresources.util.MythicMobsUtil;
+
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,22 +19,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import com.palmergames.bukkit.config.CommentedConfiguration;
-import com.palmergames.bukkit.towny.exceptions.TownyException;
-import com.palmergames.util.FileMgmt;
-
-import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
-import plugin.customresources.CustomResources;
-import plugin.customresources.objects.ResourceOfferCategory;
-import plugin.customresources.util.MMOItemsUtil;
-import plugin.customresources.util.MythicMobsUtil;
-
-import org.bukkit.Material;
-
 public class CustomResourcesSettings {
 	private static CommentedConfiguration config, newConfig;
-	private static int sumOfAllOfferDiscoveryProbabilityWeights = 0;  //Used when getting the resource offers
-	private static Path configPath = CustomResources.getPlugin().getDataFolder().toPath().resolve("config.yml");
+	private static final int sumOfAllOfferDiscoveryProbabilityWeights = 0;  //Used when getting the resource offers
+	private static final Path configPath = CustomResources.getPlugin().getDataFolder().toPath().resolve("config.yml");
 
 	public static boolean isEnabled() {
 		return getBoolean(CustomResourcesConfigNodes.ENABLED);
@@ -37,19 +35,19 @@ public class CustomResourcesSettings {
     public static List<Integer> getSurveyNumTownblocksRequirementsPerResourceLevel() {
     	return getIntegerList(CustomResourcesConfigNodes.TOWN_RESOURCES_SURVEYS_NUM_TOWNBLOCKS_REQUIREMENT_PER_RESOURCE_LEVEL);
 	}
-		
+
 	public static List<Integer> getProductionPercentagesPerResourceLevel() {
 		return getIntegerList(CustomResourcesConfigNodes.TOWN_RESOURCES_PRODUCTION_PRODUCTIVITY_PERCENTAGE_PER_RESOURCE_LEVEL);
 	}
-	
+
 	public static List<Integer> getProductionTownLevelRequirementPerResourceLevel() {
 		return getIntegerList(CustomResourcesConfigNodes.TOWN_RESOURCES_PRODUCTION_TOWN_LEVEL_REQUIREMENT_PER_RESOURCE_LEVEL);
 	}
-		
+
 	public static double getTownResourcesProductionNationTaxNormalized() {
 		return getDouble(CustomResourcesConfigNodes.TOWN_RESOURCES_PRODUCTION_NATION_TAX_PERCENTAGE) / 100;
-	}	
-	
+	}
+
 	public static double getTownResourcesProductionOccupyingNationTaxNormalized() {
 		return getDouble(CustomResourcesConfigNodes.TOWN_RESOURCES_PRODUCTION_OCCUPYING_NATION_TAX_PERCENTAGE) / 100;
 	}
@@ -60,7 +58,7 @@ public class CustomResourcesSettings {
 
 	/**
 	 * Get all resource offer categories
-	 * 
+	 *
 	 * @return a list of all resource offer categories
 	 * @throws TownyException a towny exception
 	 */
@@ -69,8 +67,8 @@ public class CustomResourcesSettings {
 		boolean problemLoadingCategories = false;
 
 		String categoriesAsString = getString(CustomResourcesConfigNodes.TOWN_RESOURCES_OFFERS_CATEGORIES);
-		
-		if(!categoriesAsString.isEmpty()) {		
+
+		if(!categoriesAsString.isEmpty()) {
 			Pattern pattern = Pattern.compile("\\{([^}]+)}", Pattern.CASE_INSENSITIVE);
 			Matcher matcher = pattern.matcher(categoriesAsString);
 			String categoryAsString;
@@ -82,28 +80,28 @@ public class CustomResourcesSettings {
 			List<String> materialsInCategory;
 			String materialName;
 			ResourceOfferCategory resourceOfferCategory;
-			
+
 			while (matcher.find()) {
 				//Read one resource offer category
 				categoryAsString = matcher.group(1);
-				   
+
 				categoryAsArray = categoryAsString.split(",");
 				if(categoryAsArray.length < 2) {
 					CustomResources.severe("Bad configuration for offer category: " + categoryAsString);
 					problemLoadingCategories = true;
 					continue;
 				}
-				
+
 				//Read name
 				categoryName = categoryAsArray[0].trim();
-				
+
 				//Read disovery weight
 				categoryDiscoveryWeight = Integer.parseInt(categoryAsArray[1].trim());
-				
+
 				//Read base amount
 				categoryBaseAmountStacks = Double.parseDouble(categoryAsArray[2].trim());
 				categoryBaseAmountItems = (int)((categoryBaseAmountStacks * 64) + 0.5);
-				
+
 				//Read Materials
 				materialsInCategory = new ArrayList<>();
 				for(int i = 3; i < categoryAsArray.length; i++) {
@@ -115,10 +113,10 @@ public class CustomResourcesSettings {
 					}
 					materialsInCategory.add(materialName);
 				}
-				
+
 				//Construct ResourceExtractionCategory object
 				resourceOfferCategory = new ResourceOfferCategory(categoryName, categoryDiscoveryWeight, categoryBaseAmountItems, materialsInCategory);
-				
+
 				//Add to result
 				result.add(resourceOfferCategory);
 			}
@@ -130,7 +128,7 @@ public class CustomResourcesSettings {
 			return result;
 		}
 	}
-	
+
 	private static boolean isValidMaterial(String materialName) {
 		Material material = Material.getMaterial(materialName);
 		if(material != null)
@@ -138,27 +136,24 @@ public class CustomResourcesSettings {
 		if(CustomResources.getPlugin().isSlimeFunInstalled()) {
 			SlimefunItem slimeFunItem = SlimefunItem.getById(materialName);
 			if(slimeFunItem != null)
-				return true;  //Known material 
+				return true;  //Known material
 		}
 		// mythicmobs integration
 		if (CustomResources.getPlugin().isMythicMobsInstalled()
 		&& MythicMobsUtil.isValidItem(materialName))
 			return true;
-		
-		// MMOItems integration
-		if (CustomResources.getPlugin().isMMOItemsInstalled()
-		&& materialName.contains(":")
-		&& MMOItemsUtil.isValidItem(materialName))
-			return true;
 
-		return false; //Unknown material		
+		// MMOItems integration
+		return CustomResources.getPlugin().isMMOItemsInstalled()
+				&& materialName.contains(":")
+				&& MMOItemsUtil.isValidItem(materialName);//Unknown material
 	}
-	
+
 	public static void loadConfig() throws TownyException {
 		if (!FileMgmt.checkOrCreateFile(configPath.toString())) {
 			throw new TownyException("Failed to create config file!");
 		}
-		
+
 		config = new CommentedConfiguration(configPath, CustomResources.getPlugin());
 		if (!config.load())
 			throw new TownyException("Failed to load Config!");
@@ -182,7 +177,7 @@ public class CustomResourcesSettings {
 	private static void setProperty(String root, Object value) {
 		config.set(root.toLowerCase(), value.toString());
 	}
-	
+
 	/**
 	 * Builds a new config reading old config data.
 	 */
@@ -202,7 +197,7 @@ public class CustomResourcesSettings {
 		config = newConfig;
 		newConfig = null;
 	}
-	
+
 	public static String getString(String root, String def) {
 		String data = config.getString(root.toLowerCase(), def);
 		if (data == null) {
@@ -215,7 +210,7 @@ public class CustomResourcesSettings {
 	private static void sendError(String msg) {
 		CustomResources.severe("Error could not read " + msg);
 	}
-	
+
 	public static boolean getBoolean(CustomResourcesConfigNodes node) {
 		return Boolean.parseBoolean(config.getString(node.getRoot().toLowerCase(), node.getDefault()));
 	}
@@ -245,7 +240,7 @@ public class CustomResourcesSettings {
 	private static List<String> getStrArr(CustomResourcesConfigNodes node) {
 		return Arrays.stream(getString(node).split(",")).collect(Collectors.toList());
 	}
-	
+
 	/**
      * Return an IMMUTABLE list of integers
 	 */
@@ -260,9 +255,9 @@ public class CustomResourcesSettings {
 				result.add(Integer.parseInt(configValue));
 			}
 			return result;
-		}    	
+		}
 	}
-	
+
 	/**
      * Return an IMMUTABLE list of strings
 	 */
@@ -274,7 +269,7 @@ public class CustomResourcesSettings {
 			configAsString = configAsString.replaceAll(" ","");
 			String[] configAsArray = configAsString.split(",");
 			return Arrays.asList(configAsArray);
-		}    	
+		}
 	}
 
 	public static boolean areSurveysEnabled() {
@@ -297,7 +292,7 @@ public class CustomResourcesSettings {
 	public static boolean isNonDynamicAmountMaterial(String material) {
 		return getStrArr(CustomResourcesConfigNodes.TOWN_RESOURCES_OFFERS_MATERIALS_WITH_NON_DYNAMIC_AMMOUNTS).contains(material);
 	}
-	
+
 	public static String getMaterialsDisplayLanguage() {
 		return getString(CustomResourcesConfigNodes.TOWN_RESOURCES_LANGUAGE_MATERIALS_DISPLAY_LANGUAGE);
 	}

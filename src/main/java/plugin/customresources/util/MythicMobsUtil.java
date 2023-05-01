@@ -1,11 +1,10 @@
 package plugin.customresources.util;
 
-import java.util.Optional;
-
-import org.bukkit.inventory.ItemStack;
-
-import plugin.customresources.CustomResources;
 import io.lumine.xikage.mythicmobs.items.MythicItem;
+import org.bukkit.inventory.ItemStack;
+import plugin.customresources.CustomResources;
+
+import java.util.Optional;
 
 public class MythicMobsUtil {
 
@@ -19,12 +18,10 @@ public class MythicMobsUtil {
 		}
 		return mythicItem;
 	}
-	
+
 	public static boolean isValidItem(String materialName) {
 		ItemStack mythicItem = getMythicItemStack(materialName);
-		if (mythicItem != null)
-			return true; // Known material
-		return false;
+		return mythicItem != null; // Known material
 	}
 
 	public static String getMaterialNameForDisplay(String materialName) {
@@ -42,7 +39,7 @@ public class MythicMobsUtil {
 					// MythicItem#getDisplayName() will always return null for imported items
 					// try to extract the name from the raw config data
 					if (mythicItem.getConfig().isSet("ItemStack")) {
-						ItemStack is = mythicItem.getConfig().getItemStack("ItemStack", (String) null);
+						ItemStack is = mythicItem.getConfig().getItemStack("ItemStack", null);
 						if (is != null && is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
 							return is.getItemMeta().getDisplayName();
 						}
@@ -59,7 +56,7 @@ public class MythicMobsUtil {
 					return maybeDisplayName.replaceAll("[^\\w\\s]\\w", "");
 				} else {
 					if (mythicItem.getConfig().isSet("ItemStack")) {
-						ItemStack is = mythicItem.getConfig().getItemStack("ItemStack", (String) null);
+						ItemStack is = mythicItem.getConfig().getItemStack("ItemStack", null);
 						if (is != null && is.hasItemMeta() && is.getItemMeta().hasDisplayName()) {
 							return is.getItemMeta().getDisplayName();
 						}

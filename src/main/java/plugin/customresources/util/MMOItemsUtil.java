@@ -1,19 +1,18 @@
 package plugin.customresources.util;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.function.Function;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
-import plugin.customresources.CustomResources;
-import plugin.customresources.settings.CustomResourcesSettings;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.Type;
 import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
 import net.Indyuce.mmoitems.api.player.PlayerData;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import plugin.customresources.CustomResources;
+import plugin.customresources.settings.CustomResourcesSettings;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.function.Function;
 
 public class MMOItemsUtil {
 
@@ -55,11 +54,11 @@ public class MMOItemsUtil {
 		}
 		return item;
 	}
-	
+
 	public static Type getType(String name) {
 		return Type.get(name.split(":")[0]);
 	}
-	
+
 	public static String getID(String name) {
 		return name.split(":")[1];
 	}

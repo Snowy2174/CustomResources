@@ -3,21 +3,21 @@ package plugin.customresources.listeners;
 import com.palmergames.bukkit.towny.event.PreNewDayEvent;
 import com.palmergames.bukkit.towny.event.TownyLoadedDatabaseEvent;
 import com.palmergames.bukkit.towny.event.time.NewShortTimeEvent;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import plugin.customresources.CustomResources;
 import plugin.customresources.controllers.TownMachineManager;
 import plugin.customresources.controllers.TownResourceProductionController;
 import plugin.customresources.settings.CustomResourcesSettings;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 
 /**
- * 
+ *
  * @author Goosius
  *
  */
 public class CustomResourcesTownyEventListener implements Listener {
 
-	private static int PRODUCTION_RECALCULATION_INTERVAL_MILLIS = 600000; //10 mins
+	private static final int PRODUCTION_RECALCULATION_INTERVAL_MILLIS = 600000; //10 mins
 	private static long nextProductionRecalculationTime = 0; //0 so that it recalculates immediately on the 1st short tick
 
 	/**
@@ -41,11 +41,11 @@ public class CustomResourcesTownyEventListener implements Listener {
             TownMachineManager.machineGenerateResources();
         }
     }
-       
+
     /**
      * On each ShortTime period, CustomResources saves data on player-extracted resources.
-     * 
-     * Every 10 mins, the produced town & nation resources are recalculated. 
+     *
+     * Every 10 mins, the produced town & nation resources are recalculated.
      */
     @EventHandler
     public void onNewShortTime(NewShortTimeEvent event) {

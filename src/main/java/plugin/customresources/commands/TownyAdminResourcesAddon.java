@@ -1,38 +1,28 @@
 package plugin.customresources.commands;
 
 import com.palmergames.bukkit.towny.TownyCommandAddonAPI;
-import com.palmergames.bukkit.towny.TownyMessaging;
 import com.palmergames.bukkit.towny.TownyCommandAddonAPI.CommandType;
 import com.palmergames.bukkit.towny.command.BaseCommand;
-import com.palmergames.bukkit.towny.confirmations.Confirmation;
 import com.palmergames.bukkit.towny.exceptions.TownyException;
 import com.palmergames.bukkit.towny.object.AddonCommand;
-import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.Translatable;
 import com.palmergames.bukkit.towny.object.Translator;
 import com.palmergames.bukkit.towny.utils.NameUtil;
 import com.palmergames.bukkit.util.ChatTools;
-import com.palmergames.util.StringMgmt;
-
-import plugin.customresources.CustomResources;
-import plugin.customresources.controllers.TownResourceDiscoveryController;
-import plugin.customresources.enums.CustomResourcesPermissionNodes;
-import plugin.customresources.metadata.BypassEntries;
-import plugin.customresources.util.CustomResourcesMessagingUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import plugin.customresources.CustomResources;
+import plugin.customresources.enums.CustomResourcesPermissionNodes;
+import plugin.customresources.metadata.BypassEntries;
+import plugin.customresources.util.CustomResourcesMessagingUtil;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.*;
 
 public class TownyAdminResourcesAddon extends BaseCommand implements CommandExecutor, TabCompleter {
-	
+
 	public TownyAdminResourcesAddon() {
 		AddonCommand townyAdminResourcesCommand = new AddonCommand(CommandType.TOWNYADMIN, "resources", this);
 		TownyCommandAddonAPI.addSubCommand(townyAdminResourcesCommand);
@@ -48,14 +38,14 @@ public class TownyAdminResourcesAddon extends BaseCommand implements CommandExec
 			case "reroll_all_resources":
 				return getTownyStartingWith(args[1], "t");
 			}
-		} 
+		}
 		return Collections.emptyList();
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		if (args.length > 0)
 			parseAdminCommand(sender, args);
-		else 
+		else
 			showHelp(sender);
 		return true;
 	}
@@ -81,7 +71,7 @@ public class TownyAdminResourcesAddon extends BaseCommand implements CommandExec
 			CustomResourcesMessagingUtil.sendErrorMsg(sender, e.getMessage(sender));
 		}
 	}
-	
+
 	private void showHelp(CommandSender sender) {
 		Translator translator = Translator.locale(sender);
 		sender.sendMessage(ChatTools.formatTitle("/townyadmin resources"));

@@ -3,13 +3,14 @@ package plugin.customresources;
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.exceptions.TownyException;
 import com.palmergames.bukkit.towny.exceptions.initialization.TownyInitException;
-import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.Translatable;
 import com.palmergames.bukkit.towny.object.TranslationLoader;
 import com.palmergames.bukkit.util.Colors;
 import com.palmergames.bukkit.util.Version;
-
-import io.lumine.xikage.mythicmobs.utils.commands.Command;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
 import plugin.customresources.commands.MachineAddon;
 import plugin.customresources.commands.NationCollectAddon;
 import plugin.customresources.commands.TownResourcesAddon;
@@ -21,20 +22,16 @@ import plugin.customresources.listeners.*;
 import plugin.customresources.settings.CustomResourcesMachineConfig;
 import plugin.customresources.settings.CustomResourcesSettings;
 import plugin.customresources.util.CustomResourcesMessagingUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class CustomResources extends JavaPlugin {
-	
+
 	private static CustomResources plugin;
-	private static Version requiredTownyVersion = Version.fromString("0.98.6.3");
+	private static final Version requiredTownyVersion = Version.fromString("0.98.6.3");
 	private static boolean siegeWarInstalled;
-	private static boolean dynmapTownyInstalled; 
+	private static boolean dynmapTownyInstalled;
 	private static boolean languageUtilsInstalled;
 	private static boolean slimeFunInstalled;
 	private static boolean legacyMythicMobsInstalled;
@@ -42,12 +39,12 @@ public class CustomResources extends JavaPlugin {
 	private static boolean mmmoItemsInstalled;
 	private static boolean itemsAdderInstalled;
 	private static boolean holographicDisplaysInstalled;
-	
+
     @Override
     public void onEnable() {
-    	
+
     	plugin = this;
-    	
+
         if (!loadAll())
         	onDisable();
 
@@ -67,7 +64,7 @@ public class CustomResources extends JavaPlugin {
 
 	/**
 	 * Load custom resources
-	 * 
+	 *
 	 * @return true if load succeeded
 	 */
 	public boolean loadAll() {
@@ -106,7 +103,7 @@ public class CustomResources extends JavaPlugin {
 
 	/**
 	 * Re-Load custom resources
-	 * 
+	 *
 	 * @return true if reload succeeded
 	 */
 	public boolean reloadAll() {
@@ -134,7 +131,7 @@ public class CustomResources extends JavaPlugin {
 
 	private void loadLocalization(boolean reload) throws TownyException {
 		try {
-			Plugin plugin = getPlugin(); 
+			Plugin plugin = getPlugin();
 			Path langFolderPath = Paths.get(plugin.getDataFolder().getPath()).resolve("lang");
 			TranslationLoader loader = new TranslationLoader(langFolderPath, plugin, CustomResources.class);
 			loader.load();
@@ -193,7 +190,7 @@ public class CustomResources extends JavaPlugin {
 	* Ideally we would also like to check if siegewar is enabled before doing this.
 	* However to do that, we would need to load siegewar before customresources,
 	* which would change the position of resources on the town screen.
-	* Maybe this will be added in future, especially if someone actually needs it. 
+	* Maybe this will be added in future, especially if someone actually needs it.
 	*/
 	public boolean isSiegeWarInstalled() {
 		return siegeWarInstalled;
@@ -208,11 +205,11 @@ public class CustomResources extends JavaPlugin {
 	}
 
 	public boolean isMythicMobsInstalled() { return mythicMobsInstalled; }
-	
+
 	public boolean isMythicMobsLegacy() {
 		return legacyMythicMobsInstalled;
 	}
-	
+
 	public boolean isMythicMobsV5() {
 		return mythicMobsInstalled;
 	}
@@ -231,27 +228,27 @@ public class CustomResources extends JavaPlugin {
 	private String getTownyVersion() {
         return Bukkit.getPluginManager().getPlugin("Towny").getDescription().getVersion();
     }
-    
+
 	private void townyVersionCheck() throws TownyException{
 		if (!(Version.fromString(getTownyVersion()).compareTo(requiredTownyVersion) >= 0))
-			throw new TownyException("Towny version does not meet required minimum version: " + requiredTownyVersion.toString());
+			throw new TownyException("Towny version does not meet required minimum version: " + requiredTownyVersion);
     }
-    
+
     private void setupIntegrationsWithOtherPlugins() {
 		//Determine if other plugins are installed
 		Plugin siegeWar = Bukkit.getPluginManager().getPlugin("SiegeWar");
 		siegeWarInstalled = siegeWar != null;
-		if(siegeWarInstalled) 
+		if(siegeWarInstalled)
 			info("  SiegeWar Integration Enabled");
 
 		Plugin dynmapTowny = Bukkit.getPluginManager().getPlugin("Dynmap-Towny");
 		dynmapTownyInstalled = dynmapTowny != null;
-		if(dynmapTownyInstalled) 
+		if(dynmapTownyInstalled)
 			info("  DynmapTowny Integration Enabled");
-				
+
 		Plugin slimeFun = Bukkit.getPluginManager().getPlugin("Slimefun");
 		slimeFunInstalled = slimeFun != null;
-		if(slimeFunInstalled) 
+		if(slimeFunInstalled)
 			info("  Slimefun Integration Enabled");
 
 		Plugin mythicMobs = Bukkit.getPluginManager().getPlugin("MythicMobs");
@@ -285,7 +282,7 @@ public class CustomResources extends JavaPlugin {
 
 		Plugin languageUtils = Bukkit.getPluginManager().getPlugin("LangUtils");
 		languageUtilsInstalled = languageUtils != null;
-		if(languageUtilsInstalled) 
+		if(languageUtilsInstalled)
 			info("  LanguageUtils Integration Enabled");
 	}
 }

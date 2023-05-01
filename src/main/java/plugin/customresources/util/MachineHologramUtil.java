@@ -1,14 +1,11 @@
 package plugin.customresources.util;
 
-import com.palmergames.bukkit.towny.Towny;
-import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.util.TimeMgmt;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -26,34 +23,50 @@ import static plugin.customresources.settings.CustomResourcesMachineConfig.MACHI
 
 public class MachineHologramUtil {
 
-    private static Map<String, Hologram> holograms = new HashMap<>();
-    public static void createInfoHologram(Machine machine, Location location){
+    private static final Map<String, Hologram> holograms = new HashMap<>();
 
+    public static void createHologram(Machine machine, Location location, Boolean ready){
         String id = String.valueOf(machine.getId());
 
         if (holograms.containsKey(id)) {
             // If a hologram with the same ID exists, stop
             return;
         }
-        
         HolographicDisplaysAPI api = HolographicDisplaysAPI.get(CustomResources.getPlugin());
-        Hologram machineInfo = api.createHologram(location.add(0.0, 3, 0.0));
+        Hologram machineHolo = api.createHologram(location.add(0.0, 3, 0.0));
 
         MachineConfig config = MACHINES.get(machine.getType());
         MachineTier tierConfig = config.getTiers().get(machine.getTier());
+
+        appendHologram(machineHolo, machine, config);
+
+        if (ready) {
+            appendReadyHologram(machineHolo, tierConfig);
+        } else {
+            appendInfoHologram(machineHolo, tierConfig);
+            removeHologramTask(machineHolo, id);
+        }
+
+        holograms.put(id, machineHolo);
+    }
+
+    private static void appendHologram(Hologram machineHolo, Machine machine, MachineConfig config) {
         ItemStack icon = new ItemStack(Material.getMaterial(config.getIcon()));
 
-        machineInfo.getLines().appendItem(icon);
-        machineInfo.getLines().appendText(ChatColor.GREEN + "" + machine.getState() + " " + ChatColor.GRAY + config.getName());
-        machineInfo.getLines().appendText(ChatColor.GRAY + "Tier [ " + ChatColor.GOLD + machine.getTier() + ChatColor.GRAY + " ]");
-        machineInfo.getLines().appendText("");
-        machineInfo.getLines().appendText(ChatColor.GRAY + "Produces " + ChatColor.GREEN + tierConfig.getOutputMaterials().get(0) + ChatColor.GRAY + "x" + ChatColor.GREEN + tierConfig.getOutputAmounts().get(0) );
-        machineInfo.getLines().appendText(ChatColor.GOLD + "[ " + TimeMgmt.countdownTimeHoursRaw(TimeMgmt.townyTime(true)) + "h Remaining]");
+        machineHolo.getLines().appendItem(icon);
+        machineHolo.getLines().appendText(ChatColor.GREEN + "" + machine.getState() + " " + ChatColor.GRAY + "" + config.getName());
+        machineHolo.getLines().appendText(ChatColor.GRAY + "Tier [" + ChatColor.GOLD + machine.getTier() + ChatColor.GRAY + "]");
+        machineHolo.getLines().appendText("");
+    }
 
-        holograms.put(String.valueOf(machine.getId()), machineInfo);
+    public static void appendInfoHologram(Hologram machineHolo, MachineTier tierConfig) {
+        machineHolo.getLines().appendText(ChatColor.GRAY + "Produces " + ChatColor.GREEN + tierConfig.getOutputMaterials().get(0) + ChatColor.GRAY + "x" + ChatColor.GREEN + tierConfig.getOutputAmounts().get(0));
+        machineHolo.getLines().appendText(ChatColor.GOLD + "[" + TimeMgmt.countdownTimeHoursRaw(TimeMgmt.townyTime(true)) + "h Remaining]");
+    }
 
-        removeHologramTask(machineInfo, id);
-
+    public static void appendReadyHologram(Hologram machineHolo, MachineTier tierConfig) {
+        machineHolo.getLines().appendText(ChatColor.GRAY + "Produced " + ChatColor.GOLD + tierConfig.getOutputMaterials().get(0) + "x" + tierConfig.getOutputAmounts().get(0));
+        machineHolo.getLines().appendText(ChatColor.GOLD + "[ Ready to Collect ]");
     }
 
     public static void removeHologramTask(Hologram hologram, String id){
@@ -66,27 +79,6 @@ public class MachineHologramUtil {
                 holograms.remove(id);
             }
         }, 60 * 20L);}
-
-
-
-    public static void createReadyHologram(Machine machine, Location location){
-
-        HolographicDisplaysAPI api = HolographicDisplaysAPI.get(CustomResources.getPlugin());
-        Hologram machineInfo = api.createHologram(location.add(0.0, 3, 0.0));
-
-        MachineConfig config = MACHINES.get(machine.getType());
-        MachineTier tierConfig = config.getTiers().get(machine.getTier());
-        ItemStack icon = new ItemStack(Material.getMaterial(config.getIcon()));
-
-        machineInfo.getLines().appendItem(icon);
-        machineInfo.getLines().appendText("&6" + machine.getState() + " &7" + config.getName());
-        machineInfo.getLines().appendText("&7Tier [ " + machine.getTier() + "]");
-        machineInfo.getLines().appendText("");
-        machineInfo.getLines().appendText("&7Produced &6" + tierConfig.getOutputMaterials().get(0)+ "&7x&6" + tierConfig.getOutputAmounts().get(0) );
-        machineInfo.getLines().appendText("&6[ Ready to Collect ]");
-
-        holograms.put(String.valueOf(machine.getId()), machineInfo);
-    }
 
     public static void removeHologram(String id) {
         holograms.get(id).delete();

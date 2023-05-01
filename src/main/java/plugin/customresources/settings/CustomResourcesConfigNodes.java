@@ -1,7 +1,7 @@
 package plugin.customresources.settings;
 
 public enum CustomResourcesConfigNodes {
-	
+
 	VERSION_HEADER("version", "", ""),
 	VERSION(
 			"version.version",
@@ -28,7 +28,7 @@ public enum CustomResourcesConfigNodes {
 			"town_resources.surveys",
 			"",
 			"",
-			""),				
+			""),
 	TOWN_RESOURCES_SURVEYS_ENABLED(
 			"town_resources.surveys.enabled",
 			"true",
@@ -51,7 +51,7 @@ public enum CustomResourcesConfigNodes {
 			"town_resources.production",
 			"",
 			"",
-			""),			
+			""),
 	TOWN_RESOURCES_PRODUCTION_ENABLED(
 			"town_resources.production.enabled",
 			"true",
@@ -97,8 +97,8 @@ public enum CustomResourcesConfigNodes {
 			"town_resources.offers.categories",
 			"" +
 			"{common_dirt, 25, 2, DIRT}," +
-			"{gravel, 100, 1, GRAVEL}," +			
-			"{sand, 100, 2, SAND}," +								
+			"{gravel, 100, 1, GRAVEL}," +
+			"{sand, 100, 2, SAND}," +
 			"{common_rocks, 100, 2, STONE, COBBLESTONE}," +
 			"{uncommon_rocks, 100, 1, DIORITE, ANDESITE, GRANITE}," +
 			"{terracotta, 100, 0.5, TERRACOTTA}," +
@@ -111,7 +111,7 @@ public enum CustomResourcesConfigNodes {
 			"{coal, 200, 1, COAL}," +
 			"{iron, 200, 0.5, RAW_IRON}," +
 			"{gold, 200, 0.25, RAW_GOLD}," +
-			"{copper, 100, 0.25, RAW_COPPER}," +			
+			"{copper, 100, 0.25, RAW_COPPER}," +
 			"{emeralds, 200, 0.25, EMERALD}," +
 			"{diamonds, 200, 0.125, DIAMOND}," +
 			"{redstone, 100, 1, REDSTONE}," +
@@ -132,7 +132,7 @@ public enum CustomResourcesConfigNodes {
 			"{apple_trees, 100, 0.125, APPLE}," +
 			"{vines, 100, 0.25, VINE}," +
 			"{fish, 100, 1, COD, SALMON, PUFFERFISH, TROPICAL_FISH}," +
-			"{wool, 100, 0.5, WHITE_WOOL}," +			
+			"{wool, 100, 0.5, WHITE_WOOL}," +
 			"{gunpowder, 200, 0.25, GUNPOWDER}," +
 			"{string, 100, 0.25, STRING}," +
 			"{spider_eyes, 100, 0.25, SPIDER_EYE}," +
@@ -174,7 +174,7 @@ public enum CustomResourcesConfigNodes {
 			"town_resources.language",
 			"",
 			"",
-			""),			
+			""),
 	TOWN_RESOURCES_LANGUAGE_MATERIALS_DISPLAY_LANGUAGE(
 			"town_resources.language.materials_display_language",
 			"zh_cn",
@@ -182,7 +182,7 @@ public enum CustomResourcesConfigNodes {
 			"# If you have the LanguageUtils plugin installed, materials will be automatically translated into this locale/language.");
 	private final String Root;
 	private final String Default;
-	private String[] comments;
+	private final String[] comments;
 
 	CustomResourcesConfigNodes(String root, String def, String... comments) {
 

@@ -1,9 +1,5 @@
 package plugin.customresources.controllers;
 
-import com.palmergames.bukkit.towny.TownyTimerHandler;
-import com.palmergames.bukkit.towny.TownyUniverse;
-import com.palmergames.bukkit.towny.tasks.NewDayScheduler;
-import com.palmergames.util.TimeMgmt;
 import dev.lone.itemsadder.api.CustomFurniture;
 import dev.lone.itemsadder.api.Events.FurnitureBreakEvent;
 import dev.lone.itemsadder.api.Events.FurnitureInteractEvent;
@@ -12,16 +8,23 @@ import org.yaml.snakeyaml.Yaml;
 import plugin.customresources.enums.CustomResourcesMachineState;
 import plugin.customresources.objects.Machine;
 
-
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 import static com.palmergames.bukkit.towny.TownyMessaging.sendMsg;
 import static org.bukkit.Bukkit.getEntity;
+import static plugin.customresources.CustomResources.severe;
 import static plugin.customresources.controllers.MachinePlacementController.breakMachine;
-import static plugin.customresources.util.MachineHologramUtil.*;
 import static plugin.customresources.util.MachineGuiUtil.createMachineInterface;
 import static plugin.customresources.util.MachineGuiUtil.openInventory;
+import static plugin.customresources.util.MachineHologramUtil.createHologram;
+import static plugin.customresources.util.MachineHologramUtil.removeHologram;
 
 public class TownMachineManager {
 
@@ -29,13 +32,19 @@ public class TownMachineManager {
     private static final String DATA_FOLDER = "plugins/ResourceGeneratorPlugin/data";
     private static final String MACHINES_FILE = "machines.json";
 
-    private static Map<UUID, Machine> machineMap = new HashMap<>();
+    public static Map<UUID, Machine> machineMap = new HashMap<>();
 
     public static void loadMachines() {
         File dataFolder = new File(DATA_FOLDER);
-        if (!dataFolder.exists()) {
-            dataFolder.mkdirs();
+        try {
+            if (!dataFolder.exists() && !dataFolder.mkdirs()) {
+                throw new IOException("Failed to create data folder");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
         }
+
         File machinesFile = new File(DATA_FOLDER + "/" + MACHINES_FILE + ".yml");
         if (machinesFile.exists()) {
             Yaml yaml = new Yaml();
@@ -50,9 +59,12 @@ public class TownMachineManager {
 
     public static void saveMachines() {
         File dataFolder = new File(DATA_FOLDER);
-        if (!dataFolder.exists()) {
-            dataFolder.mkdirs();
+        if (!dataFolder.exists() && !dataFolder.mkdirs()) {
+            // Failed to create the data folder, log an error message
+            severe("Failed to create the data folder");
+            return;
         }
+
         File machinesFile = new File(DATA_FOLDER + "/" + MACHINES_FILE + ".yml");
         Yaml yaml = new Yaml();
         try (FileWriter writer = new FileWriter(machinesFile)) {
@@ -61,6 +73,7 @@ public class TownMachineManager {
             e.printStackTrace();
         }
     }
+
 
     public static void createMachine(String type, UUID id) {
         Machine machine = new Machine(id, type, 0);
@@ -85,7 +98,7 @@ public class TownMachineManager {
                 .filter(machine -> machine.getState() == CustomResourcesMachineState.Active)
                 .forEach(machine -> {
                     machine.setState(CustomResourcesMachineState.Finshed);
-                    createReadyHologram(machine, getEntity(machine.getId()).getLocation());
+                    createHologram(machine, getEntity(machine.getId()).getLocation(), true);
                     // TODO: Add any additional logic here that needs to be performed when setting the machine
                 });
         saveMachines();
@@ -112,7 +125,7 @@ public class TownMachineManager {
                 removeHologram(String.valueOf(machine.getId()));
             } else {
                 // Create hologram (autoremoved) on right click
-                createInfoHologram(machine, customFurniture.getArmorstand().getLocation());
+                createHologram(machine, customFurniture.getArmorstand().getLocation(), false);
             }
         } else {
             // Create new GUI inventory on shift right click

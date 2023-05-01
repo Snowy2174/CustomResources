@@ -1,13 +1,12 @@
 package plugin.customresources.util;
 
-import java.util.concurrent.Callable;
-
+import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
 import org.bukkit.inventory.ItemStack;
 
-import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
+import java.util.concurrent.Callable;
 
 public class MMOItemGetter implements Callable<ItemStack> {
-	private MMOItem mmoItem;
+	private final MMOItem mmoItem;
 	public MMOItemGetter(MMOItem mmoItem) {
 		this.mmoItem = mmoItem;
 	}

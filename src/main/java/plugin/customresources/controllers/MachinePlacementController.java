@@ -8,7 +8,8 @@ import org.bukkit.entity.Entity;
 import plugin.customresources.CustomResources;
 import plugin.customresources.objects.Machine;
 
-import static plugin.customresources.controllers.TownMachineManager.*;
+import static plugin.customresources.controllers.TownMachineManager.createMachine;
+import static plugin.customresources.controllers.TownMachineManager.removeMachine;
 import static plugin.customresources.settings.CustomResourcesMachineConfig.MACHINES;
 
 public class MachinePlacementController {

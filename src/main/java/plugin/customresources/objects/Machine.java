@@ -1,29 +1,29 @@
 package plugin.customresources.objects;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import plugin.customresources.CustomResources;
+import org.bukkit.inventory.ItemStack;
 import plugin.customresources.enums.CustomResourcesMachineState;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 public class Machine {
 
-    private final CustomResources plugin;
     private final String type;
-    private final CustomResourcesMachineState state;
+    private CustomResourcesMachineState state;
     private final UUID id;
     private final Integer tier;
     private boolean isActivated = false;
     private boolean isBroken = false;
+
+    private ItemStack storedItem = null;
 
     public Machine(UUID id, String type, Integer tier) {
         this.type = type;
         this.tier = tier;
         this.state = CustomResourcesMachineState.Active;
         this.id = id;
-        this.plugin = CustomResources.getPlugin();
     }
 
     /**
@@ -68,8 +68,9 @@ public class Machine {
      * @param state The state to set the machine to.
      */
     public void setState(CustomResourcesMachineState state) {
-        // TODO: Implement this method.
+        this.state = state;
     }
+
 
     /**
      * Activate the machine.
@@ -77,7 +78,6 @@ public class Machine {
     public void activate() {
         if (!isActivated && !isBroken) {
             isActivated = true;
-            plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, this::runMachine, 1, 1);
         }
     }
 
@@ -87,7 +87,6 @@ public class Machine {
     public void deactivate() {
         if (isActivated) {
             isActivated = false;
-            plugin.getServer().getScheduler().cancelTasks(plugin);
         }
     }
 
@@ -125,20 +124,43 @@ public class Machine {
     }
 
     /**
-     * Interact with the machine.
+     * Get the ItemStack stored in the machine.
      *
-     * @param player The player interacting with the machine.
+     * @return The stored ItemStack, or null if there is no item stored.
      */
-    public void interact(Player player) {
-        // TODO: Implement this method.
+    public ItemStack getStoredItem() {
+        return storedItem;
     }
 
+
     /**
-     * Add an item to the machine.
+     * Add an ItemStack to the machine.
      *
-     * @param item The item to add.
+     * @param itemStack The ItemStack to add.
      */
-    public void addItem(Item item) {
-        // TODO: Implement this method
+    public void setStoredItem(ItemStack itemStack, Player player) {
+        if (storedItem == null) {
+            storedItem = itemStack;
+        } else {
+            int amountToAdd = itemStack.getAmount();
+            int spaceLeft = storedItem.getMaxStackSize() - storedItem.getAmount();
+            if (amountToAdd <= spaceLeft) {
+                storedItem.setAmount(storedItem.getAmount() + amountToAdd);
+            } else {
+                storedItem.setAmount(storedItem.getMaxStackSize());
+                ItemStack remaining = itemStack.clone();
+                remaining.setAmount(amountToAdd - spaceLeft);
+                addItem(remaining, player);
+            }
+        }
+    }
+    private void addItem(ItemStack remaining, Player player) {
+        HashMap<Integer, ItemStack> leftover = player.getInventory().addItem(remaining);
+        if (!leftover.isEmpty()) {
+            Location loc = player.getLocation();
+            for (ItemStack item : leftover.values()) {
+                player.getWorld().dropItem(loc, item);
+            }
+        }
     }
 }

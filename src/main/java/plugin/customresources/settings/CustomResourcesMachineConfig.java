@@ -1,8 +1,5 @@
 package plugin.customresources.settings;
 
-import com.palmergames.bukkit.config.CommentedConfiguration;
-import com.palmergames.bukkit.towny.exceptions.TownyException;
-import com.palmergames.util.FileMgmt;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -11,11 +8,9 @@ import plugin.customresources.objects.MachineConfig;
 import plugin.customresources.objects.MachineTier;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.palmergames.bukkit.towny.TownyMessaging.sendMsg;
 import static plugin.customresources.CustomResources.info;
 
 public class CustomResourcesMachineConfig {

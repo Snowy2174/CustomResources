@@ -3,21 +3,20 @@ package plugin.customresources.objects;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-import java.util.Map;
 
 public class MachineTier {
 
     private final int level;
-    private final List<String> requiredResources;
+    private final List<String> inputItems;
     private final List<String> outputMaterials;
     private final List<Integer> outputAmounts;
     private final List<ItemStack> upgradeMaterials;
     private final int upgradeCost;
 
-    public MachineTier(int level, List<String> requiredResources, List<String> outputMaterials, List<Integer> outputAmounts,
+    public MachineTier(int level, List<String> inputItems, List<String> outputMaterials, List<Integer> outputAmounts,
                        List<ItemStack> upgradeMaterials, int upgradeCost) {
         this.level = level;
-        this.requiredResources = requiredResources;
+        this.inputItems = inputItems;
         this.outputMaterials = outputMaterials;
         this.outputAmounts = outputAmounts;
         this.upgradeMaterials = upgradeMaterials;
@@ -29,8 +28,8 @@ public class MachineTier {
         return level;
     }
 
-    public List<String> getRequiredResources() {
-        return requiredResources;
+    public List<String> getInputItems() {
+        return inputItems;
     }
 
     public List<String> getOutputMaterials() {

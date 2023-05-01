@@ -6,6 +6,8 @@ import com.palmergames.bukkit.towny.event.statusscreen.TownStatusScreenEvent;
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.Translator;
 import com.palmergames.bukkit.towny.utils.TownyComponents;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import plugin.customresources.metadata.CustomResourcesGovernmentMetaDataController;
 import plugin.customresources.settings.CustomResourcesSettings;
 import plugin.customresources.util.CustomResourcesMessagingUtil;
@@ -13,11 +15,8 @@ import plugin.customresources.util.CustomResourcesMessagingUtil;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-
 /**
- * 
+ *
  * @author Goosius
  *
  */
@@ -38,7 +37,7 @@ public class CustomResourcesTownEventListener implements Listener {
 				return;
 
 			productionAsString = CustomResourcesMessagingUtil.adjustAmountsForTownLevelModifier(town, productionAsString);
-			
+
 			//Resources:
 			Component component = Component.empty();
 			component = component.append(Component.newline());
@@ -62,7 +61,7 @@ public class CustomResourcesTownEventListener implements Listener {
 		if (townModifier > 1.0)
 			modifierSlug = "+" + BigDecimal.valueOf((townModifier - 1) * 100).setScale(2, RoundingMode.HALF_UP).doubleValue();
 		if (townModifier < 1.0)
-			modifierSlug = String.valueOf(BigDecimal.valueOf((townModifier * 100) - 100).setScale(2, RoundingMode.HALF_UP).doubleValue()); 
+			modifierSlug = String.valueOf(BigDecimal.valueOf((townModifier * 100) - 100).setScale(2, RoundingMode.HALF_UP).doubleValue());
 		return Component.text(translator.of("customresources.town.screen.town.level.modifier", modifierSlug)).append(Component.text("%"));
 	}
 }

@@ -1,7 +1,5 @@
 package plugin.customresources.objects;
 
-import org.bukkit.inventory.ItemStack;
-
 import java.util.List;
 
 public class MachineConfig {
