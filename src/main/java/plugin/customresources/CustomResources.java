@@ -11,7 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import plugin.customresources.commands.MachineAddon;
+import plugin.customresources.commands.TownMachineAddon;
 import plugin.customresources.commands.NationCollectAddon;
 import plugin.customresources.commands.TownResourcesAddon;
 import plugin.customresources.commands.TownyAdminResourcesAddon;
@@ -154,14 +154,16 @@ public class CustomResources extends JavaPlugin {
 
 	private void printSickASCIIArt() {
 		Bukkit.getConsoleSender().sendMessage("");
-		Bukkit.getConsoleSender().sendMessage(              "       --------------- Goosius' ---------------  ");
-		Bukkit.getConsoleSender().sendMessage(Colors.Gold + "     ╔╦╗┌─┐┬ ┬┌┐┌┬ ┬  ╦═╗┌─┐┌─┐┌─┐┬ ┬┬─┐┌─┐┌─┐┌─┐");
-		Bukkit.getConsoleSender().sendMessage(Colors.Gold + "      ║ │ │││││││└┬┘  ╠╦╝├┤ └─┐│ ││ │├┬┘│  ├┤ └─┐");
-		Bukkit.getConsoleSender().sendMessage(Colors.Gold + "      ╩ └─┘└┴┘┘└┘ ┴   ╩╚═└─┘└─┘└─┘└─┘┴└─└─┘└─┘└─┘");
+		Bukkit.getConsoleSender().sendMessage(              "       --------------- BMC' ---------------  ");
+		Bukkit.getConsoleSender().sendMessage(Colors.Gold + "         ╔═  ╦═╗┌─┐┌─┐┌─┐┬ ┬┬─┐┌─┐┌─┐┌─┐");
+		Bukkit.getConsoleSender().sendMessage(Colors.Gold + "         ║   ╠╦╝├┤ └─┐│ ││ │├┬┘│  ├┤ └─┐");
+		Bukkit.getConsoleSender().sendMessage(Colors.Gold + "         ╚═  ╩╚═└─┘└─┘└─┘└─┘┴└─└─┘└─┘└─┘");
 		Bukkit.getConsoleSender().sendMessage("");
-		Bukkit.getConsoleSender().sendMessage(              "       ---------- Maintained by LlmDl ---------  ");
+		Bukkit.getConsoleSender().sendMessage(              "       ---------- Maintained by Snowy ---------  ");
 		Bukkit.getConsoleSender().sendMessage(              "       -- https://github.com/sponsors/LlmDl  --  ");
 		Bukkit.getConsoleSender().sendMessage("");
+
+
 	}
 
 	private void registerListeners() {
@@ -176,9 +178,9 @@ public class CustomResources extends JavaPlugin {
 
 	private void registerCommands() {
 		new TownResourcesAddon();
+		new TownMachineAddon();
 		new NationCollectAddon();
 		new TownyAdminResourcesAddon();
-		getCommand("placeMachine").setExecutor(new MachineAddon());
 	}
 
 	public boolean isDynmapTownyInstalled() {

@@ -1,13 +1,14 @@
 package plugin.customresources.controllers;
 
 import com.gmail.goosius.siegewar.TownOccupationController;
+import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.TownyEconomyHandler;
+import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.exceptions.TownyException;
-import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.towny.object.Town;
-import com.palmergames.bukkit.towny.object.Translatable;
+import com.palmergames.bukkit.towny.object.*;
 import plugin.customresources.CustomResources;
 import plugin.customresources.metadata.CustomResourcesGovernmentMetaDataController;
+import plugin.customresources.objects.Machine;
 import plugin.customresources.settings.CustomResourcesSettings;
 import plugin.customresources.util.CustomResourcesMessagingUtil;
 
@@ -76,8 +77,32 @@ public class TownResourceDiscoveryController {
         int levelOfNewResource = discoveredMaterials.size();
         double productivityModifierNormalized;
         productivityModifierNormalized = (double) CustomResourcesSettings.getProductionPercentagesPerResourceLevel().get(levelOfNewResource - 1) / 100;
-        int preTaxProduction = (int)((MACHINES.get(machine).getTiers().get(0).getOutputAmounts().get(0) * productivityModifierNormalized) + 0.5);
+        String preTaxProduction = String.valueOf(MACHINES.get(machine).getTiers().get(0).getOutputAmounts().get(0) * productivityModifierNormalized + 0.5);
         String materialName = CustomResourcesMessagingUtil.formatMaterialNameForDisplay(material);
         CustomResourcesMessagingUtil.sendGlobalMessage(Translatable.of("customresources.discovery.success", resident.getName(), town.getName(), preTaxProduction, materialName));
+    }
+
+    public static void removeResource(Machine machine) throws TownyException{
+
+        Town town = TownyAPI.getInstance().getTown(machine.getLocation());
+        List<String> alreadyDiscoveredMaterials = CustomResourcesGovernmentMetaDataController.getDiscoveredAsList(town);
+
+        //Calculate a new category and material for discovery
+        List<String> discoveredMaterials = new ArrayList<>(alreadyDiscoveredMaterials);
+        //Discover the resource
+        String material = MACHINES.get(machine.getType()).getTiers().get(0).getOutputMaterials().get(0);
+        discoveredMaterials.remove(material);
+        CustomResourcesGovernmentMetaDataController.setDiscovered(town, discoveredMaterials);
+        town.save();
+
+        //Recalculate Town Production
+        TownResourceProductionController.recalculateProductionForOneTown(town);
+
+        //Recalculate Nation Production
+        if(CustomResources.getPlugin().isSiegeWarInstalled() && TownOccupationController.isTownOccupied(town)) {
+            TownResourceProductionController.recalculateProductionForOneNation(TownOccupationController.getTownOccupier(town));
+        } else if (town.hasNation()) {
+            TownResourceProductionController.recalculateProductionForOneNation(town.getNation());
+        }
     }
 }

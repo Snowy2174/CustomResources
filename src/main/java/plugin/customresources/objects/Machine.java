@@ -10,6 +10,7 @@ import java.util.UUID;
 
 public class Machine {
 
+    private final Location location;
     private final String type;
     private CustomResourcesMachineState state;
     private final UUID id;
@@ -19,7 +20,8 @@ public class Machine {
 
     private ItemStack storedItem = null;
 
-    public Machine(UUID id, String type, Integer tier) {
+    public Machine(UUID id, String type, Integer tier, Location location) {
+        this.location = location;
         this.type = type;
         this.tier = tier;
         this.state = CustomResourcesMachineState.Active;
@@ -33,6 +35,15 @@ public class Machine {
      */
     public String getType() {
         return type;
+    }
+
+    /**
+     * Get the location of the machine.
+     *
+     * @return The location of the machine.
+     */
+    public Location getLocation() {
+        return location;
     }
 
     /**

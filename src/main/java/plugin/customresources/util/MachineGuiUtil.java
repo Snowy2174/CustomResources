@@ -18,7 +18,9 @@ import plugin.customresources.objects.Machine;
 import plugin.customresources.objects.MachineConfig;
 
 import java.util.Arrays;
+import java.util.UUID;
 
+import static plugin.customresources.controllers.TownMachineManager.getMachine;
 import static plugin.customresources.settings.CustomResourcesMachineConfig.MACHINES;
 import static plugin.customresources.util.ConfirmGuiUtil.onConfirmationInteract;
 import static plugin.customresources.util.ConfirmGuiUtil.openConfirmation;
@@ -44,24 +46,24 @@ public class MachineGuiUtil {
         MachineConfig config = MACHINES.get(machine.getType());
         Material icon = Material.valueOf((config.getIcon()));
 
-        ItemStack machineIcon = createGuiItem(icon, config.getName(), machine, "");
+        ItemStack machineIcon = createMachineIcon(icon, config.getName(), machine, "");
         inventory.setItem(22, machineIcon);
 
         // Add destroy machine button
-        inventory.setItem(20, createGuiItem(Material.REDSTONE_BLOCK, "Destroy Machine", machine, ChatColor.RED + "Click to destroy this machine"));
+        inventory.setItem(20, createGuiItem(Material.REDSTONE_BLOCK, "Destroy Machine",  ChatColor.RED + "Click to destroy this machine"));
 
         // Add upgrade machine button
-        inventory.setItem(24, createGuiItem(Material.ANVIL, "Upgrade Machine", machine, ChatColor.GREEN + "Click to upgrade this machine"));
+        inventory.setItem(24, createGuiItem(Material.ANVIL, "Upgrade Machine",  ChatColor.GREEN + "Click to upgrade this machine"));
 
         // Add item input slot
-        ItemStack inputSlot = createGuiItem(Material.HOPPER, "Input Slot", machine, ChatColor.GRAY + "Drag and drop items here to input them");
+        ItemStack inputSlot = createGuiItem(Material.HOPPER, "Input Slot",  ChatColor.GRAY + "Drag and drop items here to input them");
         if (machine.getStoredItem() != null) {
             inputSlot = machine.getStoredItem();
         }
         inventory.setItem(13, inputSlot);
     }
 
-    protected static ItemStack createGuiItem(final Material material, final String name, Machine machine, final String... lore) {
+    protected static ItemStack createMachineIcon(final Material material, final String name, Machine machine, final String... lore) {
         final ItemStack item = new ItemStack(material);
         final ItemMeta meta = item.getItemMeta();
 
@@ -71,11 +73,23 @@ public class MachineGuiUtil {
         // Set the lore of the item
         meta.setLore(Arrays.asList(lore));
 
-        Gson gson = new Gson();
-        String json = gson.toJson(machine);
+        meta.getPersistentDataContainer().set(new NamespacedKey(CustomResources.getPlugin(), "machineId"),
+                PersistentDataType.STRING,
+                machine.getId().toString());
 
-        // Set the custom tag for the machine object
-        meta.getPersistentDataContainer().set(new NamespacedKey(CustomResources.getPlugin(), "machine"), PersistentDataType.STRING, json);
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    protected static ItemStack createGuiItem(final Material material, final String name, final String... lore) {
+        final ItemStack item = new ItemStack(material);
+        final ItemMeta meta = item.getItemMeta();
+
+        // Set the name of the item
+        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
+
+        // Set the lore of the item
+        meta.setLore(Arrays.asList(lore));
 
         item.setItemMeta(meta);
         return item;
@@ -99,15 +113,14 @@ public class MachineGuiUtil {
 
                 if (clickedItem == null || clickedItem.getType().isAir()) return;
 
-                // Retrieve the machine object from the input slot item's metadata
-                ItemStack item = event.getInventory().getItem(0);
+                // Retrieve the machine ID from the storage item's metadata
+                ItemStack item = event.getInventory().getItem(22);
                 ItemMeta meta = item.getItemMeta();
-
                 PersistentDataContainer data = meta.getPersistentDataContainer();
-                String machineData = data.get(new NamespacedKey(CustomResources.getPlugin(), "machine"), PersistentDataType.STRING);
+                String machineId = data.get(new NamespacedKey(CustomResources.getPlugin(), "machineId"), PersistentDataType.STRING);
 
-                Gson gson = new Gson();
-                Machine machine = gson.fromJson(machineData, Machine.class);
+                // Retrieve the machine object using the getFromID() method
+                Machine machine = getMachine(UUID.fromString(machineId));
 
                 Player player = (Player) event.getWhoClicked();
 
