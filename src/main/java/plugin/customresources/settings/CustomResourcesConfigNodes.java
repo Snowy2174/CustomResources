@@ -43,10 +43,22 @@ public enum CustomResourcesConfigNodes {
 			"# Example: If the first value is 250, then it will cost 250 to survey and discover the level 1 resource."),
 	TOWN_RESOURCES_SURVEYS_NUM_TOWNBLOCKS_REQUIREMENT_PER_RESOURCE_LEVEL(
 			"town_resources.surveys.num_townblocks_requirement_per_resource_level",
-			"10, 50, 100, 200",
+			"1, 1, 1, 1", // ORIGINAL: "10, 50, 100, 200",
 			"",
 			"# This list of values determines how much many townblocks a town must have to DISCOVER each level of resource.",
 			"# Example: If the first value is 10, then the town must have 10 townblocks to survey and discover the level 1 resource."),
+	TOWN_RESOURCES_MACHINE_LEVEL(
+			"town_resources.machine_level",
+			"0, 1, 2, 3, 4",
+			"",
+			"# Determines how many levels a town can have for machines. For example, certain machines will require",
+			"# a town to have reached a certain level in order to work or be placed down"),
+	TOWN_RESOURCES_MACHINE_LEVEL_TOWN_BLOCK_REQUIREMENT(
+			"town_resources.machine_level.town_block_requirement",
+			"10, 50, 120",
+			"",
+			"# List of values that determines how many town blocks a town must have in order to progress to the next machine level",
+			"# level 0 -> 1 = 10, level 1 -> 2 = 50, level 3 -> 4 = 120. Level 4 is the maximum"),
 	TOWN_RESOURCES_PRODUCTION(
 			"town_resources.production",
 			"",
