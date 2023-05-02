@@ -45,7 +45,7 @@ public class TownMachineManager {
             return;
         }
 
-        File machinesFile = new File(DATA_FOLDER + "/" + MACHINES_FILE + ".yml");
+        File machinesFile = new File(DATA_FOLDER + "/" + MACHINES_FILE);
         if (machinesFile.exists()) {
             Yaml yaml = new Yaml();
             try (FileInputStream input = new FileInputStream(machinesFile)) {
