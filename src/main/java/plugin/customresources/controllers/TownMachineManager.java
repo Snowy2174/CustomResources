@@ -29,8 +29,8 @@ import static plugin.customresources.util.MachineHologramUtil.removeHologram;
 public class TownMachineManager {
 
 
-    private static final String DATA_FOLDER = "plugins/ResourceGeneratorPlugin/data";
-    private static final String MACHINES_FILE = "machines.json";
+    private static final String DATA_FOLDER = "plugins/CustomResources/data";
+    private static final String MACHINES_FILE = "machines.yml";
 
     public static Map<UUID, Machine> machineMap = new HashMap<>();
 
@@ -65,7 +65,7 @@ public class TownMachineManager {
             return;
         }
 
-        File machinesFile = new File(DATA_FOLDER + "/" + MACHINES_FILE + ".yml");
+        File machinesFile = new File(DATA_FOLDER + "/" + MACHINES_FILE);
         Yaml yaml = new Yaml();
         try (FileWriter writer = new FileWriter(machinesFile)) {
             yaml.dump(machineMap, writer);
