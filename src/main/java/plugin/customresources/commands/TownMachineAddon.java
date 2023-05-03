@@ -5,6 +5,7 @@ import com.palmergames.bukkit.towny.TownyCommandAddonAPI;
 import com.palmergames.bukkit.towny.TownyEconomyHandler;
 import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.command.BaseCommand;
+import com.palmergames.bukkit.towny.object.metadata.IntegerDataField;
 import com.palmergames.bukkit.towny.confirmations.Confirmation;
 import com.palmergames.bukkit.towny.exceptions.TownyException;
 import com.palmergames.bukkit.towny.object.*;
@@ -31,6 +32,8 @@ import static plugin.customresources.controllers.MachinePlacementController.isMa
 import static plugin.customresources.controllers.TownMachineManager.getMachine;
 import static plugin.customresources.controllers.TownMachineManager.getMachineByChunk;
 import static plugin.customresources.settings.CustomResourcesMachineConfig.*;
+import static plugin.customresources.settings.CustomResourcesMachineConfig.MACHINES;
+import plugin.customresources.objects.MachineConfig;
 
 public class TownMachineAddon extends BaseCommand implements TabExecutor {
 
@@ -89,12 +92,6 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
     public static void parseMachineConstructCommand(Player player, String[] args) throws TownyException {
         checkPermOrThrow(player, CustomResourcesPermissionNodes.CUSTOM_RESOURCES_SURVEY.getNode());
 
-//        Player targetPlayer = Bukkit.getPlayer(args[1]);
-//       if (targetPlayer == null) {
-//       CustomResourcesMessagingUtil.sendErrorMsg(player, "The specified player is not online or does not exist.");
-//            return;
-//        }
-
         String machineType = args[1];
         if (!MachinePlacementController.isValidMachine(machineType)) {
             CustomResourcesMessagingUtil.sendErrorMsg(player, "The specified machine name is not valid.");
@@ -130,55 +127,20 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
         if(!locationChunkChecker(location))
             throw new TownyException(Translatable.of("customresources.msg_err_not_same_chunk"));
 
-        //Check if there are resources left to discover at the town
-        List<String> discoveredResources = CustomResourcesGovernmentMetaDataController.getDiscoveredAsList(town);
-        List<Integer> costPerResourceLevel = CustomResourcesSettings.getSurveyCostsPerResourceLevel();
+        //Check if town meets the level requirement of the machine
+        MachineConfig config = MACHINES.get(machineType);
+        IntegerDataField idf = (IntegerDataField) town.getMetadata("customresources_townMachineLevel");
+        Integer townMachineLevel = idf.getValue();
 
-        List<Integer> requiredNumTownblocksPerResourceLevel = CustomResourcesSettings.getSurveyNumTownblocksRequirementsPerResourceLevel();
-
-        if(discoveredResources.size() >= costPerResourceLevel.size())
-            throw new TownyException(Translatable.of("customresources.msg_err_survey_all_resources_already_discovered"));
-        if(discoveredResources.size() >= requiredNumTownblocksPerResourceLevel.size())
-            throw new TownyException(Translatable.of("customresources.msg_err_survey_all_resources_already_discovered"));
-
-        //Check if the town has enough townblocks
-        int indexOfNextResourceLevel = discoveredResources.size();
-        int requiredNumTownblocks = requiredNumTownblocksPerResourceLevel.get(indexOfNextResourceLevel);
-        int currentNumTownblocks = town.getTownBlocks().size();
-
-        if(currentNumTownblocks < requiredNumTownblocks)
-            throw new TownyException(Translatable.of("customresources.msg_err_survey_not_enough_townblocks",
-                    requiredNumTownblocks, currentNumTownblocks));
-
-        //Get survey level & cost
-        int surveyLevel = indexOfNextResourceLevel+1;
-        double surveyCost = costPerResourceLevel.get(indexOfNextResourceLevel);
-
-        //Send confirmation request message
-        String surveyCostFormatted = "0";
-        if(TownyEconomyHandler.isActive())
-            surveyCostFormatted = TownyEconomyHandler.getFormattedBalance(surveyCost);
-
-        CustomResourcesMessagingUtil.sendMsg(player, Translatable.of("customresources.msg_confirm_survey", town.getName(), surveyLevel, surveyCostFormatted));
-
-        //Send warning message if town level is too low
-        int requiredTownLevel = CustomResourcesSettings.getProductionTownLevelRequirementPerResourceLevel().get(indexOfNextResourceLevel);
-        int actualTownLevel = town.getLevel();
-        if(actualTownLevel < requiredTownLevel) {
-            CustomResourcesMessagingUtil.sendMsg(player, Translatable.of("customresources.msg_confirm_survey_town_level_warning", requiredTownLevel, actualTownLevel));
-        }
-        Resident resident = TownyUniverse.getInstance().getResident(player.getUniqueId());
+        if (config.getTownLevel() != townMachineLevel)
+            throw new TownyException(Translatable.of("customresources.msg_err_town_machine_level_req_not_met", config.getTownLevel(), townMachineLevel));
 
         Location finalLocation = location;
+
         Confirmation.runOnAcceptAsync(() -> {
-                    try {
-                        MachinePlacementController.placeMachine(finalLocation, machineType);
-                        TownResourceDiscoveryController.discoverNewResource(resident, town, machineType, surveyLevel, surveyCost, discoveredResources);
-                    } catch (TownyException te) {
-                        CustomResourcesMessagingUtil.sendErrorMsg(player, te.getMessage(player));
-                    }
-                })
-                .sendTo(player);
+            MachinePlacementController.placeMachine(finalLocation, machineType);
+        })
+        .sendTo(player);
     }
 
     public static void parseMachineUpgradeCommand(Player player) throws TownyException {
