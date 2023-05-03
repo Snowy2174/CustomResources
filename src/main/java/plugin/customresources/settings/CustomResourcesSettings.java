@@ -52,6 +52,14 @@ public class CustomResourcesSettings {
 		return getDouble(CustomResourcesConfigNodes.TOWN_RESOURCES_PRODUCTION_OCCUPYING_NATION_TAX_PERCENTAGE) / 100;
 	}
 
+	public static List<Integer> getTownMachineLevel() {
+		return getIntegerList(CustomResourcesConfigNodes.TOWN_RESOURCES_MACHINE_LEVEL);
+	}
+
+	public static List<Integer> getTownBlockPerMachineLevel() {
+		return getIntegerList(CustomResourcesConfigNodes.TOWN_RESOURCES_TOWN_BLOCK_PER_MACHINE_LEVEL);
+	}
+
 	public static int getSumOfAllOfferDiscoveryProbabilityWeights() {
 		return sumOfAllOfferDiscoveryProbabilityWeights;
 	}
