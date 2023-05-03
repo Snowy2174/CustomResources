@@ -1,17 +1,22 @@
 package plugin.customresources.controllers;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.palmergames.bukkit.towny.exceptions.TownyException;
 import dev.lone.itemsadder.api.CustomFurniture;
 import dev.lone.itemsadder.api.Events.FurnitureBreakEvent;
 import dev.lone.itemsadder.api.Events.FurnitureInteractEvent;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.yaml.snakeyaml.Yaml;
+import plugin.customresources.CustomResources;
 import plugin.customresources.enums.CustomResourcesMachineState;
 import plugin.customresources.objects.Machine;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -21,6 +26,7 @@ import static com.palmergames.bukkit.towny.TownyMessaging.sendMsg;
 import static org.bukkit.Bukkit.getEntity;
 import static plugin.customresources.CustomResources.severe;
 import static plugin.customresources.controllers.MachinePlacementController.breakMachine;
+import static plugin.customresources.controllers.TownResourceDiscoveryController.removeResource;
 import static plugin.customresources.util.MachineGuiUtil.createMachineInterface;
 import static plugin.customresources.util.MachineGuiUtil.openInventory;
 import static plugin.customresources.util.MachineHologramUtil.createHologram;
@@ -29,8 +35,8 @@ import static plugin.customresources.util.MachineHologramUtil.removeHologram;
 public class TownMachineManager {
 
 
-    private static final String DATA_FOLDER = "plugins/ResourceGeneratorPlugin/data";
-    private static final String MACHINES_FILE = "machines.json";
+    private static final String DATA_FOLDER = "plugins/CustomResources/data";
+    private static final String MACHINES_FILE = "data.yml";
 
     public static Map<UUID, Machine> machineMap = new HashMap<>();
 
@@ -45,7 +51,7 @@ public class TownMachineManager {
             return;
         }
 
-        File machinesFile = new File(DATA_FOLDER + "/" + MACHINES_FILE + ".yml");
+        File machinesFile = new File(DATA_FOLDER + "/" + MACHINES_FILE);
         if (machinesFile.exists()) {
             Yaml yaml = new Yaml();
             try (FileInputStream input = new FileInputStream(machinesFile)) {
@@ -65,7 +71,7 @@ public class TownMachineManager {
             return;
         }
 
-        File machinesFile = new File(DATA_FOLDER + "/" + MACHINES_FILE + ".yml");
+        File machinesFile = new File(DATA_FOLDER + "/" + MACHINES_FILE);
         Yaml yaml = new Yaml();
         try (FileWriter writer = new FileWriter(machinesFile)) {
             yaml.dump(machineMap, writer);
@@ -74,9 +80,8 @@ public class TownMachineManager {
         }
     }
 
-
-    public static void createMachine(String type, UUID id) {
-        Machine machine = new Machine(id, type, 0);
+    public static void createMachine(String type, UUID id, Location center) {
+        Machine machine = new Machine(id, type, 0, center);
         machineMap.put(machine.getId(), machine);
 
         saveMachines();
@@ -84,7 +89,13 @@ public class TownMachineManager {
     }
 
     public static void removeMachine(Machine machine) {
-        machineMap.remove(machine.getId());
+        try {
+            machineMap.remove(machine.getId());
+            removeResource(machine);
+            removeHologram(String.valueOf(machine.getId()));
+        } catch (TownyException e) {
+            throw new RuntimeException(e);
+        }
 
         saveMachines();
     }
@@ -93,12 +104,22 @@ public class TownMachineManager {
         return machineMap.get(id);
     }
 
+    public static Machine getMachineByChunk(Location location) {
+        Chunk chunk = location.getChunk();
+        for (Machine machine : machineMap.values()) {
+            if (machine.getLocation().getChunk().equals(chunk)) {
+                return machine;
+            }
+        }
+        return null;
+    }
+
     public static void machineGenerateResources() {
         machineMap.values().stream()
                 .filter(machine -> machine.getState() == CustomResourcesMachineState.Active)
                 .forEach(machine -> {
                     machine.setState(CustomResourcesMachineState.Finshed);
-                    createHologram(machine, getEntity(machine.getId()).getLocation(), true);
+                    createHologram(machine, true);
                     // TODO: Add any additional logic here that needs to be performed when setting the machine
                 });
         saveMachines();
@@ -125,7 +146,7 @@ public class TownMachineManager {
                 removeHologram(String.valueOf(machine.getId()));
             } else {
                 // Create hologram (autoremoved) on right click
-                createHologram(machine, customFurniture.getArmorstand().getLocation(), false);
+                createHologram(machine, false);
             }
         } else {
             // Create new GUI inventory on shift right click
@@ -153,7 +174,7 @@ public class TownMachineManager {
                 } else {
                     breakMachine(clickedFurniture, machine);
                 }
-                }
             }
         }
     }
+}
