@@ -174,7 +174,7 @@ public class TownMachineManager {
                 } else {
                     breakMachine(clickedFurniture, machine);
                 }
-                }
             }
         }
     }
+}

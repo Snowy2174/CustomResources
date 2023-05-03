@@ -6,6 +6,7 @@ import com.palmergames.bukkit.towny.event.statusscreen.TownStatusScreenEvent;
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.Translator;
 import com.palmergames.bukkit.towny.utils.TownyComponents;
+import com.palmergames.bukkit.towny.event.NewTownEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import plugin.customresources.metadata.CustomResourcesGovernmentMetaDataController;
@@ -21,6 +22,12 @@ import java.math.RoundingMode;
  *
  */
 public class CustomResourcesTownEventListener implements Listener {
+
+	@EventHandler
+	public void onNewTown(NewTownEvent event){
+		Town town = event.getTown();
+		CustomResourcesGovernmentMetaDataController.checkTownMachineryLevel(town);
+	}
 
 	/*
 	 * CustomResources will add resource info to the town screen
