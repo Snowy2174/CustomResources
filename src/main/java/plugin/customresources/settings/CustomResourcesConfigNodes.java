@@ -53,8 +53,8 @@ public enum CustomResourcesConfigNodes {
 			"",
 			"# Determines how many levels a town can have for machines. For example, certain machines will require",
 			"# a town to have reached a certain level in order to work or be placed down"),
-	TOWN_RESOURCES_MACHINE_LEVEL_TOWN_BLOCK_REQUIREMENT(
-			"town_resources.machine_level.town_block_requirement",
+	TOWN_RESOURCES_TOWN_BLOCK_PER_MACHINE_LEVEL(
+			"town_resources.machine_level.town_block_per_level",
 			"10, 50, 120",
 			"",
 			"# List of values that determines how many town blocks a town must have in order to progress to the next machine level",
