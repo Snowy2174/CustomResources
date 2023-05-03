@@ -219,4 +219,4 @@ Should I enable the daily-limits feature?
   ```
 - Keep in mind that whatever the pros and cons of the feature, it is no less ***Natural*** than *Towny* block protections, i.e. Just as *Towny* magically prevents-block breaking to protect the **Architectural** value of towns, *CustomResources* magically prevents block-breaking to protect the **Economic** value of towns.
 
------------
+---------
