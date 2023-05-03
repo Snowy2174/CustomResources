@@ -59,8 +59,11 @@ public class MachinePlacementController {
                         }
                     }
                 }
-                CustomFurniture.remove(entity, false);
-                removeMachineData(machine);
+                // Wrap the remove furniture call and subsequent operations in a Bukkit runTask method call
+                Bukkit.getScheduler().runTask(CustomResources.getPlugin(), () -> {
+                    CustomFurniture.remove(entity, false);
+                    removeMachineData(machine);
+                });
             }
         }
     }

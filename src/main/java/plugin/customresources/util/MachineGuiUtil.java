@@ -114,7 +114,7 @@ public class MachineGuiUtil {
 
     // On click inside inventory, perform action
     public static void onInterfaceInteract(InventoryClickEvent event) {
-            if (!event.getInventory().equals(inventory)) {
+            if (event.getInventory().equals(inventory)) {
 
                 event.setCancelled(true);
 

@@ -28,14 +28,14 @@ public class MachineHologramUtil {
 
     public static void createHologram(Machine machine, Boolean ready) {
         String id = String.valueOf(machine.getId());
-        Location location = machine.getLocation();
+        Location location = machine.getLocation().add(0.0, 3.0, 0.0);
 
         if (holograms.containsKey(id)) {
             // If a hologram with the same ID exists, stop
             return;
         } else {
             HolographicDisplaysAPI api = HolographicDisplaysAPI.get(CustomResources.getPlugin());
-            Hologram machineHolo = api.createHologram(location.add(0.0, 3.0, 0.0));
+            Hologram machineHolo = api.createHologram(location);
 
             MachineConfig config = MACHINES.get(machine.getType());
             MachineTier tierConfig = config.getTiers().get(machine.getTier());

@@ -32,6 +32,7 @@ import static plugin.customresources.commands.TownMachineAddon.locationChunkChec
 import static plugin.customresources.controllers.MachinePlacementController.breakMachine;
 import static plugin.customresources.controllers.MachinePlacementController.isMachinePlacedInChunk;
 import static plugin.customresources.controllers.TownMachineManager.getMachineByChunk;
+import static plugin.customresources.metadata.CustomResourcesGovernmentMetaDataController.setTownMachineryLevel;
 
 public class TownyAdminMachinesAddon extends BaseCommand implements CommandExecutor, TabCompleter {
 
@@ -131,7 +132,7 @@ public class TownyAdminMachinesAddon extends BaseCommand implements CommandExecu
 		if (town == null)
 			throw new TownyException(Translatable.of("customresources.msg_err_no_town"));
 
-		//setTownMachineryLevel(town, (Integer) level);
+		setTownMachineryLevel(town, Integer.parseInt(level));
 	}
 
 	public static void parseBuildMachineCommand(CommandSender sender, String[] args) throws TownyException {

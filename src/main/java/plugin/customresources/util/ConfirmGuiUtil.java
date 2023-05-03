@@ -3,12 +3,21 @@ package plugin.customresources.util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
+import plugin.customresources.CustomResources;
 import plugin.customresources.objects.Machine;
 
+import java.util.UUID;
+
+import static plugin.customresources.controllers.MachinePlacementController.breakMachine;
+import static plugin.customresources.controllers.TownMachineManager.getMachine;
 import static plugin.customresources.util.MachineGuiUtil.createGuiItem;
 import static plugin.customresources.util.MachineGuiUtil.createMachineIcon;
 
@@ -74,8 +83,16 @@ public class ConfirmGuiUtil {
 
     public static void handleConfirmationResponse(Player player, ItemStack clickedItem, ConfirmationAction action) {
         if (clickedItem.getType() == action.getMaterial()) {
+            // Retrieve the machine ID from the storage item's metadata
+            ItemMeta meta = clickedItem.getItemMeta();
+            PersistentDataContainer data = meta.getPersistentDataContainer();
+            String machineId = data.get(new NamespacedKey(CustomResources.getPlugin(), "machineId"), PersistentDataType.STRING);
+
+            // Retrieve the machine object using the getFromID() method
+            Machine machine = getMachine(UUID.fromString(machineId));
+
             if (action == ConfirmationAction.DESTROY) {
-                // TODO: Code to destroy machine
+                breakMachine(machine);
             } else if (action == ConfirmationAction.UPGRADE) {
                 // TODO: Code to upgrade machine
             }

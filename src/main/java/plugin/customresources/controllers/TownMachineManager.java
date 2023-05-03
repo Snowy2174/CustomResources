@@ -1,6 +1,7 @@
 package plugin.customresources.controllers;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.palmergames.bukkit.towny.exceptions.TownyException;
 import dev.lone.itemsadder.api.CustomFurniture;
@@ -33,49 +34,47 @@ public class TownMachineManager {
 
 
     private static final String DATA_FOLDER = "plugins/CustomResources/data";
-    private static final String MACHINES_FILE = "data.yml";
+    private static final String MACHINES_FILE = "data.json";
 
     public static Map<UUID, Machine> machineMap = new HashMap<>();
 
     public static void loadMachines() {
-        File dataFolder = new File(DATA_FOLDER);
-        try {
-            if (!dataFolder.exists() && !dataFolder.mkdirs()) {
-                throw new IOException("Failed to create data folder");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
 
-        File machinesFile = new File(DATA_FOLDER + "/" + MACHINES_FILE);
-        if (machinesFile.exists()) {
-            Yaml yaml = new Yaml();
-            try (FileInputStream input = new FileInputStream(machinesFile)) {
-                Map<String, Machine> machineMap = yaml.load(input);
-                machineMap.values().forEach(machine -> TownMachineManager.machineMap.put(machine.getId(), machine));
+        Gson gson = new Gson();
+        File file = new File(CustomResources.getPlugin().getDataFolder().getAbsolutePath() + "/machines.json");
+        if (file.exists()){
+            try {
+                Reader reader = new FileReader(file);
+               // Machine[] n = gson.fromJson(reader, Machine[].class);
+                //for (Machine machine : n) {
+                //    machineMap.put(machine.getId(), machine);
+              //  }
+                System.out.println("Machines loaded.");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+
     }
-
     public static void saveMachines() {
-        File dataFolder = new File(DATA_FOLDER);
-        if (!dataFolder.exists() && !dataFolder.mkdirs()) {
-            // Failed to create the data folder, log an error message
-            severe("Failed to create the data folder");
-            return;
-        }
-
-        File machinesFile = new File(DATA_FOLDER + "/" + MACHINES_FILE);
-        Yaml yaml = new Yaml();
-        try (FileWriter writer = new FileWriter(machinesFile)) {
-            yaml.dump(machineMap, writer);
+        Gson gson = new Gson();
+        System.out.println(CustomResources.getPlugin().getDataFolder().getAbsolutePath());
+        File file = new File(CustomResources.getPlugin().getDataFolder().getAbsolutePath() + "/machines.json");
+        file.getParentFile().mkdir();
+        try {
+            file.createNewFile();
+            Writer writer = new FileWriter(file, false);
+            //Machine[] machines = machineMap.values().toArray(new Machine[0]);
+            int[] machines = { 1 };
+            gson.toJson(machines, writer);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+
+
+
 
     public static void createMachineData(String type, UUID id, Location center) {
         Machine machine = new Machine(id, type, 0, center);
