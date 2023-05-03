@@ -95,7 +95,12 @@ public class CustomResourcesMachineConfig {
         return new MachineTier(tierLevel, tierInputs, outputMaterialNames, outputMaterialAmounts, upgradeMaterials, tierUpgradeCost);
     }
 
-
+    public static List<String> getAllMachineNames() {
+        if (MACHINES == null) {
+            return Collections.emptyList();
+        }
+        return new ArrayList<>(MACHINES.keySet());
+    }
 
 
     public static void unload() {

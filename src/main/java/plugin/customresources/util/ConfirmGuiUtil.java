@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import plugin.customresources.objects.Machine;
 
 import static plugin.customresources.util.MachineGuiUtil.createGuiItem;
+import static plugin.customresources.util.MachineGuiUtil.createMachineIcon;
 
 public class ConfirmGuiUtil {
 
@@ -47,8 +48,8 @@ public class ConfirmGuiUtil {
 
         confirmInventory = Bukkit.createInventory(null, 36, "Confirm " + action.getName());
 
-        ItemStack confirmItem = createGuiItem((action.getMaterial()), (action.getColor() + action.getName()), machine, "" );
-        ItemStack cancelItem = createGuiItem((Material.EMERALD_BLOCK), (ChatColor.RED + "Cancel"), machine, "" );
+        ItemStack confirmItem = createMachineIcon((action.getMaterial()), (action.getColor() + action.getName()), machine, "" );
+        ItemStack cancelItem = createMachineIcon((Material.EMERALD_BLOCK), (ChatColor.RED + "Cancel"), machine, "" );
 
         confirmInventory.setItem(CONFIRM_SLOT, confirmItem);
         confirmInventory.setItem(CANCEL_SLOT, cancelItem);
@@ -74,9 +75,9 @@ public class ConfirmGuiUtil {
     public static void handleConfirmationResponse(Player player, ItemStack clickedItem, ConfirmationAction action) {
         if (clickedItem.getType() == action.getMaterial()) {
             if (action == ConfirmationAction.DESTROY) {
-                // Code to destroy machine
+                // TODO: Code to destroy machine
             } else if (action == ConfirmationAction.UPGRADE) {
-                // Code to upgrade machine
+                // TODO: Code to upgrade machine
             }
         }
 
