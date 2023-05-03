@@ -75,6 +75,8 @@ customresources.msg_err_survey_too_expensive: "&cYou cannot afford to do this su
 customresources.msg_err_not_enough_offers_left: "&cSurvey not possible, because there are no offers left on the configured offers list."
 customresources.msg_err_town_machine_level_req_not_met: "&cYour town does not meet the level requirement of this machine. Machine Level Required: %d, Current Machine Town Level: %d"
 customresources.msg_err_no_town: "&cThis place is not part of your town. You must have it claimed first."
+customresources.msg_err_not_same_chunk: "&cThis machine cannot be placed between chunks. Please place it within only a single chunk."
+customresources.msg_err_already_placed_chunk: "&cThere is already a machine within this chunk. Please place it in another chunk."
 
 ### Production
 customresources.production.message: "&b%s towns produced resources."
