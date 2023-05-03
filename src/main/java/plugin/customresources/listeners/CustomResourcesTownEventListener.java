@@ -5,12 +5,15 @@ import com.palmergames.bukkit.towny.TownySettings;
 import com.palmergames.bukkit.towny.event.statusscreen.TownStatusScreenEvent;
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.Translator;
+import com.palmergames.bukkit.towny.object.metadata.IntegerDataField;
 import com.palmergames.bukkit.towny.utils.TownyComponents;
+import com.palmergames.bukkit.towny.event.NewTownEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import plugin.customresources.metadata.CustomResourcesGovernmentMetaDataController;
 import plugin.customresources.settings.CustomResourcesSettings;
 import plugin.customresources.util.CustomResourcesMessagingUtil;
+import org.bukkit.Bukkit;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -21,6 +24,14 @@ import java.math.RoundingMode;
  *
  */
 public class CustomResourcesTownEventListener implements Listener {
+
+	@EventHandler
+	public void onNewTown(NewTownEvent event){
+		Town town = event.getTown();
+		Integer startingMachineLevel = 0;
+		IntegerDataField idf = new IntegerDataField("customresources_townMachineLevel", startingMachineLevel, "Town Machine Level");
+		town.addMetaData(idf);
+	}
 
 	/*
 	 * CustomResources will add resource info to the town screen
