@@ -129,8 +129,7 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
 
         //Check if town meets the level requirement of the machine
         MachineConfig config = MACHINES.get(machineType);
-        IntegerDataField idf = (IntegerDataField) town.getMetadata("customresources_townMachineLevel");
-        Integer townMachineLevel = idf.getValue();
+        Integer townMachineLevel = CustomResourcesGovernmentMetaDataController.getTownMachineryLevel(town);
 
         if (config.getTownLevel() != townMachineLevel)
             throw new TownyException(Translatable.of("customresources.msg_err_town_machine_level_req_not_met", config.getTownLevel(), townMachineLevel));
