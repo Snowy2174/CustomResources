@@ -2,6 +2,7 @@ package plugin.customresources.metadata;
 
 import com.palmergames.bukkit.towny.object.Government;
 import com.palmergames.bukkit.towny.object.Town;
+import com.palmergames.bukkit.towny.object.metadata.IntegerDataField;
 import com.palmergames.bukkit.towny.object.metadata.StringDataField;
 import com.palmergames.bukkit.towny.utils.MetaDataUtil;
 import plugin.customresources.CustomResources;
@@ -35,6 +36,23 @@ public class CustomResourcesGovernmentMetaDataController {
         return MetaDataUtil.getString(government, discoveredSDF).replaceAll(" ","");
     }
 
+    // Set town metadata "customresources_townMachineLevel" of a given town to the specified level
+    public static void setTownMachineryLevel(Town town, Integer level){
+        IntegerDataField idf = new IntegerDataField("customresources_townMachineLevel", level, "Town Machine Level");
+        town.addMetaData(idf);
+    }
+
+    public static Integer getTownMachineryLevel(Town town){
+        IntegerDataField townMachineryLevel = (IntegerDataField) town.getMetadata("customresources_townMachineLevel");
+        return townMachineryLevel.getValue();
+    }
+
+    // Checks if a given town has the metadata "customresources_townMachineLevel" set, and if not, set it to 0 (starting machinery level of new towns)
+    public static void checkTownMachineryLevel(Town town){
+        Integer startingLevel = 0;
+        if (town.getMetadata("customresources_townMachineLevel") == null)
+            setTownMachineryLevel(town, startingLevel);
+    }
 
      /**
      * Get the discovered resources of a town
