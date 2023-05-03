@@ -40,25 +40,30 @@ public class MachinePlacementController {
                     }
                 }
             }
-            createMachine(machineName, machine.getUniqueId(), center);
+            createMachineData(machineName, machine.getUniqueId(), center);
         });
     }
 
 
-    public static void breakMachine(CustomFurniture furniture, Machine machine){
-        Location center = furniture.getArmorstand().getLocation().add(0, 1,0 );
+    public static void breakMachine(Machine machine) {
+        Location center = machine.getLocation();
 
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-                for (int k = -1; k <= 1; k++) {
-                    Location loc = new Location(furniture.getArmorstand().getWorld(), center.getBlockX() + i, center.getBlockY() + j, center.getBlockZ() + k);
-                    loc.getBlock().setType(Material.AIR);
+        for (Entity entity : center.getChunk().getEntities()) {
+            if (entity.getUniqueId().equals(machine.getId())) {
+
+                for (int i = -1; i <= 1; i++) {
+                    for (int j = -1; j <= 1; j++) {
+                        for (int k = -1; k <= 1; k++) {
+                            Location loc = new Location(entity.getWorld(), center.getBlockX() + i, center.getBlockY() + j, center.getBlockZ() + k);
+                            loc.getBlock().setType(Material.AIR);
+                        }
+                    }
                 }
+                CustomFurniture.remove(entity, false);
+                removeMachineData(machine);
             }
         }
-                furniture.remove(false);
-                removeMachine(machine);
-            }
+    }
 
     public static boolean isValidMachine(String machineName) {
         return MACHINES.containsKey(machineName);

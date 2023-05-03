@@ -17,10 +17,7 @@ import plugin.customresources.objects.Machine;
 
 import java.io.*;
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 import static com.palmergames.bukkit.towny.TownyMessaging.sendMsg;
 import static org.bukkit.Bukkit.getEntity;
@@ -80,7 +77,7 @@ public class TownMachineManager {
         }
     }
 
-    public static void createMachine(String type, UUID id, Location center) {
+    public static void createMachineData(String type, UUID id, Location center) {
         Machine machine = new Machine(id, type, 0, center);
         machineMap.put(machine.getId(), machine);
 
@@ -88,7 +85,7 @@ public class TownMachineManager {
         sendMsg("Machine created with ID " + machine.getId());
     }
 
-    public static void removeMachine(Machine machine) {
+    public static void removeMachineData(Machine machine) {
         try {
             machineMap.remove(machine.getId());
             removeResource(machine);
@@ -172,7 +169,7 @@ public class TownMachineManager {
                     event.setCancelled(true);
                     sendMsg(player, "&7[&c&l!&7]&c You cannot break this machine, open the machine Menu.");
                 } else {
-                    breakMachine(clickedFurniture, machine);
+                    breakMachine(machine);
                 }
             }
         }

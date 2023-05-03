@@ -14,7 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import plugin.customresources.commands.TownMachineAddon;
 import plugin.customresources.commands.NationCollectAddon;
 import plugin.customresources.commands.TownResourcesAddon;
-import plugin.customresources.commands.TownyAdminResourcesAddon;
+import plugin.customresources.commands.TownyAdminMachinesAddon;
 import plugin.customresources.controllers.TownMachineManager;
 import plugin.customresources.controllers.TownResourceOffersController;
 import plugin.customresources.controllers.TownResourceProductionController;
@@ -180,7 +180,7 @@ public class CustomResources extends JavaPlugin {
 		new TownResourcesAddon();
 		new TownMachineAddon();
 		new NationCollectAddon();
-		new TownyAdminResourcesAddon();
+		new TownyAdminMachinesAddon();
 	}
 
 	public boolean isDynmapTownyInstalled() {

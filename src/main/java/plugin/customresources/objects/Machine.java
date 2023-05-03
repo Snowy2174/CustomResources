@@ -6,6 +6,8 @@ import org.bukkit.inventory.ItemStack;
 import plugin.customresources.enums.CustomResourcesMachineState;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class Machine {
@@ -13,12 +15,13 @@ public class Machine {
     private final Location location;
     private final String type;
     private CustomResourcesMachineState state;
+    private Integer storedResources;
     private final UUID id;
     private final Integer tier;
-    private boolean isActivated = false;
-    private boolean isBroken = false;
 
-    private ItemStack storedItem = null;
+    private ItemStack fuelItemStack = null;
+    private Map<String, Integer> storedMaterialStrings = new HashMap<>();
+
 
     public Machine(UUID id, String type, Integer tier, Location location) {
         this.location = location;
@@ -84,50 +87,6 @@ public class Machine {
 
 
     /**
-     * Activate the machine.
-     */
-    public void activate() {
-        if (!isActivated && !isBroken) {
-            isActivated = true;
-        }
-    }
-
-    /**
-     * Deactivate the machine.
-     */
-    public void deactivate() {
-        if (isActivated) {
-            isActivated = false;
-        }
-    }
-
-    /**
-     * Check if the machine is activated.
-     *
-     * @return True if the machine is activated, false otherwise.
-     */
-    public boolean isActivated() {
-        return isActivated;
-    }
-
-    /**
-     * Break the machine.
-     */
-    public void breakMachine() {
-        isBroken = true;
-        deactivate();
-    }
-
-    /**
-     * Check if the machine is broken.
-     *
-     * @return True if the machine is broken, false otherwise.
-     */
-    public boolean isBroken() {
-        return isBroken;
-    }
-
-    /**
      * Run the machine.
      */
     private void runMachine() {
@@ -135,30 +94,80 @@ public class Machine {
     }
 
     /**
-     * Get the ItemStack stored in the machine.
+     * Get the map of stored materials and amounts.
+     *
+     * @return The map of stored materials and amounts.
+     */
+    public Integer getStoredResourcesInteger() {
+        return storedResources;
+    }
+
+    /**
+     * Get the map of stored materials and amounts.
+     *
+     * @return The map of stored materials and amounts.
+     */
+    public Map<String, Integer> getStoredMaterials() {
+        return storedMaterialStrings;
+    }
+
+    /**
+     * Add a material and amount to the stored materials map.
+     *
+     * @param material The material to add.
+     * @param amount The amount of the material to add.
+     */
+    public void addStoredMaterial(String material, int amount) {
+        if (storedMaterialStrings.containsKey(material)) {
+            storedMaterialStrings.put(material, storedMaterialStrings.get(material) + amount);
+        } else {
+            storedMaterialStrings.put(material, amount);
+        }
+    }
+
+    /**
+     * Remove a material and amount from the stored materials map.
+     *
+     * @param material The material to remove.
+     * @param amount The amount of the material to remove.
+     * @return True if the removal was successful, false otherwise.
+     */
+    public boolean removeStoredMaterial(String material, int amount) {
+        if (storedMaterialStrings.containsKey(material) && storedMaterialStrings.get(material) >= amount) {
+            storedMaterialStrings.put(material, storedMaterialStrings.get(material) - amount);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+
+    /**
+     * Get the fuel ItemStack stored in the machine.
      *
      * @return The stored ItemStack, or null if there is no item stored.
      */
-    public ItemStack getStoredItem() {
-        return storedItem;
+    public ItemStack getStoredFuelStack() {
+        return fuelItemStack;
     }
 
 
     /**
-     * Add an ItemStack to the machine.
+     * Add a fuel ItemStack to the machine.
      *
      * @param itemStack The ItemStack to add.
      */
-    public void setStoredItem(ItemStack itemStack, Player player) {
-        if (storedItem == null) {
-            storedItem = itemStack;
+    public void setFuelItemStack(ItemStack itemStack, Player player) {
+        if (fuelItemStack == null) {
+            fuelItemStack = itemStack;
         } else {
             int amountToAdd = itemStack.getAmount();
-            int spaceLeft = storedItem.getMaxStackSize() - storedItem.getAmount();
+            int spaceLeft = fuelItemStack.getMaxStackSize() - fuelItemStack.getAmount();
             if (amountToAdd <= spaceLeft) {
-                storedItem.setAmount(storedItem.getAmount() + amountToAdd);
+                fuelItemStack.setAmount(fuelItemStack.getAmount() + amountToAdd);
             } else {
-                storedItem.setAmount(storedItem.getMaxStackSize());
+                fuelItemStack.setAmount(fuelItemStack.getMaxStackSize());
                 ItemStack remaining = itemStack.clone();
                 remaining.setAmount(amountToAdd - spaceLeft);
                 addItem(remaining, player);
