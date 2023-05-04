@@ -27,7 +27,6 @@ public class CustomResourcesFurnitureListener implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event){
-        System.out.println("Inventory Click!");
         MachineGui.onInterfaceInteract(event);
     }
 }

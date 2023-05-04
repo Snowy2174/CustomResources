@@ -3,10 +3,7 @@ package plugin.customresources.controllers;
 import dev.lone.itemsadder.api.CustomFurniture;
 import dev.lone.itemsadder.api.Events.FurnitureBreakEvent;
 import dev.lone.itemsadder.api.Events.FurnitureInteractEvent;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import plugin.customresources.CustomResources;
@@ -35,10 +32,20 @@ public class TownMachineManager {
         return false;
     }
 
-    public static void placeMachine(Location center, String machineName) {
+    public static void placeMachine(Location machineLocation, String machineName) {
         // Wrap the spawnPreciseNonSolid call and subsequent operations in a Bukkit runTask method call
         Bukkit.getScheduler().runTask(CustomResources.getPlugin(), () -> {
-            Location location = center.add(0, 0, 0);
+            Location location = machineLocation.add(0, 1, 0);
+            
+            location.getWorld().spawnParticle(Particle.END_ROD, location, 50, 0, 0, 0, 1);
+
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (player.getLocation().distance(location) <= 10) {
+                    player.playSound(location, Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+                    player.playSound(location, Sound.BLOCK_ANVIL_USE, 1, 1);
+                }
+            }
+            
             Entity machine = CustomFurniture.spawnPreciseNonSolid(machineName, location).getArmorstand();
 
             for (int i = -1; i <= 1; i++) {
@@ -49,7 +56,7 @@ public class TownMachineManager {
                     }
                 }
             }
-            createMachineData(machineName, machine.getUniqueId().toString(), center);
+            createMachineData(machineName, machine.getUniqueId().toString(), machineLocation);
         });
     }
 
@@ -68,8 +75,18 @@ public class TownMachineManager {
                         }
                     }
                 }
+
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    if (player.getLocation().distance(center) <= 10) {
+                        player.playSound(center, Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+                        player.playSound(center, Sound.BLOCK_ANVIL_PLACE, 1, 1);
+                    }
+                }
+
                 // Wrap the remove furniture call and subsequent operations in a Bukkit runTask method call
                 Bukkit.getScheduler().runTask(CustomResources.getPlugin(), () -> {
+                    center.getWorld().spawnParticle(Particle.FLASH, center, 1, 0, 0, 0, 0.1);
+                    center.getWorld().spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, center, 20, 0, 0, 0, 1);
                     CustomFurniture.remove(entity, false);
                     removeMachineData(machine);
                 });

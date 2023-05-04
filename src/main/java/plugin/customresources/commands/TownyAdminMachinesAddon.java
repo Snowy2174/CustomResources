@@ -37,7 +37,7 @@ public class TownyAdminMachinesAddon extends BaseCommand implements CommandExecu
 		TownyCommandAddonAPI.addSubCommand(townyAdminResourcesCommand);
 	}
 
-	private static final List<String> tabCompletes = Arrays.asList("reload", "buildMachine", "setTownMachineryLevel", "breakMachine");
+	private static final List<String> tabCompletes = Arrays.asList("reload", "build", "setTownMachineryLevel", "break");
 
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
 		if (args.length == 1)
@@ -70,9 +70,9 @@ public class TownyAdminMachinesAddon extends BaseCommand implements CommandExecu
 
 			switch (args[0]) {
 				case "reload" -> parseReloadCommand(sender);
-				case "buildMachine" -> parseBuildMachineCommand(sender, args);
+				case "build" -> parseBuildMachineCommand(sender, args);
 				case "setTownMachineryLevel" -> parseSetTownMachineryLevelCommand(sender, args[1]);
-				case "breakMachine" -> parseMachineDestroyCommand((Player) sender);
+				case "break" -> parseMachineDestroyCommand((Player) sender);
 				/*
 				 * Show help if no command found.
 				 */
