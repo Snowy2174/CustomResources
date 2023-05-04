@@ -74,6 +74,7 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
                 case "construct" -> parseMachineConstructCommand(player, args);
                 case "upgrade" -> parseMachineUpgradeCommand(player);
                 case "destroy" -> parseMachineDestroyCommand(player);
+                case "upgrademachinerylevel" -> parseMachineryLevelUpgrade(player);
                 default -> showTownMachinesHelp(player);
             }
 
@@ -229,6 +230,17 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
 
     }
 
+    public static void parseMachineryLevelUpgrade(Player player) throws TownyException {
+        Town town = TownyAPI.getInstance().getTown(player.getLocation());
+        if (town == null)
+            throw new TownyException(Translatable.of("customresources.msg_err_no_town"));
+
+        if (!town.hasResident(player))
+            throw new TownyException(Translatable.of("customresources.not_your_town"));
+
+        CustomResourcesMessagingUtil.sendMsg(player, Translatable.of("commandexecuted"));
+        CustomResourcesGovernmentMetaDataController.calculateMachineryLevelUpgradeCost(town);
+    }
 
     public static boolean locationChunkChecker(Location location) {
         Chunk chunk = location.getChunk();

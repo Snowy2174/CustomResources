@@ -28,13 +28,13 @@ public class CustomResourcesSettings {
 		return getBoolean(CustomResourcesConfigNodes.ENABLED);
 	}
 
-    public static List<Integer> getSurveyCostsPerResourceLevel() {
-	    return getIntegerList(CustomResourcesConfigNodes.TOWN_RESOURCES_SURVEYS_COST_PER_RESOURCE_LEVEL);
-	}
+//    public static List<Integer> getSurveyCostsPerResourceLevel() {
+//	    return getIntegerList(CustomResourcesConfigNodes.TOWN_RESOURCES_SURVEYS_COST_PER_RESOURCE_LEVEL);
+//	}
 
-    public static List<Integer> getSurveyNumTownblocksRequirementsPerResourceLevel() {
-    	return getIntegerList(CustomResourcesConfigNodes.TOWN_RESOURCES_SURVEYS_NUM_TOWNBLOCKS_REQUIREMENT_PER_RESOURCE_LEVEL);
-	}
+//    public static List<Integer> getSurveyNumTownblocksRequirementsPerResourceLevel() {
+//    	return getIntegerList(CustomResourcesConfigNodes.TOWN_RESOURCES_SURVEYS_NUM_TOWNBLOCKS_REQUIREMENT_PER_RESOURCE_LEVEL);
+//	}
 
 	public static List<Integer> getProductionPercentagesPerResourceLevel() {
 		return getIntegerList(CustomResourcesConfigNodes.TOWN_RESOURCES_PRODUCTION_PRODUCTIVITY_PERCENTAGE_PER_RESOURCE_LEVEL);
@@ -52,12 +52,12 @@ public class CustomResourcesSettings {
 		return getDouble(CustomResourcesConfigNodes.TOWN_RESOURCES_PRODUCTION_OCCUPYING_NATION_TAX_PERCENTAGE) / 100;
 	}
 
-	public static List<Integer> getTownMachineLevel() {
-		return getIntegerList(CustomResourcesConfigNodes.TOWN_RESOURCES_MACHINE_LEVEL);
+	public static List<Integer> getConfigMachineryLevel() {
+		return getIntegerList(CustomResourcesConfigNodes.TOWN_RESOURCES_MACHINERY_LEVEL);
 	}
 
-	public static List<Integer> getTownBlockPerMachineLevel() {
-		return getIntegerList(CustomResourcesConfigNodes.TOWN_RESOURCES_TOWN_BLOCK_PER_MACHINE_LEVEL);
+	public static List<Integer> getConfigBlockPerMachineryLevel() {
+		return getIntegerList(CustomResourcesConfigNodes.TOWN_RESOURCES_TOWN_BLOCK_PER_MACHINERY_LEVEL);
 	}
 
 	public static int getSumOfAllOfferDiscoveryProbabilityWeights() {

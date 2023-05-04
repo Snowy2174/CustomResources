@@ -6,6 +6,7 @@ import com.palmergames.bukkit.towny.object.metadata.IntegerDataField;
 import com.palmergames.bukkit.towny.object.metadata.StringDataField;
 import com.palmergames.bukkit.towny.utils.MetaDataUtil;
 import plugin.customresources.CustomResources;
+import plugin.customresources.settings.CustomResourcesSettings;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,6 +37,10 @@ public class CustomResourcesGovernmentMetaDataController {
         return MetaDataUtil.getString(government, discoveredSDF).replaceAll(" ","");
     }
 
+    /*
+    * Machinery Level Related
+    */
+
     // Set town metadata "customresources_townMachineLevel" of a given town to the specified level
     public static void setTownMachineryLevel(Town town, Integer level){
         IntegerDataField idf = new IntegerDataField("customresources_townMachineLevel", level, "Town Machine Level");
@@ -49,9 +54,19 @@ public class CustomResourcesGovernmentMetaDataController {
 
     // Checks if a given town has the metadata "customresources_townMachineLevel" set, and if not, set it to 0 (starting machinery level of new towns)
     public static void checkTownMachineryLevel(Town town){
-        Integer startingLevel = 0;
+        Integer startingLevel = 1;
         if (town.getMetadata("customresources_townMachineLevel") == null)
             setTownMachineryLevel(town, startingLevel);
+    }
+
+    public static void calculateMachineryLevelUpgradeCost(Town town){
+        List<Integer> configMachineryLevel = CustomResourcesSettings.getConfigMachineryLevel();
+        Integer townMachineryLevel = getTownMachineryLevel(town);
+
+        Integer upgradeCostIndex = configMachineryLevel.indexOf(townMachineryLevel);
+        List<Integer> configTownBlockMachineryLevel = CustomResourcesSettings.getConfigBlockPerMachineryLevel();
+        Integer townBlockCost = configTownBlockMachineryLevel.get(upgradeCostIndex);
+        org.bukkit.Bukkit.getLogger().info("The town " + town.getName() + " is at level " + townMachineryLevel + ". Upgrade cost is " + townBlockCost + "");
     }
 
      /**
