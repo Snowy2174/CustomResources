@@ -1,4 +1,4 @@
-package plugin.customresources.util;
+package plugin.customresources.interfaces;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,14 +14,11 @@ import org.bukkit.persistence.PersistentDataType;
 import plugin.customresources.CustomResources;
 import plugin.customresources.objects.Machine;
 
-import java.util.UUID;
-
-import static plugin.customresources.controllers.MachinePlacementController.breakMachine;
+import static plugin.customresources.controllers.TownMachineManager.breakMachine;
 import static plugin.customresources.controllers.TownMachineManager.getMachine;
-import static plugin.customresources.util.MachineGuiUtil.createGuiItem;
-import static plugin.customresources.util.MachineGuiUtil.createMachineIcon;
+import static plugin.customresources.util.ItemStackUtil.createMachineIcon;
 
-public class ConfirmGuiUtil {
+public class ConfirmGui {
 
     public static Inventory confirmInventory;
     public enum ConfirmationAction {
@@ -73,9 +70,9 @@ public class ConfirmGuiUtil {
             ItemStack clickedItem = event.getCurrentItem();
             if (clickedItem == null || clickedItem.getType().isAir()) return;
 
-            ConfirmGuiUtil.ConfirmationAction action = ConfirmGuiUtil.ConfirmationAction.valueOf(ChatColor.stripColor((event.getView().getTitle()).replace("Confirm ", "").toUpperCase()));
+            ConfirmGui.ConfirmationAction action = ConfirmGui.ConfirmationAction.valueOf(ChatColor.stripColor((event.getView().getTitle()).replace("Confirm ", "").toUpperCase()));
 
-            ConfirmGuiUtil.handleConfirmationResponse((Player) event.getWhoClicked(), clickedItem, action);
+            ConfirmGui.handleConfirmationResponse((Player) event.getWhoClicked(), clickedItem, action);
         }
 
     }

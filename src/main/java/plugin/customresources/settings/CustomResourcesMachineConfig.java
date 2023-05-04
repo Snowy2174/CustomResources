@@ -64,6 +64,7 @@ public class CustomResourcesMachineConfig {
     }
 
     private static MachineTier createTierFromConfig(YamlConfiguration config, String key, int tierLevel) {
+        int tierResourceStorage = config.getInt(key + ".tiers." + tierLevel + ".storage", 3);
         List<String> tierInputs = config.isSet(key + ".tiers." + tierLevel + ".input")
                 ? config.getStringList(key + ".tiers." + tierLevel + ".input")
                 : new ArrayList<>();
@@ -92,7 +93,7 @@ public class CustomResourcesMachineConfig {
                 .collect(Collectors.toList());
         int tierUpgradeCost = config.getInt(key + ".tiers." + tierLevel + ".upgrade_cost", 0);
 
-        return new MachineTier(tierLevel, tierInputs, outputMaterialNames, outputMaterialAmounts, upgradeMaterials, tierUpgradeCost);
+        return new MachineTier(tierLevel, tierResourceStorage, tierInputs, outputMaterialNames, outputMaterialAmounts, upgradeMaterials, tierUpgradeCost);
     }
 
     public static List<String> getAllMachineNames() {

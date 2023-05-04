@@ -10,14 +10,12 @@ import com.palmergames.bukkit.towny.exceptions.TownyException;
 import com.palmergames.bukkit.towny.object.*;
 import com.palmergames.bukkit.towny.utils.NameUtil;
 import com.palmergames.bukkit.util.ChatTools;
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
-import plugin.customresources.controllers.MachinePlacementController;
 import plugin.customresources.controllers.TownResourceDiscoveryController;
 import plugin.customresources.enums.CustomResourcesPermissionNodes;
 import plugin.customresources.metadata.CustomResourcesGovernmentMetaDataController;
@@ -27,10 +25,7 @@ import plugin.customresources.util.CustomResourcesMessagingUtil;
 
 import java.util.*;
 
-import static plugin.customresources.controllers.MachinePlacementController.breakMachine;
-import static plugin.customresources.controllers.MachinePlacementController.isMachinePlacedInChunk;
-import static plugin.customresources.controllers.TownMachineManager.getMachine;
-import static plugin.customresources.controllers.TownMachineManager.getMachineByChunk;
+import static plugin.customresources.controllers.TownMachineManager.*;
 import static plugin.customresources.settings.CustomResourcesMachineConfig.*;
 
 public class TownMachineAddon extends BaseCommand implements TabExecutor {
@@ -98,7 +93,7 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
 //        }
 
         String machineType = args[1];
-        if (!MachinePlacementController.isValidMachine(machineType)) {
+        if (!isValidMachine(machineType)) {
             CustomResourcesMessagingUtil.sendErrorMsg(player, "The specified machine name is not valid.");
             return;
         }
@@ -125,7 +120,7 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
         if (!town.hasResident(player))
             throw new TownyException(Translatable.of("customresources.not_your_town"));
 
-        if(MachinePlacementController.isMachinePlacedInChunk(location))
+        if(isMachinePlacedInChunk(location))
             throw new TownyException(Translatable.of("customresources.msg_err_already_placed_chunk"));
 
         //Check location to see if it's on a chunk border
@@ -174,7 +169,7 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
         Location finalLocation = location;
         Confirmation.runOnAcceptAsync(() -> {
                     try {
-                        MachinePlacementController.placeMachine(finalLocation, machineType);
+                        placeMachine(finalLocation, machineType);
                         TownResourceDiscoveryController.discoverNewResource(resident, town, machineType, surveyLevel, surveyCost, discoveredResources);
                     } catch (TownyException te) {
                         CustomResourcesMessagingUtil.sendErrorMsg(player, te.getMessage(player));

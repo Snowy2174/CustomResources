@@ -1,4 +1,4 @@
-package plugin.customresources.util;
+package plugin.customresources.interfaces;
 
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.Town;
@@ -21,18 +21,19 @@ import plugin.customresources.metadata.CustomResourcesGovernmentMetaDataControll
 import plugin.customresources.objects.Machine;
 import plugin.customresources.objects.MachineConfig;
 import plugin.customresources.objects.MachineTier;
+import plugin.customresources.util.CustomResourcesMessagingUtil;
 
 import java.util.*;
 
 import static plugin.customresources.controllers.TownMachineManager.getMachine;
-import static plugin.customresources.controllers.TownMachineManager.saveMachines;
 import static plugin.customresources.settings.CustomResourcesMachineConfig.MACHINES;
-import static plugin.customresources.util.ConfirmGuiUtil.onConfirmationInteract;
-import static plugin.customresources.util.ConfirmGuiUtil.openConfirmation;
+import static plugin.customresources.settings.MachineDataHandler.saveMachines;
+import static plugin.customresources.interfaces.ConfirmGui.onConfirmationInteract;
+import static plugin.customresources.interfaces.ConfirmGui.openConfirmation;
+import static plugin.customresources.util.ItemStackUtil.createGuiItem;
+import static plugin.customresources.util.ItemStackUtil.createMachineIcon;
 
-public class MachineGuiUtil {
-    // Main interface inventory
-    private static Inventory inventory;
+public class MachineGui {
 
     // Create new GUI inventory
     public static void createMachineInterface(Player player, Machine machine) {
@@ -42,9 +43,9 @@ public class MachineGuiUtil {
 
         String title = ChatColor.translateAlternateColorCodes('&', ("&a" + state + " &7| " + type + " | " + " [&6 " + tier + " &7]"));
 
-        inventory = Bukkit.createInventory(null, 36, title);
+        Inventory inventory = Bukkit.createInventory(null, 36, title);
         populateMachineInterface(inventory, machine);
-        openInventory(player);
+        openInventory(player, inventory);
     }
 
     private static void populateMachineInterface(Inventory inventory, Machine machine) {
@@ -75,48 +76,13 @@ public class MachineGuiUtil {
         }
     }
 
-    protected static ItemStack createMachineIcon(final Material material, final String name, Machine machine, final String... lore) {
-        final ItemStack item = new ItemStack(material);
-        final ItemMeta meta = item.getItemMeta();
-
-        // Set the name of the item
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
-
-        // Set the lore of the item
-        meta.setLore(Arrays.asList(lore));
-
-        meta.getPersistentDataContainer().set(new NamespacedKey(CustomResources.getPlugin(), "machineId"),
-                PersistentDataType.STRING,
-                machine.getId().toString());
-
-        item.setItemMeta(meta);
-        return item;
-    }
-
-    protected static ItemStack createGuiItem(final Material material, final String name, final String... lore) {
-        final ItemStack item = new ItemStack(material);
-        final ItemMeta meta = item.getItemMeta();
-
-        // Set the name of the item
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
-
-        // Set the lore of the item
-        meta.setLore(Arrays.asList(lore));
-
-        item.setItemMeta(meta);
-        return item;
-    }
-
-
-    public static void openInventory(final HumanEntity ent) {
+    public static void openInventory(final HumanEntity ent, Inventory inventory) {
         ent.openInventory(inventory);
     }
 
     // On click inside inventory, perform action
     public static void onInterfaceInteract(InventoryClickEvent event) {
-            if (event.getInventory().equals(inventory)) {
-
-                event.setCancelled(true);
+            if (event.getInventory() instanceof MachineGui) {
 
                 ItemStack clickedItem = event.getCurrentItem();
 
@@ -135,16 +101,19 @@ public class MachineGuiUtil {
 
                 // Destroy machine button
                 if (clickedItem.getType() == Material.REDSTONE_BLOCK) {
-                    openConfirmation(ConfirmGuiUtil.ConfirmationAction.DESTROY, player, machine);
+                    event.setCancelled(true);
+                    openConfirmation(ConfirmGui.ConfirmationAction.DESTROY, player, machine);
                 }
 
                 // Upgrade machine button
                 if (clickedItem.getType() == Material.ANVIL) {
-                    openConfirmation(ConfirmGuiUtil.ConfirmationAction.UPGRADE, player, machine);
+                    event.setCancelled(true);
+                    openConfirmation(ConfirmGui.ConfirmationAction.UPGRADE, player, machine);
                 }
 
                 // Collect machine button
                 if (clickedItem.getType() == Material.CHEST) {
+                    event.setCancelled(true);
                     handleCollectButton(event, machine);
                 }
 

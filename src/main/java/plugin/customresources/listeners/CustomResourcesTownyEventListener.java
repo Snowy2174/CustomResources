@@ -10,6 +10,8 @@ import plugin.customresources.controllers.TownMachineManager;
 import plugin.customresources.controllers.TownResourceProductionController;
 import plugin.customresources.settings.CustomResourcesSettings;
 
+import static plugin.customresources.settings.MachineDataHandler.saveMachines;
+
 /**
  *
  * @author Goosius
@@ -51,7 +53,7 @@ public class CustomResourcesTownyEventListener implements Listener {
     public void onNewShortTime(NewShortTimeEvent event) {
             if(System.currentTimeMillis() > nextProductionRecalculationTime) {
                 nextProductionRecalculationTime = System.currentTimeMillis() + PRODUCTION_RECALCULATION_INTERVAL_MILLIS;
-                TownMachineManager.saveMachines();
+                saveMachines();
                 TownResourceProductionController.recalculateAllProduction();
             }
     }
