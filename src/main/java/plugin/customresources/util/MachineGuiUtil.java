@@ -129,7 +129,7 @@ public class MachineGuiUtil {
                 String machineId = data.get(new NamespacedKey(CustomResources.getPlugin(), "machineId"), PersistentDataType.STRING);
 
                 // Retrieve the machine object using the getFromID() method
-                Machine machine = getMachine(UUID.fromString(machineId));
+                Machine machine = getMachine(machineId);
 
                 Player player = (Player) event.getWhoClicked();
 

@@ -18,7 +18,7 @@ public class MachinePlacementController {
     public static boolean isMachinePlacedInChunk(Location location) {
         Chunk chunk = location.getChunk();
 
-        for (Machine machine : machineMap.values()) {
+        for (Machine machine : machines) {
             if (machine.getLocation().getChunk().equals(chunk)) {
                 return true;
             }
@@ -40,7 +40,7 @@ public class MachinePlacementController {
                     }
                 }
             }
-            createMachineData(machineName, machine.getUniqueId(), center);
+            createMachineData(machineName, machine.getUniqueId().toString(), center);
         });
     }
 

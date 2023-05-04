@@ -177,9 +177,9 @@ public class TownyAdminMachinesAddon extends BaseCommand implements CommandExecu
 
 		//Check if there are resources left to discover at the town
 		List<String> discoveredResources = CustomResourcesGovernmentMetaDataController.getDiscoveredAsList(town);
-		List<Integer> costPerResourceLevel = CustomResourcesSettings.getSurveyCostsPerResourceLevel();
+		List<Integer> costPerResourceLevel = CustomResourcesSettings.getConfigMachineryLevel();
 
-		List<Integer> requiredNumTownblocksPerResourceLevel = CustomResourcesSettings.getSurveyNumTownblocksRequirementsPerResourceLevel();
+		List<Integer> requiredNumTownblocksPerResourceLevel = CustomResourcesSettings.getConfigBlockPerMachineryLevel();
 
 		if(discoveredResources.size() >= costPerResourceLevel.size())
 			throw new TownyException(Translatable.of("customresources.msg_err_survey_all_resources_already_discovered"));
@@ -216,12 +216,12 @@ public class TownyAdminMachinesAddon extends BaseCommand implements CommandExecu
 
 		Location finalLocation = location;
 		Confirmation.runOnAcceptAsync(() -> {
-					try {
+					//try {
 						MachinePlacementController.placeMachine(finalLocation, machineType);
-						TownResourceDiscoveryController.discoverNewResource(resident, town, machineType, surveyLevel, surveyCost, discoveredResources);
-					} catch (TownyException te) {
-						CustomResourcesMessagingUtil.sendErrorMsg(player, te.getMessage(player));
-					}
+						//TownResourceDiscoveryController.discoverNewResource(resident, town, machineType, surveyLevel, surveyCost, discoveredResources);
+					//} catch (TownyException te) {
+			//			CustomResourcesMessagingUtil.sendErrorMsg(player, te.getMessage(player));
+			//		}
 				})
 				.sendTo(player);
 	}

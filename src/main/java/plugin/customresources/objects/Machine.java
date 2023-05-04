@@ -5,10 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import plugin.customresources.enums.CustomResourcesMachineState;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class Machine {
 
@@ -16,19 +13,19 @@ public class Machine {
     private final String type;
     private CustomResourcesMachineState state;
     private Integer storedResources;
-    private final UUID id;
+    private final String id;
     private final Integer tier;
 
     private ItemStack fuelItemStack = null;
-    private Map<String, Integer> storedMaterialStrings = new HashMap<>();
+    private ArrayList<String> storedMaterialStrings = new ArrayList<>();
 
 
-    public Machine(UUID id, String type, Integer tier, Location location) {
+    public Machine(String id, String type, Integer tier, Location location) {
         this.location = location;
         this.type = type;
         this.tier = tier;
-        this.state = CustomResourcesMachineState.Active;
         this.id = id;
+        this.state = CustomResourcesMachineState.Active;
     }
 
     /**
@@ -54,7 +51,7 @@ public class Machine {
      *
      * @return The ID of the machine.
      */
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
@@ -107,7 +104,7 @@ public class Machine {
      *
      * @return The map of stored materials and amounts.
      */
-    public Map<String, Integer> getStoredMaterials() {
+    public ArrayList<String> getStoredMaterials() {
         return storedMaterialStrings;
     }
 
@@ -118,11 +115,7 @@ public class Machine {
      * @param amount The amount of the material to add.
      */
     public void addStoredMaterial(String material, int amount) {
-        if (storedMaterialStrings.containsKey(material)) {
-            storedMaterialStrings.put(material, storedMaterialStrings.get(material) + amount);
-        } else {
-            storedMaterialStrings.put(material, amount);
-        }
+      //Todo
     }
 
     /**
@@ -133,12 +126,8 @@ public class Machine {
      * @return True if the removal was successful, false otherwise.
      */
     public boolean removeStoredMaterial(String material, int amount) {
-        if (storedMaterialStrings.containsKey(material) && storedMaterialStrings.get(material) >= amount) {
-            storedMaterialStrings.put(material, storedMaterialStrings.get(material) - amount);
-            return true;
-        } else {
+         //Todo:
             return false;
-        }
     }
 
 

@@ -134,9 +134,9 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
 
         //Check if there are resources left to discover at the town
         List<String> discoveredResources = CustomResourcesGovernmentMetaDataController.getDiscoveredAsList(town);
-        List<Integer> costPerResourceLevel = CustomResourcesSettings.getSurveyCostsPerResourceLevel();
+        List<Integer> costPerResourceLevel = CustomResourcesSettings.getConfigMachineryLevel();
 
-        List<Integer> requiredNumTownblocksPerResourceLevel = CustomResourcesSettings.getSurveyNumTownblocksRequirementsPerResourceLevel();
+        List<Integer> requiredNumTownblocksPerResourceLevel = CustomResourcesSettings.getConfigBlockPerMachineryLevel();
 
         if(discoveredResources.size() >= costPerResourceLevel.size())
             throw new TownyException(Translatable.of("customresources.msg_err_survey_all_resources_already_discovered"));

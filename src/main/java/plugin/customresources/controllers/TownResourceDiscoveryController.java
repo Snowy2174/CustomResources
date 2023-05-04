@@ -77,9 +77,9 @@ public class TownResourceDiscoveryController {
         int levelOfNewResource = discoveredMaterials.size();
         double productivityModifierNormalized;
         productivityModifierNormalized = (double) CustomResourcesSettings.getProductionPercentagesPerResourceLevel().get(levelOfNewResource - 1) / 100;
-        String preTaxProduction = String.valueOf(MACHINES.get(machine).getTiers().get(0).getOutputAmounts().get(0) * productivityModifierNormalized + 0.5);
+        double preTaxProduction = MACHINES.get(machine).getTiers().get(0).getOutputAmounts().get(0) * productivityModifierNormalized + 0.5;
         String materialName = CustomResourcesMessagingUtil.formatMaterialNameForDisplay(material);
-        CustomResourcesMessagingUtil.sendGlobalMessage(Translatable.of("customresources.discovery.success", resident.getName(), town.getName(), preTaxProduction, materialName));
+        CustomResourcesMessagingUtil.sendGlobalMessage(Translatable.of("customresources.discovery.success", resident.getName(), town.getName(),  materialName, preTaxProduction));
     }
 
     public static void removeResource(Machine machine) throws TownyException{
