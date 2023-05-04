@@ -13,7 +13,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import plugin.customresources.commands.TownMachineAddon;
 import plugin.customresources.commands.NationCollectAddon;
-import plugin.customresources.commands.TownResourcesAddon;
 import plugin.customresources.commands.TownyAdminMachinesAddon;
 import plugin.customresources.controllers.TownMachineManager;
 import plugin.customresources.controllers.TownResourceOffersController;
@@ -21,6 +20,7 @@ import plugin.customresources.controllers.TownResourceProductionController;
 import plugin.customresources.listeners.*;
 import plugin.customresources.settings.CustomResourcesMachineConfig;
 import plugin.customresources.settings.CustomResourcesSettings;
+import plugin.customresources.settings.MachineDataHandler;
 import plugin.customresources.util.CustomResourcesMessagingUtil;
 
 import java.nio.file.Path;
@@ -82,7 +82,7 @@ public class CustomResources extends JavaPlugin {
 			//Load controllers
 			TownResourceOffersController.loadAllResourceOfferCategories();
 			//Load machines
-			TownMachineManager.loadMachines();
+			MachineDataHandler.loadMachines();
 			//WARNING: Do not try to recalculate production here, because unless SW has been loaded first, the results will be incorrect.
 			//Load commands and listeners
 			registerCommands();
@@ -116,7 +116,7 @@ public class CustomResources extends JavaPlugin {
 			TownResourceOffersController.loadAllResourceOfferCategories();
 			TownResourceProductionController.recalculateAllProduction();
 			//Load Machines
-			TownMachineManager.loadMachines();
+			MachineDataHandler.loadMachines();
 			CustomResourcesMachineConfig.unload();
 			CustomResourcesMachineConfig.load();
 		} catch (Exception e) {
@@ -177,7 +177,6 @@ public class CustomResources extends JavaPlugin {
 	}
 
 	private void registerCommands() {
-		new TownResourcesAddon();
 		new TownMachineAddon();
 		new NationCollectAddon();
 		new TownyAdminMachinesAddon();

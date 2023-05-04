@@ -18,8 +18,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import plugin.customresources.CustomResources;
-import plugin.customresources.controllers.MachinePlacementController;
-import plugin.customresources.controllers.TownResourceDiscoveryController;
 import plugin.customresources.enums.CustomResourcesPermissionNodes;
 import plugin.customresources.metadata.CustomResourcesGovernmentMetaDataController;
 import plugin.customresources.objects.Machine;
@@ -29,9 +27,7 @@ import plugin.customresources.util.CustomResourcesMessagingUtil;
 import java.util.*;
 
 import static plugin.customresources.commands.TownMachineAddon.locationChunkChecker;
-import static plugin.customresources.controllers.MachinePlacementController.breakMachine;
-import static plugin.customresources.controllers.MachinePlacementController.isMachinePlacedInChunk;
-import static plugin.customresources.controllers.TownMachineManager.getMachineByChunk;
+import static plugin.customresources.controllers.TownMachineManager.*;
 import static plugin.customresources.metadata.CustomResourcesGovernmentMetaDataController.setTownMachineryLevel;
 
 public class TownyAdminMachinesAddon extends BaseCommand implements CommandExecutor, TabCompleter {
@@ -145,7 +141,7 @@ public class TownyAdminMachinesAddon extends BaseCommand implements CommandExecu
 //        }
 
 		String machineType = args[1];
-		if (!MachinePlacementController.isValidMachine(machineType)) {
+		if (!isValidMachine(machineType)) {
 			CustomResourcesMessagingUtil.sendErrorMsg(player, "The specified machine name is not valid.");
 			return;
 		}
@@ -153,9 +149,9 @@ public class TownyAdminMachinesAddon extends BaseCommand implements CommandExecu
 		Location location = player.getLocation();
 		if (args.length > 2) {
 			try {
-				double x = Double.parseDouble(args[2]);
-				double y = Double.parseDouble(args[3]);
-				double z = Double.parseDouble(args[4]);
+				double x = Math.round(Double.parseDouble(args[2]));
+				double y = Math.round(Double.parseDouble(args[3]));
+				double z = Math.round(Double.parseDouble(args[4]));
 				float yaw = Float.parseFloat(args[5]);
 				location = new Location(location.getWorld(), x, y, z, yaw, 0);
 			} catch (NumberFormatException e) {
@@ -163,12 +159,13 @@ public class TownyAdminMachinesAddon extends BaseCommand implements CommandExecu
 			}
 		}
 
+
 		Town town = TownyAPI.getInstance().getTown(location);
 		//Check if there is a town here
 		if(town == null)
 			throw new TownyException(Translatable.of("customresources.msg_err_no_town"));
 
-		if(MachinePlacementController.isMachinePlacedInChunk(location))
+		if(isMachinePlacedInChunk(location))
 			throw new TownyException(Translatable.of("customresources.msg_err_already_placed_chunk"));
 
 		//Check location to see if it's on a chunk border
@@ -217,7 +214,7 @@ public class TownyAdminMachinesAddon extends BaseCommand implements CommandExecu
 		Location finalLocation = location;
 		Confirmation.runOnAcceptAsync(() -> {
 					//try {
-						MachinePlacementController.placeMachine(finalLocation, machineType);
+						placeMachine(finalLocation, machineType);
 						//TownResourceDiscoveryController.discoverNewResource(resident, town, machineType, surveyLevel, surveyCost, discoveredResources);
 					//} catch (TownyException te) {
 			//			CustomResourcesMessagingUtil.sendErrorMsg(player, te.getMessage(player));

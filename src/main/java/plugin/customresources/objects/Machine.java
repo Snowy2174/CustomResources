@@ -3,7 +3,6 @@ package plugin.customresources.objects;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import plugin.customresources.enums.CustomResourcesMachineState;
 
 import java.util.*;
 
@@ -21,11 +20,19 @@ public class Machine {
 
 
     public Machine(String id, String type, Integer tier, Location location) {
-        this.location = location;
         this.type = type;
         this.tier = tier;
         this.id = id;
+
+        this.location = location;
+
         this.state = CustomResourcesMachineState.Active;
+        this.storedResources = 0;
+    }
+
+    public enum CustomResourcesMachineState {
+        Active, Broken, Upgrading
+
     }
 
     /**
@@ -91,12 +98,23 @@ public class Machine {
     }
 
     /**
-     * Get the map of stored materials and amounts.
+     * Get the stored resource instances
      *
-     * @return The map of stored materials and amounts.
+     * @return The integer value of stored resources
      */
     public Integer getStoredResourcesInteger() {
         return storedResources;
+    }
+
+    /**
+     * If the stored resources is less than the max, increment
+     *
+     * @return The integer value of stored resources
+     */
+    public void incrementStoredResources(int maxResources) {
+        if (storedResources < maxResources) {
+            storedResources++;
+        }
     }
 
     /**

@@ -6,11 +6,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import plugin.customresources.controllers.TownMachineManager;
-import plugin.customresources.util.MachineGuiUtil;
+import plugin.customresources.interfaces.MachineGui;
 
 public class CustomResourcesFurnitureListener implements Listener {
     private TownMachineManager machineManager;
-    private MachineGuiUtil machineGui;
+    private MachineGui machineGui;
 
     public CustomResourcesFurnitureListener() {
     }
@@ -28,6 +28,6 @@ public class CustomResourcesFurnitureListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event){
         System.out.println("Inventory Click!");
-        MachineGuiUtil.onInterfaceInteract(event);
+        MachineGui.onInterfaceInteract(event);
     }
 }

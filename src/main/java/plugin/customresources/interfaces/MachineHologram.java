@@ -1,4 +1,4 @@
-package plugin.customresources.util;
+package plugin.customresources.interfaces;
 
 import com.palmergames.util.TimeMgmt;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
@@ -8,7 +8,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import plugin.customresources.CustomResources;
@@ -19,10 +18,9 @@ import plugin.customresources.objects.MachineTier;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.bukkit.Bukkit.getServer;
 import static plugin.customresources.settings.CustomResourcesMachineConfig.MACHINES;
 
-public class MachineHologramUtil {
+public class MachineHologram {
 
     private static final Map<String, Hologram> holograms = new HashMap<>();
 
