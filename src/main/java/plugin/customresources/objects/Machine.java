@@ -13,16 +13,20 @@ public class Machine {
     private CustomResourcesMachineState state;
     private Integer storedResources;
     private final String id;
-    private final Integer tier;
+    private Integer tier;
+    private Integer durability;
+    private Integer maxDurability;
 
     private ItemStack fuelItemStack = null;
     private ArrayList<String> storedMaterialStrings = new ArrayList<>();
 
 
-    public Machine(String id, String type, Integer tier, Location location) {
+    public Machine(String id, String type, Integer tier, Location location, Integer durability) {
         this.type = type;
         this.tier = tier;
         this.id = id;
+        this.durability = durability;
+        this.maxDurability = durability;
 
         this.location = location;
 
@@ -31,7 +35,7 @@ public class Machine {
     }
 
     public enum CustomResourcesMachineState {
-        Active, Broken, Upgrading
+        Active, Broken, Upgrading, Repairing
 
     }
 
@@ -89,6 +93,17 @@ public class Machine {
         this.state = state;
     }
 
+    public Integer getDurability(){
+        return this.durability;
+    }
+
+    public void setDurability(Integer durability){ this.durability = durability; }
+
+    public void setMaxDurability(int maxDurability){ this.maxDurability = maxDurability; }
+
+    public Integer getMaxDurability(){
+        return this.maxDurability;
+    }
 
     /**
      * Run the machine.
@@ -188,6 +203,48 @@ public class Machine {
             for (ItemStack item : leftover.values()) {
                 player.getWorld().dropItem(loc, item);
             }
+        }
+    }
+
+    public void takeDamage(Integer damageAmount){
+        Integer durability = getDurability();
+        Integer durablityAfterDamage = durability - damageAmount;
+
+        // Check if machine will be broken after taking damage
+        if (durablityAfterDamage <= 0){
+            setDurability(0);
+            setState(CustomResourcesMachineState.Broken);
+            // todo: notify players the machine is broken (send message to members of town or create a persistent hologram on the machine's location)
+        } else {
+            setDurability(durablityAfterDamage);
+        }
+    }
+
+    public void repair(){
+        // if machine is in repairing state, repair the machine. otherwise, set it to repairing
+        if (getState() == CustomResourcesMachineState.Repairing){
+            Integer maxDurability = getMaxDurability();
+            setDurability(maxDurability);
+            // todo: set state of machine to active
+            // todo: notify players the machine has been repaired (send message to members of town or create a persistent hologram on the machine's location)
+        } else {
+            // todo: check costs of repair
+            setState(CustomResourcesMachineState.Repairing);
+            // todo: send feedback to player
+        }
+    }
+
+    public void upgrade(){
+        // if machine is in upgrading state, upgrade the machine. otherwise, set it to upgrading
+        if (getState() == CustomResourcesMachineState.Upgrading){
+            // todo: upgrade to higher tier
+            // todo: set state of machine to active
+            // todo: notify players the machine has been upgraded (send message to members of town or create a persistent hologram on the machine's location)
+        } else {
+            // todo: check if machine has a higher tier to be upgraded to
+            // todo: check costs of upgrading
+            // todo: set state of machine to ugprading
+            // todo: send feedback to player
         }
     }
 }
