@@ -12,11 +12,13 @@ public class MachineTier {
     private final List<String> outputMaterials;
     private final List<Integer> outputAmounts;
     private final List<ItemStack> upgradeMaterials;
-    private final int upgradeCost;
+    private final double upgradeCost;
     private final int durability;
+    private final List<ItemStack> repairMaterials;
+    private final double repairCost;
 
     public MachineTier(int level, int storage, List<String> inputItems, List<String> outputMaterials, List<Integer> outputAmounts,
-                       List<ItemStack> upgradeMaterials, int upgradeCost, int durability) {
+                       List<ItemStack> upgradeMaterials, double upgradeCost, int durability, List<ItemStack> repairMaterials, double repairCost) {
         this.level = level;
         this.storage = storage;
         this.inputItems = inputItems;
@@ -25,12 +27,15 @@ public class MachineTier {
         this.upgradeMaterials = upgradeMaterials;
         this.upgradeCost = upgradeCost;
         this.durability = durability;
+        this.repairCost = repairCost;
+        this.repairMaterials = repairMaterials;
     }
 
 
     public int getLevel() {
         return level;
     }
+
     public int getResourceStorage() {
         return storage;
     }
@@ -51,9 +56,13 @@ public class MachineTier {
         return upgradeMaterials;
     }
 
-    public int getUpgradeCost() {
+    public double getUpgradeCost() {
         return upgradeCost;
     }
+
+    public List<ItemStack> getRepairMaterials() { return upgradeMaterials; }
+
+    public double getRepairCost() { return repairCost; }
 
     public int getDurability(){ return durability; }
 }
