@@ -3,6 +3,7 @@ package plugin.customresources.objects;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import static plugin.customresources.settings.CustomResourcesMachineConfig.MACHINES;
 
 import java.util.*;
 
@@ -13,16 +14,18 @@ public class Machine {
     private CustomResourcesMachineState state;
     private Integer storedResources;
     private final String id;
-    private final Integer tier;
+    private Integer tier;
+    private Integer durability;
 
     private ItemStack fuelItemStack = null;
     private ArrayList<String> storedMaterialStrings = new ArrayList<>();
 
 
-    public Machine(String id, String type, Integer tier, Location location) {
+    public Machine(String id, String type, Integer tier, Location location, Integer durability) {
         this.type = type;
         this.tier = tier;
         this.id = id;
+        this.durability = durability;
 
         this.location = location;
 
@@ -31,7 +34,7 @@ public class Machine {
     }
 
     public enum CustomResourcesMachineState {
-        Active, Broken, Upgrading
+        Active, Broken, Upgrading, Repairing
 
     }
 
@@ -79,6 +82,7 @@ public class Machine {
     public Integer getTier() {
         return tier;
     }
+    public void setTier(Integer tier) { this.tier = tier; }
 
     /**
      * Set the state of the machine.
@@ -89,6 +93,18 @@ public class Machine {
         this.state = state;
     }
 
+    public Integer getDurability(){
+        return this.durability;
+    }
+
+    public void setDurability(Integer durability){ this.durability = durability; }
+
+    public Integer getMaxDurability(){
+        MachineConfig config = MACHINES.get(getType());
+        Integer machineTier = getTier();
+        Integer maxDurability = config.getTiers().get(machineTier).getDurability();
+        return maxDurability;
+    }
 
     /**
      * Run the machine.
@@ -188,6 +204,46 @@ public class Machine {
             for (ItemStack item : leftover.values()) {
                 player.getWorld().dropItem(loc, item);
             }
+        }
+    }
+
+    // todo: Not sure where to put this method. Feel free to move it (delete todo when read or moved)
+    public void takeDamage(Integer damageAmount){
+        Integer durability = getDurability();
+        Integer durablityAfterDamage = durability - damageAmount;
+
+        // Check if machine will be broken after taking damage
+        if (durablityAfterDamage <= 0){
+            setDurability(0);
+            setState(CustomResourcesMachineState.Broken);
+            // todo: notify players the machine is broken (send message to members of town or create a persistent hologram on the machine's location)
+        } else {
+            setDurability(durablityAfterDamage);
+        }
+    }
+
+    // todo: Not sure where to put this method. Feel free to move it (delete todo when read or moved)
+    public void repair(){
+        // if machine is in repairing state, repair the machine. otherwise, set it to repairing
+        if (getState() == CustomResourcesMachineState.Repairing){
+            Integer maxDurability = getMaxDurability();
+            setDurability(maxDurability);
+            setState(CustomResourcesMachineState.Active);
+            // todo: notify players the machine has been repaired (send message to members of town or create a persistent hologram on the machine's location)
+        } else {
+            setState(CustomResourcesMachineState.Repairing);
+        }
+    }
+
+    // todo: Not sure where to put this method. Feel free to move it (delete todo when read or moved)
+    public void upgrade(){
+        // if machine is in upgrading state, upgrade the machine. otherwise, set it to upgrading
+        if (getState() == CustomResourcesMachineState.Upgrading){
+            setTier(getTier() + 1);
+            setState(CustomResourcesMachineState.Active);
+            // todo: (player feedback) notify players the machine has been upgraded (send message to members of town or create a persistent hologram on the machine's location)
+        } else {
+            setState(CustomResourcesMachineState.Upgrading);
         }
     }
 }

@@ -7,16 +7,16 @@ public class MachineConfig {
     private final String structure;
     private final String icon;
     private final double cost;
-    private final int townLevel;
+    private final int townMachineryLevel;
     private final List<String> preferredBiomes;
     private final List<MachineTier> tiers;
 
-    public MachineConfig(String name, String structure, String icon, double cost, int townLevel, List<String> preferredBiomes, List<MachineTier> tiers) {
+    public MachineConfig(String name, String structure, String icon, double cost, int townMachineryLevel, List<String> preferredBiomes, List<MachineTier> tiers) {
         this.name = name;
         this.structure = structure;
         this.icon = icon;
         this.cost = cost;
-        this.townLevel = townLevel;
+        this.townMachineryLevel = townMachineryLevel;
         this.preferredBiomes = preferredBiomes;
         this.tiers = tiers;
     }
@@ -33,8 +33,8 @@ public class MachineConfig {
         return cost;
     }
 
-    public int getTownLevel() {
-        return townLevel;
+    public int getTownMachineryLevel() {
+        return townMachineryLevel;
     }
 
     public List<String> getPreferredBiomes() {

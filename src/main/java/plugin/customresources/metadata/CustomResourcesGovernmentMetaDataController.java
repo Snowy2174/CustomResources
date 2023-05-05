@@ -59,16 +59,6 @@ public class CustomResourcesGovernmentMetaDataController {
             setTownMachineryLevel(town, startingLevel);
     }
 
-    public static void calculateMachineryLevelUpgradeCost(Town town){
-        List<Integer> configMachineryLevel = CustomResourcesSettings.getConfigMachineryLevel();
-        Integer townMachineryLevel = getTownMachineryLevel(town);
-
-        Integer upgradeCostIndex = configMachineryLevel.indexOf(townMachineryLevel);
-        List<Integer> configTownBlockMachineryLevel = CustomResourcesSettings.getConfigBlockPerMachineryLevel();
-        Integer townBlockCost = configTownBlockMachineryLevel.get(upgradeCostIndex);
-        org.bukkit.Bukkit.getLogger().info("The town " + town.getName() + " is at level " + townMachineryLevel + ". Upgrade cost is " + townBlockCost + "");
-    }
-
      /**
      * Get the discovered resources of a town
      *
