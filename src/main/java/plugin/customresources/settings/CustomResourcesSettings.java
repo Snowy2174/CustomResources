@@ -60,6 +60,10 @@ public class CustomResourcesSettings {
 		return getIntegerList(CustomResourcesConfigNodes.TOWN_RESOURCES_TOWN_BLOCK_PER_MACHINERY_LEVEL);
 	}
 
+	public static List<Double> getConfigCostPerMachineryLevel() {
+		return getDoubleList(CustomResourcesConfigNodes.TOWN_RESOURCES_COST_PER_MACHINERY_LEVEL);
+	}
+
 	public static int getSumOfAllOfferDiscoveryProbabilityWeights() {
 		return sumOfAllOfferDiscoveryProbabilityWeights;
 	}
@@ -261,6 +265,19 @@ public class CustomResourcesSettings {
 			List<Integer> result = new ArrayList<>();
 			for(String configValue: configAsString.split(",")) {
 				result.add(Integer.parseInt(configValue));
+			}
+			return result;
+		}
+	}
+	public static List<Double> getDoubleList(CustomResourcesConfigNodes configEntry) {
+		String configAsString = getString(configEntry);
+		if(configAsString.isEmpty()) {
+			return Collections.emptyList();
+		} else {
+			configAsString = configAsString.replaceAll(" ","");
+			List<Double> result = new ArrayList<>();
+			for(String configValue: configAsString.split(",")) {
+				result.add(Double.parseDouble(configValue));
 			}
 			return result;
 		}
