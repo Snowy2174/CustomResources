@@ -136,6 +136,8 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
         MachineConfig config = MACHINES.get(machineType);
         Integer townMachineLevel = CustomResourcesGovernmentMetaDataController.getTownMachineryLevel(town);
 
+        // todo: money cost of placing down machine (Don't implement yet, code needs to be refactored for it to work properly)
+
         Location finalLocation = location;
 
         if (config.getTownLevel() != townMachineLevel)
@@ -143,6 +145,7 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
 
         Confirmation.runOnAcceptAsync(() -> {
             placeMachine(finalLocation, machineType);
+            // todo: (player feedback) send message to player
         }).sendTo(player);
     }
 
@@ -168,21 +171,24 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
         int maxTier = config.getTiers().size();
 
         // check if machine has tiers above its current one
-        System.out.println("Checking machine has higher tiers..."); // todo: remove debug
         if (machineTier >= maxTier)
-            throw new TownyException(Translatable.of("customresources.machine_max_tier")); // todo: add "customresources.machine_max_tier" to lang
-        System.out.println("Passed, machine has higher tiers."); // todo: remove debug
+            throw new TownyException(Translatable.of("customresources.machine_max_tier")); // todo: add to lang
 
-        // check if player can afford to upgrade machine
-        System.out.println("Checking if player can afford the costs..."); // todo: remove debug
-        if (!canAffordCosts(player, machine, town))
-            throw new TownyException(Translatable.of("customresources.cannot_afford_costs")); // todo: add "customresources.cannot_afford_costs" to lang
-        System.out.println("Passed, player can afford all costs."); // todo: remove debug
+        // check if town has enough money in the town bank
+        if (!townHasEnoughMoney(machine, town))
+            throw new TownyException(Translatable.of("customresources.upgrade_cannot_afford_money")); // todo: add to lang
+
+        // check if player has enough materials
+        if (!playerHasEnoughMaterials(machine, player))
+            throw new TownyException(Translatable.of("customresources.upgrade_cannot_afford_materials")); // todo: add to lang
 
         CustomResourcesMessagingUtil.sendMsg(player, Translatable.of("customresources.msg_confirm_upgrade", town.getName()));
 
         Confirmation.runOnAcceptAsync(() -> {
                     machine.upgrade();
+                    // todo: withdraw from town bank
+                    // todo: remove material from player's inventory
+                    // todo: (player feedback) send message to player
                 })
                 .sendTo(player);
     }
@@ -206,6 +212,7 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
 
         Confirmation.runOnAcceptAsync(() -> {
                     breakMachine(machine);
+                    // todo: (player feedback) send message to player
                 })
                 .sendTo(player);
 
@@ -224,11 +231,17 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
         if (!isMachinePlacedInChunk(player.getLocation()))
             throw new TownyException(Translatable.of("customresources.no_machine_here"));
 
+        // todo: money cost of repair
+        // todo: material cost of repair (?)
+
         Machine machine = getMachineByChunk(player.getLocation());
 
         CustomResourcesMessagingUtil.sendMsg(player, Translatable.of("customresources.msg_confirm_repair", town.getName()));
 
         Confirmation.runOnAcceptAsync(() -> {
+            // todo: (player feedback) send message to player
+            // todo: remove money from town
+            // todo: remove material from player's inventory
             machine.repair();
         })
                 .sendTo(player);
@@ -241,6 +254,8 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
 
         if (!town.hasResident(player))
             throw new TownyException(Translatable.of("customresources.not_your_town"));
+
+        // todo: money cost of upgrading town machinery (Don't implement yet, code needs to be refactored for it to work properly)
 
         CustomResourcesMessagingUtil.sendMsg(player, Translatable.of("commandexecuted")); // debug
         CustomResourcesGovernmentMetaDataController.calculateMachineryLevelUpgradeCost(town); // todo: refactor
@@ -269,7 +284,22 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
         return true;
     }
 
-    public static boolean canAffordCosts(Player player, Machine machine, Town town) {
+    public static boolean playerHasEnoughMaterials(Machine machine, Player player){
+        MachineConfig config = MACHINES.get(machine.getType());
+
+        int machineNextTierIndex = config.getTiers().indexOf(machine.getTier()) + 1;
+        MachineTier machineNextTier = config.getTiers().get(machineNextTierIndex);
+
+        List<ItemStack> upgradeMaterialCost = machineNextTier.getUpgradeMaterials();
+        for (ItemStack item : upgradeMaterialCost){
+            if (!player.getInventory().containsAtLeast(item, item.getAmount()))
+                return false;
+        }
+
+        return true;
+    }
+
+    public static boolean townHasEnoughMoney(Machine machine, Town town) {
         MachineConfig config = MACHINES.get(machine.getType());
 
         int machineNextTierIndex = config.getTiers().indexOf(machine.getTier()) + 1;
@@ -280,12 +310,6 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
 
         if (upgradeCost > townBalance)
             return false;
-
-        List<ItemStack> upgradeMaterialCost = machineNextTier.getUpgradeMaterials();
-        for (ItemStack item : upgradeMaterialCost){
-            if (!player.getInventory().containsAtLeast(item, item.getAmount()))
-                return false;
-        }
 
         return true;
     }

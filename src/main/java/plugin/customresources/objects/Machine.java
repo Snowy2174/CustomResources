@@ -229,12 +229,10 @@ public class Machine {
         if (getState() == CustomResourcesMachineState.Repairing){
             Integer maxDurability = getMaxDurability();
             setDurability(maxDurability);
-            // todo: set state of machine to active
+            setState(CustomResourcesMachineState.Active);
             // todo: notify players the machine has been repaired (send message to members of town or create a persistent hologram on the machine's location)
         } else {
-            // todo: check costs of repair
             setState(CustomResourcesMachineState.Repairing);
-            // todo: send feedback to player
         }
     }
 
@@ -247,7 +245,6 @@ public class Machine {
             // todo: (player feedback) notify players the machine has been upgraded (send message to members of town or create a persistent hologram on the machine's location)
         } else {
             setState(CustomResourcesMachineState.Upgrading);
-            // todo: (player feedback) send message to player
         }
     }
 }
