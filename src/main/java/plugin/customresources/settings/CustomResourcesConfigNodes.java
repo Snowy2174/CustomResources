@@ -35,29 +35,22 @@ public enum CustomResourcesConfigNodes {
 			"",
 			"# If true, players can do surveys.",
 			"# if false, they cannot."),
-//	TOWN_RESOURCES_SURVEYS_COST_PER_RESOURCE_LEVEL(
-//			"town_resources.surveys.cost_per_resource_level",
-//			"250, 1000, 5000, 20000",
-//			"",
-//			"# This list of values determines how much it costs to do a survey for each resource level.",
-//			"# Example: If the first value is 250, then it will cost 250 to survey and discover the level 1 resource."),
-//	TOWN_RESOURCES_SURVEYS_NUM_TOWNBLOCKS_REQUIREMENT_PER_RESOURCE_LEVEL(
-//			"town_resources.surveys.num_townblocks_requirement_per_resource_level",
-//			"1, 1, 1, 1", // ORIGINAL: "10, 50, 100, 200",
-//			"",
-//			"# This list of values determines how much many townblocks a town must have to DISCOVER each level of resource.",
-//			"# Example: If the first value is 10, then the town must have 10 townblocks to survey and discover the level 1 resource."),
 	TOWN_RESOURCES_MACHINERY_LEVEL(
 			"town_resources.machinery_level.levels",
 			"1, 2, 3, 4",
 			"",
-			"# Determines how many levels a town can have for machines. For example, certain machines will require",
-			"# a town to have reached a certain level in order to work or be placed down"),
+			"# List of values that determine the values of machinery levels all towns can have.",
+			"# Must be in ascending order and cannot have gaps (e.g. '1, 2, 4' would not work)."),
+	TOWN_RESOURCES_COST_PER_MACHINERY_LEVEL(
+			"town_resources.machinery_level.cost_per_level",
+			"100.00, 200.00, 300.00, 400.00",
+			"",
+			"# List of values that determine how much money a town needs to upgrade its machinery level"),
 	TOWN_RESOURCES_TOWN_BLOCK_PER_MACHINERY_LEVEL(
 			"town_resources.machinery_level.town_block_per_level",
 			"10, 50, 120",
 			"",
-			"# List of values that determines how many town blocks a town must have in order to progress to the next machine level"),
+			"# List of values that determines how many town blocks a town must have in order to upgrade its machinery level"),
 	TOWN_RESOURCES_PRODUCTION(
 			"town_resources.production",
 			"",
