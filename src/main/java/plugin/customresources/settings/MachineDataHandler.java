@@ -58,8 +58,8 @@ public class MachineDataHandler {
             e.printStackTrace();
         }
     }
-    public static void createMachineData(String type, String id, Location center) {
-        Machine machine = new Machine(id, type, 0, center);
+    public static void createMachineData(String type, String id, Location center, Integer durability) {
+        Machine machine = new Machine(id, type, 0, center, durability);
         machines.add(machine);
 
         saveMachines();
