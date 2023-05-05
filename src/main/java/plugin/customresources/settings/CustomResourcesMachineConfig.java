@@ -45,12 +45,12 @@ public class CustomResourcesMachineConfig {
         String icon = config.getString(key + ".icon");
         String structure = config.getString(key + ".structure");
         double machineCost = config.getDouble(key + ".cost");
-        int machineTownLevel = config.getInt(key + ".town_level");
+        int townMachineryLevel = config.getInt(key + ".town_machinery_level");
         List<String> machinePreferredBiomes = config.getStringList(key + ".preferred_biomes");
 
         List<MachineTier> tiers = createTiersFromConfig(config, key);
 
-        return new MachineConfig(name, structure, icon, machineCost, machineTownLevel, machinePreferredBiomes, tiers);
+        return new MachineConfig(name, structure, icon, machineCost, townMachineryLevel, machinePreferredBiomes, tiers);
     }
 
     private static List<MachineTier> createTiersFromConfig(YamlConfiguration config, String key) {
@@ -64,6 +64,7 @@ public class CustomResourcesMachineConfig {
     }
 
     private static MachineTier createTierFromConfig(YamlConfiguration config, String key, int tierLevel) {
+        int tierDurability = config.getInt(key + ".tiers." + tierLevel + ".durability", 1);
         int tierResourceStorage = config.getInt(key + ".tiers." + tierLevel + ".storage", 3);
         List<String> tierInputs = config.isSet(key + ".tiers." + tierLevel + ".input")
                 ? config.getStringList(key + ".tiers." + tierLevel + ".input")
@@ -91,10 +92,20 @@ public class CustomResourcesMachineConfig {
                     return new ItemStack(upgradeMaterial, upgradeAmount);
                 })
                 .collect(Collectors.toList());
-        int tierUpgradeCost = config.getInt(key + ".tiers." + tierLevel + ".upgrade_cost", 0);
-        int tierDurability = config.getInt(key + ".tiers." + tierLevel + ".durability", 1);
+        double tierUpgradeCost = config.getInt(key + ".tiers." + tierLevel + ".upgrade_cost", 0);
 
-        return new MachineTier(tierLevel, tierResourceStorage, tierInputs, outputMaterialNames, outputMaterialAmounts, upgradeMaterials, tierUpgradeCost, tierDurability);
+        List<ItemStack> tierRepairMaterials = config.getStringList(key + ".tiers." + tierLevel + ".repair_materials")
+                .stream()
+                .map(upgradeMaterialString -> upgradeMaterialString.split(" "))
+                .map(upgradeMaterialParts -> {
+                    Material upgradeMaterial = Material.getMaterial(upgradeMaterialParts[0].toUpperCase());
+                    int upgradeAmount = Integer.parseInt(upgradeMaterialParts[1]);
+                    return new ItemStack(upgradeMaterial, upgradeAmount);
+                })
+                .collect(Collectors.toList());
+        double tierRepairCost = config.getInt(key + ".tiers." + tierLevel + ".repair_cost", 0);
+
+        return new MachineTier(tierLevel, tierResourceStorage, tierInputs, outputMaterialNames, outputMaterialAmounts, upgradeMaterials, tierUpgradeCost, tierDurability, tierRepairMaterials, tierRepairCost);
     }
 
     public static List<String> getAllMachineNames() {
