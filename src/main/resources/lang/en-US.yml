@@ -63,6 +63,9 @@ customresources.nation.screen.header: "&2Resources:"
 customresources.nation.screen.daily.production: '&2 > Daily Production &a[%s]&2: &f'
 customresources.nation.screen.available.for.collection: '&2 > Available For Collection &a[%s]&2: &f'
 
+### Commands
+# IMPLEMENT
+
 ### Surveys 
 customresources.not_your_town: 'You do not belong to this town.'
 customresources.help_survey: 'Survey the town at your current location, to discover new resources.'
