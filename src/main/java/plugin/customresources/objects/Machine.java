@@ -16,7 +16,6 @@ public class Machine {
     private final String id;
     private Integer tier;
     private Integer durability;
-    private Integer maxDurability;
 
     private ItemStack fuelItemStack = null;
     private ArrayList<String> storedMaterialStrings = new ArrayList<>();
@@ -27,7 +26,6 @@ public class Machine {
         this.tier = tier;
         this.id = id;
         this.durability = durability;
-        this.maxDurability = durability;
 
         this.location = location;
 
@@ -101,10 +99,11 @@ public class Machine {
 
     public void setDurability(Integer durability){ this.durability = durability; }
 
-    public void setMaxDurability(int maxDurability){ this.maxDurability = maxDurability; }
-
     public Integer getMaxDurability(){
-        return this.maxDurability;
+        MachineConfig config = MACHINES.get(getType());
+        Integer machineTier = getTier();
+        Integer maxDurability = config.getTiers().get(machineTier).getDurability();
+        return maxDurability;
     }
 
     /**
