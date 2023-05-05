@@ -16,10 +16,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import plugin.customresources.controllers.TownResourceDiscoveryController;
 import plugin.customresources.enums.CustomResourcesPermissionNodes;
 import plugin.customresources.metadata.CustomResourcesGovernmentMetaDataController;
 import plugin.customresources.objects.Machine;
+import plugin.customresources.objects.MachineTier;
 import plugin.customresources.settings.CustomResourcesSettings;
 import plugin.customresources.util.CustomResourcesMessagingUtil;
 import static plugin.customresources.settings.CustomResourcesMachineConfig.MACHINES;
@@ -151,13 +153,31 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
         if(town == null)
             throw new TownyException(Translatable.of("customresources.msg_err_no_town"));
 
+        // check if player is resident of town in chunk
         if (!town.hasResident(player))
             throw new TownyException(Translatable.of("customresources.not_your_town"));
 
+        // check if machine is completely inside a chunk
         if (!isMachinePlacedInChunk(player.getLocation()))
             throw new TownyException(Translatable.of("customresources.no_machine_here"));
 
         Machine machine = getMachineByChunk(player.getLocation());
+
+        MachineConfig config = MACHINES.get(machine.getType());
+        int machineTier = machine.getTier();
+        int maxTier = config.getTiers().size();
+
+        // check if machine has tiers above its current one
+        System.out.println("Checking machine has higher tiers..."); // todo: remove debug
+        if (machineTier >= maxTier)
+            throw new TownyException(Translatable.of("customresources.machine_max_tier")); // todo: add "customresources.machine_max_tier" to lang
+        System.out.println("Passed, machine has higher tiers."); // todo: remove debug
+
+        // check if player can afford to upgrade machine
+        System.out.println("Checking if player can afford the costs..."); // todo: remove debug
+        if (!canAffordCosts(player, machine, town))
+            throw new TownyException(Translatable.of("customresources.cannot_afford_costs")); // todo: add "customresources.cannot_afford_costs" to lang
+        System.out.println("Passed, player can afford all costs."); // todo: remove debug
 
         CustomResourcesMessagingUtil.sendMsg(player, Translatable.of("customresources.msg_confirm_upgrade", town.getName()));
 
@@ -223,7 +243,7 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
             throw new TownyException(Translatable.of("customresources.not_your_town"));
 
         CustomResourcesMessagingUtil.sendMsg(player, Translatable.of("commandexecuted")); // debug
-        CustomResourcesGovernmentMetaDataController.calculateMachineryLevelUpgradeCost(town);
+        CustomResourcesGovernmentMetaDataController.calculateMachineryLevelUpgradeCost(town); // todo: refactor
     }
 
     public static boolean locationChunkChecker(Location location) {
@@ -249,4 +269,24 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
         return true;
     }
 
+    public static boolean canAffordCosts(Player player, Machine machine, Town town) {
+        MachineConfig config = MACHINES.get(machine.getType());
+
+        int machineNextTierIndex = config.getTiers().indexOf(machine.getTier()) + 1;
+        MachineTier machineNextTier = config.getTiers().get(machineNextTierIndex);
+
+        int upgradeCost = machineNextTier.getUpgradeCost();
+        double townBalance = town.getAccount().getHoldingBalance();
+
+        if (upgradeCost > townBalance)
+            return false;
+
+        List<ItemStack> upgradeMaterialCost = machineNextTier.getUpgradeMaterials();
+        for (ItemStack item : upgradeMaterialCost){
+            if (!player.getInventory().containsAtLeast(item, item.getAmount()))
+                return false;
+        }
+
+        return true;
+    }
 }

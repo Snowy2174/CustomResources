@@ -3,6 +3,7 @@ package plugin.customresources.objects;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import static plugin.customresources.settings.CustomResourcesMachineConfig.MACHINES;
 
 import java.util.*;
 
@@ -83,6 +84,7 @@ public class Machine {
     public Integer getTier() {
         return tier;
     }
+    public void setTier(Integer tier) { this.tier = tier; }
 
     /**
      * Set the state of the machine.
@@ -206,6 +208,7 @@ public class Machine {
         }
     }
 
+    // todo: Not sure where to put this method. Feel free to move it (delete todo when read or moved)
     public void takeDamage(Integer damageAmount){
         Integer durability = getDurability();
         Integer durablityAfterDamage = durability - damageAmount;
@@ -220,6 +223,7 @@ public class Machine {
         }
     }
 
+    // todo: Not sure where to put this method. Feel free to move it (delete todo when read or moved)
     public void repair(){
         // if machine is in repairing state, repair the machine. otherwise, set it to repairing
         if (getState() == CustomResourcesMachineState.Repairing){
@@ -234,17 +238,16 @@ public class Machine {
         }
     }
 
+    // todo: Not sure where to put this method. Feel free to move it (delete todo when read or moved)
     public void upgrade(){
         // if machine is in upgrading state, upgrade the machine. otherwise, set it to upgrading
         if (getState() == CustomResourcesMachineState.Upgrading){
-            // todo: upgrade to higher tier
-            // todo: set state of machine to active
-            // todo: notify players the machine has been upgraded (send message to members of town or create a persistent hologram on the machine's location)
+            setTier(getTier() + 1);
+            setState(CustomResourcesMachineState.Active);
+            // todo: (player feedback) notify players the machine has been upgraded (send message to members of town or create a persistent hologram on the machine's location)
         } else {
-            // todo: check if machine has a higher tier to be upgraded to
-            // todo: check costs of upgrading
-            // todo: set state of machine to ugprading
-            // todo: send feedback to player
+            setState(CustomResourcesMachineState.Upgrading);
+            // todo: (player feedback) send message to player
         }
     }
 }

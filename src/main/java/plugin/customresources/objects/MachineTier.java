@@ -55,5 +55,5 @@ public class MachineTier {
         return upgradeCost;
     }
 
-    public int getDurability(){ return this.durability; }
+    public int getDurability(){ return durability; }
 }
