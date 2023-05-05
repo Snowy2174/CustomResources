@@ -37,7 +37,7 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
         TownyCommandAddonAPI.addSubCommand(townMachinesCommand);
     }
 
-    private static final List<String> customResourcesTabCompletes = Arrays.asList("construct", "upgrade", "destroy");
+    private static final List<String> customResourcesTabCompletes = Arrays.asList("construct", "upgrade", "repair", "upgrademachinerylevel", "destroy");
 
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1)
@@ -68,10 +68,11 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
         try {
 
             switch (args[0].toLowerCase(Locale.ROOT)) {
-                case "construct" -> parseMachineConstructCommand(player, args);
+                case "construct" -> parseMachineConstructCommand(player, args); // todo: if players get access to this command, implement tab completion for buildings
                 case "upgrade" -> parseMachineUpgradeCommand(player);
-                case "destroy" -> parseMachineDestroyCommand(player);
-                case "upgrademachinerylevel" -> parseMachineryLevelUpgrade(player);
+                case "repair" -> parseMachineRepair(player);
+                case "destroy" -> parseMachineDestroyCommand(player); // todo: if players get access to this command, implement tab completion for buildings
+                case "upgrademachinerylevel" -> parseMachineryLevelUpgrade(player); // todo: replace with better title or move command somewhere else
                 default -> showTownMachinesHelp(player);
             }
 
@@ -161,7 +162,7 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
         CustomResourcesMessagingUtil.sendMsg(player, Translatable.of("customresources.msg_confirm_upgrade", town.getName()));
 
         Confirmation.runOnAcceptAsync(() -> {
-                    //Todo: Implement these methods
+                    machine.upgrade();
                 })
                 .sendTo(player);
     }
@@ -190,6 +191,29 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
 
     }
 
+    public static void parseMachineRepair(Player player) throws TownyException {
+
+        Town town = TownyAPI.getInstance().getTown(player.getLocation());
+        //Check if there is a town here
+        if(town == null)
+            throw new TownyException(Translatable.of("customresources.msg_err_no_town"));
+
+        if (!town.hasResident(player))
+            throw new TownyException(Translatable.of("customresources.not_your_town"));
+
+        if (!isMachinePlacedInChunk(player.getLocation()))
+            throw new TownyException(Translatable.of("customresources.no_machine_here"));
+
+        Machine machine = getMachineByChunk(player.getLocation());
+
+        CustomResourcesMessagingUtil.sendMsg(player, Translatable.of("customresources.msg_confirm_repair", town.getName()));
+
+        Confirmation.runOnAcceptAsync(() -> {
+            machine.repair();
+        })
+                .sendTo(player);
+    }
+
     public static void parseMachineryLevelUpgrade(Player player) throws TownyException {
         Town town = TownyAPI.getInstance().getTown(player.getLocation());
         if (town == null)
@@ -198,7 +222,7 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
         if (!town.hasResident(player))
             throw new TownyException(Translatable.of("customresources.not_your_town"));
 
-        CustomResourcesMessagingUtil.sendMsg(player, Translatable.of("commandexecuted"));
+        CustomResourcesMessagingUtil.sendMsg(player, Translatable.of("commandexecuted")); // debug
         CustomResourcesGovernmentMetaDataController.calculateMachineryLevelUpgradeCost(town);
     }
 
