@@ -92,8 +92,9 @@ public class CustomResourcesMachineConfig {
                 })
                 .collect(Collectors.toList());
         int tierUpgradeCost = config.getInt(key + ".tiers." + tierLevel + ".upgrade_cost", 0);
+        int tierDurability = config.getInt(key + ".tiers." + tierLevel + ".durability", 1);
 
-        return new MachineTier(tierLevel, tierResourceStorage, tierInputs, outputMaterialNames, outputMaterialAmounts, upgradeMaterials, tierUpgradeCost);
+        return new MachineTier(tierLevel, tierResourceStorage, tierInputs, outputMaterialNames, outputMaterialAmounts, upgradeMaterials, tierUpgradeCost, tierDurability);
     }
 
     public static List<String> getAllMachineNames() {
