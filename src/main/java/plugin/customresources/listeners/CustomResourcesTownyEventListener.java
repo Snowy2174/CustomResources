@@ -39,6 +39,10 @@ public class CustomResourcesTownyEventListener implements Listener {
     @EventHandler
     public void onNewDay(PreNewDayEvent event) {
         if(CustomResourcesSettings.isEnabled()) {
+            TownMachineManager.damageMachines();
+            TownMachineManager.repairMachines();
+            TownMachineManager.upgradeMachines();
+
             TownResourceProductionController.produceAllResources();
             TownMachineManager.machineGenerateResources();
         }

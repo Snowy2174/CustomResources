@@ -49,7 +49,9 @@ public class TownMachineManager {
                     }
                 }
             }
-            createMachineData(machineName, machine.getUniqueId().toString(), center);
+            // todo: get durability in config of machine (per tier)
+            Integer durability = 1;
+            createMachineData(machineName, machine.getUniqueId().toString(), center, durability);
         });
     }
 
@@ -107,7 +109,7 @@ public class TownMachineManager {
                 .forEach(machine -> {
                     int maxResources = MACHINES.get(machine.getType()).getTiers().get(machine.getTier()).getResourceStorage();
                     machine.incrementStoredResources(maxResources);
-                    createHologram(machine, true);
+                    createHologram(machine, true); // todo: throwing errors when TownNewDay is triggered
                     // TODO: Add any additional logic here that needs to be performed when setting the machine
                 });
         saveMachines();
@@ -156,8 +158,37 @@ public class TownMachineManager {
                     sendMsg(player, "&7[&c&l!&7]&c You cannot break this machine, open the machine Menu.");
                 } else {
                     breakMachine(machine);
+                    System.out.println("Machine has been broken");
                 }
+            } else {
+                System.out.println("Machine has not been broken because its id did not match id of its armor stand's");
             }
         }
+    }
+
+    public static void damageMachines(){
+        machines.stream()
+                .filter(machine -> machine.getState() == Machine.CustomResourcesMachineState.Active)
+                .forEach(machine -> {
+                    // todo: implement rng for chance to damage a machine
+                    Integer damageAmount = 1;
+                    machine.takeDamage(damageAmount);
+                });
+    }
+
+    public static void upgradeMachines() {
+        machines.stream()
+                .filter(machine -> machine.getState() == Machine.CustomResourcesMachineState.Upgrading)
+                .forEach(machine -> {
+                    machine.upgrade();
+                });
+    }
+
+    public static void repairMachines() {
+        machines.stream()
+                .filter(machine -> machine.getState() == Machine.CustomResourcesMachineState.Repairing)
+                .forEach(machine -> {
+                    machine.repair();
+                });
     }
 }
