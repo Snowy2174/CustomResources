@@ -10,6 +10,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -21,6 +22,7 @@ import plugin.customresources.metadata.CustomResourcesGovernmentMetaDataControll
 import plugin.customresources.objects.Machine;
 import plugin.customresources.objects.MachineConfig;
 import plugin.customresources.objects.MachineTier;
+import plugin.customresources.util.CustomGuiHolderUtil;
 import plugin.customresources.util.CustomResourcesMessagingUtil;
 
 import java.util.*;
@@ -43,7 +45,7 @@ public class MachineGui {
 
         String title = ChatColor.translateAlternateColorCodes('&', ("&a" + state + " &7| " + type + " | " + " [&6 " + tier + " &7]"));
 
-        Inventory inventory = Bukkit.createInventory(null, 36, title);
+        Inventory inventory = Bukkit.createInventory(new CustomGuiHolderUtil(), 36, title);
         populateMachineInterface(inventory, machine);
         openInventory(player, inventory);
     }
@@ -82,11 +84,16 @@ public class MachineGui {
 
     // On click inside inventory, perform action
     public static void onInterfaceInteract(InventoryClickEvent event) {
-            if (event.getInventory() instanceof MachineGui) {
+        if (event.getClickedInventory() == null || event.getClickedInventory().getType() == InventoryType.PLAYER) {
+            return;
+        }
+            if (event.getInventory().getHolder() instanceof CustomGuiHolderUtil) {
 
                 ItemStack clickedItem = event.getCurrentItem();
 
                 if (clickedItem == null || clickedItem.getType().isAir()) return;
+
+                event.setCancelled(true);
 
                 // Retrieve the machine ID from the storage item's metadata
                 ItemStack item = event.getInventory().getItem(22);
@@ -99,26 +106,18 @@ public class MachineGui {
 
                 Player player = (Player) event.getWhoClicked();
 
-                // Destroy machine button
-                if (clickedItem.getType() == Material.REDSTONE_BLOCK) {
-                    event.setCancelled(true);
-                    openConfirmation(ConfirmGui.ConfirmationAction.DESTROY, player, machine);
-                }
-
-                // Upgrade machine button
-                if (clickedItem.getType() == Material.ANVIL) {
-                    event.setCancelled(true);
-                    openConfirmation(ConfirmGui.ConfirmationAction.UPGRADE, player, machine);
-                }
-
-                // Collect machine button
-                if (clickedItem.getType() == Material.CHEST) {
-                    event.setCancelled(true);
-                    handleCollectButton(event, machine);
-                }
-
-                if (event.getRawSlot() == 13) {
-                    handleInputSlot(event, machine);
+                switch (clickedItem.getType()) {
+                    case REDSTONE_BLOCK:
+                        openConfirmation(ConfirmGui.ConfirmationAction.DESTROY, player, machine);
+                        break;
+                    case ANVIL:
+                        openConfirmation(ConfirmGui.ConfirmationAction.UPGRADE, player, machine);
+                        break;
+                    case CHEST:
+                        handleCollectButton(event, machine);
+                        break;
+                    default:
+                        break;
                 }
             }
         onConfirmationInteract(event);
