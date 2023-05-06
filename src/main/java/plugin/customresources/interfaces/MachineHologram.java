@@ -36,14 +36,13 @@ public class MachineHologram {
             Hologram machineHolo = api.createHologram(location.add(0.0, 3.0, 0.0));
 
             MachineConfig config = MACHINES.get(machine.getType());
-            MachineTier tierConfig = config.getTiers().get(machine.getTier());
 
             appendHologram(machineHolo, machine, config);
 
             if (ready) {
-                appendReadyHologram(machineHolo, tierConfig);
+                appendReadyHologram(machineHolo, machine.getTierConfig(), machine.getResourceType());
             } else {
-                appendInfoHologram(machineHolo, tierConfig);
+                appendInfoHologram(machineHolo, machine.getTierConfig(), machine.getResourceType());
                 removeHologramTask(machineHolo, id);
             }
 
@@ -63,17 +62,17 @@ public class MachineHologram {
         machineHolo.getLines().appendText("");
     }
 
-    public static void appendInfoHologram(Hologram machineHolo, MachineTier tierConfig) {
+    public static void appendInfoHologram(Hologram machineHolo, MachineTier tierConfig, Integer resource) {
 
-        String line1 = "&7Produces &a" + tierConfig.getOutputMaterials().get(0) + "&7x&a" + tierConfig.getOutputAmounts().get(0);
+        String line1 = "&7Produces &a" + tierConfig.getOutputMaterials().get(resource) + "&7x&a" + tierConfig.getOutputAmounts().get(resource);
         String line2 = "&6[ " + TimeMgmt.countdownTimeHoursRaw(TimeMgmt.townyTime(true)) + "h Remaining ]";
 
         machineHolo.getLines().appendText(ChatColor.translateAlternateColorCodes( '&',line1));
         machineHolo.getLines().appendText(ChatColor.translateAlternateColorCodes('&', line2));
     }
 
-    public static void appendReadyHologram(Hologram machineHolo, MachineTier tierConfig) {
-        String line1 = "&7Produced &6" + tierConfig.getOutputMaterials().get(0) + "&7x&6" + tierConfig.getOutputAmounts().get(0);
+    public static void appendReadyHologram(Hologram machineHolo, MachineTier tierConfig, Integer resource) {
+        String line1 = "&7Produced &6" + tierConfig.getOutputMaterials().get(resource) + "&7x&6" + tierConfig.getOutputAmounts().get(resource);
         String line2 = "&6[ Ready to Collect! ]";
 
         machineHolo.getLines().appendText(ChatColor.translateAlternateColorCodes( '&',line1));

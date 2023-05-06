@@ -7,8 +7,7 @@ import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import org.bukkit.Material;
 import plugin.customresources.CustomResources;
 import plugin.customresources.objects.ResourceOfferCategory;
-import plugin.customresources.util.MMOItemsUtil;
-import plugin.customresources.util.MythicMobsUtil;
+import plugin.customresources.util.ItemsAdderUtil;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -150,15 +149,7 @@ public class CustomResourcesSettings {
 			if(slimeFunItem != null)
 				return true;  //Known material
 		}
-		// mythicmobs integration
-		if (CustomResources.getPlugin().isMythicMobsInstalled()
-		&& MythicMobsUtil.isValidItem(materialName))
-			return true;
-
-		// MMOItems integration
-		return CustomResources.getPlugin().isMMOItemsInstalled()
-				&& materialName.contains(":")
-				&& MMOItemsUtil.isValidItem(materialName);//Unknown material
+		return false;
 	}
 
 	public static void loadConfig() throws TownyException {

@@ -14,8 +14,7 @@ import org.bukkit.persistence.PersistentDataType;
 import plugin.customresources.CustomResources;
 import plugin.customresources.objects.Machine;
 
-import static plugin.customresources.controllers.TownMachineManager.breakMachine;
-import static plugin.customresources.controllers.TownMachineManager.getMachine;
+import static plugin.customresources.controllers.TownMachineManager.*;
 import static plugin.customresources.util.ItemStackUtil.createMachineIcon;
 
 public class ConfirmGui {
@@ -89,7 +88,7 @@ public class ConfirmGui {
             Machine machine = getMachine(machineId);
 
             if (action == ConfirmationAction.DESTROY) {
-                breakMachine(machine);
+                destroyMachine(machine);
             } else if (action == ConfirmationAction.UPGRADE) {
                 // TODO: Code to upgrade machine
             }

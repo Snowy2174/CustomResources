@@ -114,7 +114,7 @@ public class TownyAdminMachinesAddon extends BaseCommand implements CommandExecu
 		Machine machine = getMachineByChunk(player.getLocation());
 
 		Confirmation.runOnAcceptAsync(() -> {
-					breakMachine(machine);
+					destroyMachine(machine);
 				})
 				.sendTo(player);
 
@@ -146,7 +146,7 @@ public class TownyAdminMachinesAddon extends BaseCommand implements CommandExecu
 			return;
 		}
 
-		Location location = player.getLocation();
+		Location location = player.getEyeLocation();
 		if (args.length > 2) {
 			try {
 				double x = Math.round(Double.parseDouble(args[2]));

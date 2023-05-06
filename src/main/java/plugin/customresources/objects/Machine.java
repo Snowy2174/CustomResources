@@ -1,9 +1,19 @@
 package plugin.customresources.objects;
 
+import com.palmergames.bukkit.towny.TownyAPI;
+import com.palmergames.bukkit.towny.object.Town;
+import com.palmergames.bukkit.towny.object.Translatable;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import plugin.customresources.metadata.CustomResourcesGovernmentMetaDataController;
+import plugin.customresources.util.CustomResourcesMessagingUtil;
+
 import static plugin.customresources.settings.CustomResourcesMachineConfig.MACHINES;
+import static plugin.customresources.settings.MachineDataHandler.saveMachines;
+import static plugin.customresources.util.ItemStackUtil.build;
 
 import java.util.*;
 
@@ -13,6 +23,7 @@ public class Machine {
     private final String type;
     private CustomResourcesMachineState state;
     private Integer storedResources;
+    private Integer resourceType;
     private final String id;
     private Integer tier;
     private Integer durability;
@@ -24,6 +35,7 @@ public class Machine {
     public Machine(String id, String type, Integer tier, Location location, Integer durability) {
         this.type = type;
         this.tier = tier;
+        this.resourceType = randomResourceType();
         this.id = id;
         this.durability = durability;
 
@@ -38,6 +50,16 @@ public class Machine {
 
     }
 
+    private Integer randomResourceType() {
+        Random random = new Random();
+        List<String> resources = getTierConfig().getOutputMaterials();
+        return random.nextInt(resources.size());
+    }
+
+    public Integer getResourceType() {
+        return resourceType;
+    }
+
     /**
      * Get the type of the machine.
      *
@@ -45,6 +67,10 @@ public class Machine {
      */
     public String getType() {
         return type;
+    }
+
+    public MachineConfig getTypeConfig() {
+        return MACHINES.get(type);
     }
 
     /**
@@ -83,6 +109,9 @@ public class Machine {
         return tier;
     }
     public void setTier(Integer tier) { this.tier = tier; }
+    public MachineTier getTierConfig() {
+        return MACHINES.get(type).getTiers().get(tier);
+    }
 
     /**
      * Set the state of the machine.
@@ -107,10 +136,39 @@ public class Machine {
     }
 
     /**
-     * Run the machine.
+     * Set the model of the machine.
      */
-    private void runMachine() {
-        // TODO: Implement this method.
+
+
+
+    /**
+     * Collect resources from the machine
+     */
+    public  void collectResources(Player player) {
+        //See if player can hold any items at all.
+        PlayerInventory inv = player.getInventory();
+
+        if (inv.firstEmpty() == -1) {
+            CustomResourcesMessagingUtil.sendMsg(player, Translatable.of("customresources.resource.you_have_no_room_in_your_inventory"));
+            return;
+        }
+
+        Town government = TownyAPI.getInstance().getTown(player);
+
+        MachineTier tierConfig = getTierConfig();
+        Integer resourceAmount = getStoredResourcesInteger() * tierConfig.getOutputAmounts().get(getResourceType());
+
+        ItemStack items = build(tierConfig.getOutputMaterials().get(getResourceType()));
+        items.setAmount(resourceAmount);
+
+        //Give items
+        inv.addItem(items);
+        //Clear available list
+        clearStoredResourcesInteger();
+        CustomResourcesGovernmentMetaDataController.setAvailableForCollection(government, Collections.emptyMap());
+
+        //Save machine
+        saveMachines();
     }
 
     /**
@@ -131,6 +189,9 @@ public class Machine {
         if (storedResources < maxResources) {
             storedResources++;
         }
+    }
+    private void clearStoredResourcesInteger() {
+        this.storedResources = 0;
     }
 
     /**
@@ -240,6 +301,7 @@ public class Machine {
         // if machine is in upgrading state, upgrade the machine. otherwise, set it to upgrading
         if (getState() == CustomResourcesMachineState.Upgrading){
             setTier(getTier() + 1);
+            // todo: update the model of the structure, either through replacement or model data modification
             setState(CustomResourcesMachineState.Active);
             // todo: (player feedback) notify players the machine has been upgraded (send message to members of town or create a persistent hologram on the machine's location)
         } else {

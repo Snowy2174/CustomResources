@@ -13,8 +13,6 @@ import plugin.customresources.CustomResources;
 import plugin.customresources.metadata.CustomResourcesGovernmentMetaDataController;
 import plugin.customresources.util.CustomResourcesMessagingUtil;
 import plugin.customresources.util.ItemsAdderUtil;
-import plugin.customresources.util.MMOItemsUtil;
-import plugin.customresources.util.MythicMobsUtil;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -112,17 +110,6 @@ public class TownResourceCollectionController {
                     continue;
                 }
             }
-
-            // mythicmobs integration
-            if (CustomResources.getPlugin().isMythicMobsInstalled()) {
-                ItemStack mythicItem = MythicMobsUtil.getMythicItemStack(materialName);
-                if (mythicItem != null) {
-                    itemStack = mythicItem;
-                    itemStack.setAmount(amount);
-                    itemStackList.add(itemStack);
-                    continue;
-                }
-            }
             // Itemsadder integration
             if (CustomResources.getPlugin().isItemsAdderInstalled() && materialName.contains(":")) {
                 ItemStack iaItem = ItemsAdderUtil.getItemsAdderItemStack(materialName);
@@ -132,16 +119,6 @@ public class TownResourceCollectionController {
                     itemStackList.add(itemStack);
                     continue;
                 }
-            }
-            // MMOItems integration
-            if (CustomResources.getPlugin().isMMOItemsInstalled() && materialName.contains(":")) {
-            	ItemStack mmoItem = MMOItemsUtil.getMMOItemsItemStack(materialName, player);
-            	if (mmoItem != null) {
-            		itemStack = mmoItem;
-            		itemStack.setAmount(amount);
-            		itemStackList.add(itemStack);
-            		continue;
-            	}
             }
             //Unknown material. Send error message
             CustomResourcesMessagingUtil.sendErrorMsg(player, Translatable.of("customresources.msg_err_cannot_collect_unknown_material", materialName));

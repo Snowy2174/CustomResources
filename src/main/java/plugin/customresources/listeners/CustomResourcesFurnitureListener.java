@@ -22,7 +22,7 @@ public class CustomResourcesFurnitureListener implements Listener {
 
     @EventHandler
     public void onFurnitureBreak(FurnitureBreakEvent event) {
-        TownMachineManager.onMachineDestroy(event);
+        TownMachineManager.onMachineBreak(event);
     }
 
     @EventHandler

@@ -1,11 +1,15 @@
 package plugin.customresources.util;
 
+import dev.lone.itemsadder.api.CustomStack;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import plugin.customresources.CustomResources;
 import plugin.customresources.objects.Machine;
 
@@ -45,6 +49,17 @@ public class ItemStackUtil {
         return item;
     }
 
+    @Nullable
+    public static ItemStack buildia(String key) {
+        String material = key.replaceAll("[\\[\\]]", "");
+        CustomStack customStack = CustomStack.getInstance(material);
+        return customStack == null ? null : customStack.getItemStack();
+    }
 
+    @NotNull
+    public static ItemStack build(String key) {
+        ItemStack itemStack = buildia(key);
+        return itemStack == null ? new ItemStack(Material.valueOf(key)) : itemStack;
+    }
 
 }

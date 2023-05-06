@@ -224,7 +224,7 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
         CustomResourcesMessagingUtil.sendMsg(player, Translatable.of("customresources.msg_confirm_destroy", town.getName()));
 
         Confirmation.runOnAcceptAsync(() -> {
-                    breakMachine(machine);
+                    destroyMachine(machine);
                     // todo: if tier of machine is the first level, 100% refund, otherwise, no refund or 50% refund
                     // todo: (player feedback) send message to player
                 })

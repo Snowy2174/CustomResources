@@ -51,7 +51,6 @@ public class CustomResourcesTownyEventListener implements Listener {
     /**
      * On each ShortTime period, CustomResources saves data on player-extracted resources.
      *
-     * Every 10 mins, the produced town & nation resources are recalculated.
      */
     @EventHandler
     public void onNewShortTime(NewShortTimeEvent event) {

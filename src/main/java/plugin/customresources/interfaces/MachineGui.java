@@ -39,11 +39,11 @@ public class MachineGui {
 
     // Create new GUI inventory
     public static void createMachineInterface(Player player, Machine machine) {
-        String type = machine.getType();
+        String name = machine.getTypeConfig().getName();
         String state = String.valueOf(machine.getState());
         Integer tier = machine.getTier();
 
-        String title = ChatColor.translateAlternateColorCodes('&', ("&a" + state + " &7| " + type + " | " + " [&6 " + tier + " &7]"));
+        String title = ChatColor.translateAlternateColorCodes('&', ("&a" + state + " &7| " + name + " | " + " [&6 " + tier + " &7]"));
 
         Inventory inventory = Bukkit.createInventory(new CustomGuiHolderUtil(), 36, title);
         populateMachineInterface(inventory, machine);
@@ -71,7 +71,7 @@ public class MachineGui {
         inventory.setItem(13, inputSlot);
 
         // Add collect button if machine has stored resources
-        if (machine.getStoredResourcesInteger() != null) {
+        if (machine.getStoredResourcesInteger() > 0) {
             int storedResources = machine.getStoredResourcesInteger();
             ItemStack chestItem = createGuiItem(Material.CHEST, "Stored Resources", ChatColor.GRAY + "This machine has " + storedResources + " stored resources");
             inventory.setItem(15, chestItem);
@@ -106,6 +106,10 @@ public class MachineGui {
 
                 Player player = (Player) event.getWhoClicked();
 
+                if (event.getRawSlot() == 13) {
+                    handleInputSlot(event, machine);
+                }
+
                 switch (clickedItem.getType()) {
                     case REDSTONE_BLOCK:
                         openConfirmation(ConfirmGui.ConfirmationAction.DESTROY, player, machine);
@@ -114,42 +118,14 @@ public class MachineGui {
                         openConfirmation(ConfirmGui.ConfirmationAction.UPGRADE, player, machine);
                         break;
                     case CHEST:
-                        handleCollectButton(event, machine);
+                        machine.collectResources(player);
+                        player.closeInventory();
                         break;
                     default:
                         break;
                 }
             }
         onConfirmationInteract(event);
-    }
-
-    private static void handleCollectButton(InventoryClickEvent event, Machine machine) {
-        MachineTier tierConfig = MACHINES.get(machine.getType()).getTiers().get(machine.getTier());
-        Player player = (Player) event.getWhoClicked();
-        Town government = TownyAPI.getInstance().getTown(player);
-
-        //TODO: Implement resource randomness
-        String resourceMaterial = tierConfig.getOutputMaterials().get(0);
-        int resourceAmount = tierConfig.getOutputAmounts().get(0) * machine.getStoredResourcesInteger();
-
-        //Calculate stuff to give player
-        //TODO: replace with an item stack builder
-        ItemStack itemStack = new ItemStack(Material.getMaterial(resourceMaterial), resourceAmount);
-
-        //See if player can hold any items at all.
-        PlayerInventory inv = player.getInventory();
-
-        if (inv.firstEmpty() == -1) {
-            CustomResourcesMessagingUtil.sendMsg(player, Translatable.of("customresources.resource.you_have_no_room_in_your_inventory"));
-            return;
-        }
-        //Give items
-        inv.addItem(itemStack);
-            //Clear available list
-            CustomResourcesGovernmentMetaDataController.setAvailableForCollection(government, Collections.emptyMap());
-
-        //Save machine
-        saveMachines();
     }
 
 
@@ -161,13 +137,13 @@ public class MachineGui {
             // Player has clicked with empty hand, so we don't need to add anything
         } else if (storedItem == null) {
             // Machine has no stored item yet, so we can simply set the stored item to the clicked item
-            if (MACHINES.get(machine.getType()).getTiers().get(machine.getTier()).getInputItems().contains(inputItem.getType())) {
+            if (machine.getTierConfig().getInputItems().contains(inputItem.getType())) {
                 machine.setFuelItemStack(inputItem, (Player) event.getWhoClicked());
                 inputItem.setAmount(0);
             }
         } else if (storedItem.getType() == inputItem.getType() && storedItem.getAmount() < storedItem.getMaxStackSize()) {
             // Player has clicked with an item that matches the stored item, so we add it to the stored item stack
-            if (MACHINES.get(machine.getType()).getTiers().get(machine.getTier()).getInputItems().contains(inputItem.getType())) {
+            if (machine.getTierConfig().getInputItems().contains(inputItem.getType())) {
                 int amountToAdd = Math.min(inputItem.getAmount(), storedItem.getMaxStackSize() - storedItem.getAmount());
                 storedItem.setAmount(storedItem.getAmount() + amountToAdd);
                 inputItem.setAmount(inputItem.getAmount() - amountToAdd);

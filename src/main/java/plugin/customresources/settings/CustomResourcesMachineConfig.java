@@ -119,4 +119,10 @@ public class CustomResourcesMachineConfig {
     public static void unload() {
         CustomResourcesMachineConfig.MACHINES = null;
     }
+
+    public static void reload() {
+        unload();
+        load();
+    }
+
 }

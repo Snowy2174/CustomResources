@@ -10,6 +10,7 @@ import plugin.customresources.CustomResources;
 import plugin.customresources.objects.Machine;
 
 import java.util.Objects;
+import java.util.UUID;
 
 import static com.palmergames.bukkit.towny.TownyMessaging.sendMsg;
 import static plugin.customresources.interfaces.MachineGui.createMachineInterface;
@@ -32,10 +33,10 @@ public class TownMachineManager {
         return false;
     }
 
-    public static void placeMachine(Location machineLocation, String machineName) {
+    public static void placeMachine(Location location, String machineName) {
         // Wrap the spawnPreciseNonSolid call and subsequent operations in a Bukkit runTask method call
         Bukkit.getScheduler().runTask(CustomResources.getPlugin(), () -> {
-            Location location = machineLocation.add(0, 1, 0);
+            Location entityLoc = location.subtract(0, 1, 0);
 
             location.getWorld().spawnParticle(Particle.END_ROD, location, 50, 0, 0, 0, 1);
 
@@ -46,7 +47,7 @@ public class TownMachineManager {
                 }
             }
 
-            Entity machine = CustomFurniture.spawnPreciseNonSolid(machineName, location).getArmorstand();
+            Entity machine = CustomFurniture.spawnPreciseNonSolid(machineName, entityLoc).getArmorstand();
 
             for (int i = -1; i <= 1; i++) {
                 for (int j = -1; j <= 1; j++) {
@@ -58,29 +59,20 @@ public class TownMachineManager {
             }
             // todo: get durability in config of machine (per tier)
             Integer durability = 1;
-            createMachineData(machineName, machine.getUniqueId().toString(), machineLocation, durability);
+            createMachineData(machineName, machine.getUniqueId().toString(), location, durability);
         });
     }
 
 
-    public static void breakMachine(Machine machine) {
+    public static void destroyMachine(Machine machine) {
         Location center = machine.getLocation();
 
         for (Entity entity : center.getChunk().getEntities()) {
-            if (entity.getUniqueId().equals(machine.getId())) {
-
-                for (int i = -1; i <= 1; i++) {
-                    for (int j = -1; j <= 1; j++) {
-                        for (int k = -1; k <= 1; k++) {
-                            Location loc = new Location(entity.getWorld(), center.getBlockX() + i, center.getBlockY() + j, center.getBlockZ() + k);
-                            loc.getBlock().setType(Material.AIR);
-                        }
-                    }
-                }
+            if (entity.getUniqueId().equals(UUID.fromString(machine.getId()))) {
 
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     if (player.getLocation().distance(center) <= 10) {
-                        player.playSound(center, Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+                        player.playSound(center, Sound.ENTITY_PLAYER_ATTACK_SWEEP, 1, 1);
                         player.playSound(center, Sound.BLOCK_ANVIL_PLACE, 1, 1);
                     }
                 }
@@ -93,6 +85,7 @@ public class TownMachineManager {
                     removeMachineData(machine);
                 });
             }
+            System.out.println("No machine found!");
         }
     }
 
@@ -118,18 +111,6 @@ public class TownMachineManager {
             }
         }
         return null;
-    }
-
-    public static void machineGenerateResources() {
-        machines.stream()
-                .filter(machine -> machine.getState() == Machine.CustomResourcesMachineState.Active)
-                .forEach(machine -> {
-                    int maxResources = MACHINES.get(machine.getType()).getTiers().get(machine.getTier()).getResourceStorage();
-                    machine.incrementStoredResources(maxResources);
-                    createHologram(machine, true); // todo: throwing errors when TownNewDay is triggered
-                    // TODO: Add any additional logic here that needs to be performed when setting the machine
-                });
-        saveMachines();
     }
 
     public static void onMachineInteract(FurnitureInteractEvent event) {
@@ -160,7 +141,7 @@ public class TownMachineManager {
     }
 
 
-    public static void onMachineDestroy(FurnitureBreakEvent event) {
+    public static void onMachineBreak(FurnitureBreakEvent event) {
         Player player = event.getPlayer();
         CustomFurniture clickedFurniture = event.getFurniture();
 
@@ -169,18 +150,24 @@ public class TownMachineManager {
             // Check if the clicked block is a machine
             Machine machine = TownMachineManager.getMachine(String.valueOf(clickedFurniture.getArmorstand().getUniqueId()));
             if (machine != null) {
-                // Check if player is an operator
-                if (!player.isOp()) {
                     event.setCancelled(true);
                     sendMsg(player, "&7[&c&l!&7]&c You cannot break this machine, open the machine Menu.");
-                } else {
-                    breakMachine(machine);
-                    System.out.println("Machine has been broken");
-                }
             } else {
                 System.out.println("Machine has not been broken because its id did not match id of its armor stand's");
             }
         }
+    }
+
+    public static void machineGenerateResources() {
+        machines.stream()
+                .filter(machine -> machine.getState() == Machine.CustomResourcesMachineState.Active)
+                .forEach(machine -> {
+                    int maxResources = MACHINES.get(machine.getType()).getTiers().get(machine.getTier()).getResourceStorage();
+                    machine.incrementStoredResources(maxResources);
+                    createHologram(machine, true); // todo: throwing errors when TownNewDay is triggered
+                    // TODO: Add any additional logic here that needs to be performed when setting the machine
+                });
+        saveMachines();
     }
 
     public static void damageMachines(){

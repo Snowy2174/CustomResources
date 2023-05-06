@@ -177,25 +177,11 @@ public class CustomResourcesMessagingUtil {
                     return slimefunItem.getItemName().replaceAll("[^\\w\\s]\\w","");
                 }
             }
-
-            // mythicmobs integration
-            if(CustomResources.getPlugin().isMythicMobsInstalled()) {
-            	String mmName = MythicMobsUtil.getMaterialNameForDisplay(materialName);
-            	if (mmName != null) {
-            		return mmName;
-            	}
-            }
             // ItemsAdder integration
             if (CustomResources.getPlugin().isItemsAdderInstalled() && materialName.contains(":")) {
                 String iaName = ItemsAdderUtil.getMaterialNameForDisplay(materialName);
                 if (iaName != null)
                     return iaName;
-            }
-            // MMOItems integration
-            if (CustomResources.getPlugin().isMMOItemsInstalled() && materialName.contains(":")) {
-            	String miName = MMOItemsUtil.getMaterialNameForDisplay(materialName);
-            	if (miName != null)
-            		return miName;
             }
         } else {
             if(CustomResources.getPlugin().isLanguageUtilsInstalled()) {

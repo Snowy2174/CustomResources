@@ -116,9 +116,8 @@ public class CustomResources extends JavaPlugin {
 			TownResourceOffersController.loadAllResourceOfferCategories();
 			TownResourceProductionController.recalculateAllProduction();
 			//Load Machines
-			MachineDataHandler.loadMachines();
-			CustomResourcesMachineConfig.unload();
-			CustomResourcesMachineConfig.load();
+			MachineDataHandler.reloadMachines();
+			CustomResourcesMachineConfig.reload();
 		} catch (Exception e) {
             e.printStackTrace();
 			severe(e.getMessage());
@@ -204,20 +203,6 @@ public class CustomResources extends JavaPlugin {
 	public boolean isSlimeFunInstalled() {
 		return slimeFunInstalled;
 	}
-
-	public boolean isMythicMobsInstalled() { return mythicMobsInstalled; }
-
-	public boolean isMythicMobsLegacy() {
-		return legacyMythicMobsInstalled;
-	}
-
-	public boolean isMythicMobsV5() {
-		return mythicMobsInstalled;
-	}
-
-	public boolean isMMOItemsInstalled() {
-		return mmmoItemsInstalled;
-	}
 	public boolean isItemsAdderInstalled() {
 		return itemsAdderInstalled;
 	}
@@ -252,20 +237,6 @@ public class CustomResources extends JavaPlugin {
 		if(slimeFunInstalled)
 			info("  Slimefun Integration Enabled");
 
-		Plugin mythicMobs = Bukkit.getPluginManager().getPlugin("MythicMobs");
-		if(mythicMobs != null) {
-			String className = Bukkit.getServer().getPluginManager().getPlugin("MythicMobs").getClass().getName();
-			if (className.equals("io.lumine.xikage.mythicmobs.MythicMobs")) {
-				legacyMythicMobsInstalled = true;
-				info("  Legacy Mythic Mobs Integration Enabled");
-			} else if (className.equals("io.lumine.mythic.bukkit.MythicBukkit")) {
-				mythicMobsInstalled = true;
-				info("  Mythic Mobs Integration Enabled");
-			} else {
-				mythicMobsInstalled = false;
-				severe("Problem enabling mythic mobs");
-			}
-		}
 		Plugin holographicDisplays = Bukkit.getPluginManager().getPlugin("HolographicDisplays");
 		holographicDisplaysInstalled = holographicDisplays != null;
 		if (holographicDisplaysInstalled)
@@ -275,11 +246,6 @@ public class CustomResources extends JavaPlugin {
 		itemsAdderInstalled = itemsAdder != null;
 		if (itemsAdderInstalled)
 			info("  ItemsAdder Integration Enabled");
-
-		Plugin mmmoItems = Bukkit.getPluginManager().getPlugin("MMOItems");
-		mmmoItemsInstalled = mmmoItems != null;
-		if (mmmoItemsInstalled)
-			info("  MMOItems Integration Enabled");
 
 		Plugin languageUtils = Bukkit.getPluginManager().getPlugin("LangUtils");
 		languageUtilsInstalled = languageUtils != null;
