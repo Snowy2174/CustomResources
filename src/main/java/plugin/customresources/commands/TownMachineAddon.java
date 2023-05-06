@@ -137,7 +137,7 @@ public class TownMachineAddon extends BaseCommand implements TabExecutor {
 
         //Check if town meets the level requirement of the machine
         MachineConfig config = MACHINES.get(machineType);
-        Integer townMachineLevel = CustomResourcesGovernmentMetaDataController.getTownMachineryLevel(town); // todo: rename machine->machinery
+        Integer townMachineLevel = CustomResourcesGovernmentMetaDataController.getTownMachineryLevel(town);
         double buildCost = config.getCost();
 
         //Check if town has enough money in town bank to afford building costs

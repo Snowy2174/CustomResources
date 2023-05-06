@@ -153,11 +153,16 @@ public class TownyAdminMachinesAddon extends BaseCommand implements CommandExecu
 				double y = Math.round(Double.parseDouble(args[3]));
 				double z = Math.round(Double.parseDouble(args[4]));
 				float yaw = Float.parseFloat(args[5]);
-				location = new Location(location.getWorld(), x, y, z, yaw, 0);
+
+				// Round yaw to nearest cardinal direction
+				int cardinalYaw = Math.round(yaw / 90) * 90;
+
+				location = new Location(location.getWorld(), x, y, z, cardinalYaw, 0);
 			} catch (NumberFormatException e) {
 				throw new TownyException(Translatable.of("customresources.msg_err_coord_format"));
 			}
 		}
+
 
 
 		Town town = TownyAPI.getInstance().getTown(location);

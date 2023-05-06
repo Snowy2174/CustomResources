@@ -22,17 +22,6 @@ import static plugin.customresources.settings.MachineDataHandler.*;
 
 public class TownMachineManager {
 
-    public static boolean isMachinePlacedInChunk(Location location) {
-        Chunk chunk = location.getChunk();
-
-        for (Machine machine : machines) {
-            if (machine.getLocation().getChunk().equals(chunk)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static void placeMachine(Location location, String machineName) {
         // Wrap the spawnPreciseNonSolid call and subsequent operations in a Bukkit runTask method call
         Bukkit.getScheduler().runTask(CustomResources.getPlugin(), () -> {
@@ -57,9 +46,8 @@ public class TownMachineManager {
                     }
                 }
             }
-            // todo: get durability in config of machine (per tier)
-            Integer durability = 1;
-            createMachineData(machineName, machine.getUniqueId().toString(), location, durability);
+            createMachineData(machineName, machine.getUniqueId().toString(), location);
+
         });
     }
 
@@ -93,6 +81,16 @@ public class TownMachineManager {
         return MACHINES.containsKey(machineName);
     }
 
+    public static boolean isMachinePlacedInChunk(Location location) {
+        Chunk chunk = location.getChunk();
+
+        for (Machine machine : machines) {
+            if (machine.getLocation().getChunk().equals(chunk)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public static Machine getMachine(String id) {
         for (Machine machine : machines) {

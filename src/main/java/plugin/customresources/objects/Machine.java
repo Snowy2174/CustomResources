@@ -32,16 +32,16 @@ public class Machine {
     private ArrayList<String> storedMaterialStrings = new ArrayList<>();
 
 
-    public Machine(String id, String type, Integer tier, Location location, Integer durability) {
+    public Machine(String id, String type, Integer tier, Location location) {
         this.type = type;
         this.tier = tier;
-        this.resourceType = randomResourceType();
         this.id = id;
-        this.durability = durability;
 
         this.location = location;
-
         this.state = CustomResourcesMachineState.Active;
+
+        this.durability = getTierConfig().getDurability();
+        this.resourceType = randomResourceType();
         this.storedResources = 0;
     }
 
@@ -54,6 +54,10 @@ public class Machine {
         Random random = new Random();
         List<String> resources = getTierConfig().getOutputMaterials();
         return random.nextInt(resources.size());
+    }
+
+    private void setResourceType(Integer i) {
+        this.resourceType = i;
     }
 
     public Integer getResourceType() {
@@ -301,6 +305,11 @@ public class Machine {
         // if machine is in upgrading state, upgrade the machine. otherwise, set it to upgrading
         if (getState() == CustomResourcesMachineState.Upgrading){
             setTier(getTier() + 1);
+
+            setResourceType(randomResourceType());
+            setDurability(getTierConfig().getDurability());
+            clearStoredResourcesInteger();
+
             // todo: update the model of the structure, either through replacement or model data modification
             setState(CustomResourcesMachineState.Active);
             // todo: (player feedback) notify players the machine has been upgraded (send message to members of town or create a persistent hologram on the machine's location)
