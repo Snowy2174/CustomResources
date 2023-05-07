@@ -1,8 +1,10 @@
 package plugin.customresources.objects;
 
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MachineTier {
 
@@ -11,14 +13,14 @@ public class MachineTier {
     private final List<String> inputItems;
     private final List<String> outputMaterials;
     private final List<Integer> outputAmounts;
-    private final List<ItemStack> upgradeMaterials;
+    private final List<String> upgradeMaterials;
     private final double upgradeCost;
     private final int durability;
     private final List<ItemStack> repairMaterials;
     private final double repairCost;
 
     public MachineTier(int level, int storage, List<String> inputItems, List<String> outputMaterials, List<Integer> outputAmounts,
-                       List<ItemStack> upgradeMaterials, double upgradeCost, int durability, List<ItemStack> repairMaterials, double repairCost) {
+                       List<String> upgradeMaterials, double upgradeCost, int durability, List<ItemStack> repairMaterials, double repairCost) {
         this.level = level;
         this.storage = storage;
         this.inputItems = inputItems;
@@ -52,15 +54,39 @@ public class MachineTier {
         return outputAmounts;
     }
 
-    public List<ItemStack> getUpgradeMaterials() {
-        return upgradeMaterials;
+    public List<String> getUpgradeMaterialTypes() {
+        return upgradeMaterials.stream()
+                .map(materialString -> materialString.split(":")[0])
+                .collect(Collectors.toList());
     }
+
+    public List<Integer> getUpgradeMaterialAmounts() {
+        return upgradeMaterials.stream()
+                .map(materialString -> Integer.parseInt(materialString.split(":")[1]))
+                .collect(Collectors.toList());
+    }
+
+    public int getUpgradeMaterialAmount(Material material) {
+        for (String upgradeMaterialAmount : upgradeMaterials) {
+            String[] parts = upgradeMaterialAmount.split(":");
+            if (parts.length == 2) {
+                Material storedMaterial = Material.getMaterial(parts[0]);
+                if (storedMaterial != null && storedMaterial.equals(material)) {
+                    return Integer.parseInt(parts[1]);
+                }
+            }
+        }
+        return 0;
+    }
+
+
+
 
     public double getUpgradeCost() {
         return upgradeCost;
     }
 
-    public List<ItemStack> getRepairMaterials() { return upgradeMaterials; }
+    public List<ItemStack> getRepairMaterials() { return repairMaterials; }
 
     public double getRepairCost() { return repairCost; }
 

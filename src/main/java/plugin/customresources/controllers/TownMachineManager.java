@@ -1,11 +1,16 @@
 package plugin.customresources.controllers;
 
+import com.palmergames.bukkit.towny.TownyEconomyHandler;
+import com.palmergames.bukkit.towny.exceptions.TownyException;
+import com.palmergames.bukkit.towny.object.Resident;
+import com.palmergames.bukkit.towny.object.Translatable;
 import dev.lone.itemsadder.api.CustomFurniture;
 import dev.lone.itemsadder.api.Events.FurnitureBreakEvent;
 import dev.lone.itemsadder.api.Events.FurnitureInteractEvent;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import plugin.customresources.CustomResources;
 import plugin.customresources.objects.Machine;
 
@@ -25,7 +30,7 @@ public class TownMachineManager {
     public static void placeMachine(Location location, String machineName) {
         // Wrap the spawnPreciseNonSolid call and subsequent operations in a Bukkit runTask method call
         Bukkit.getScheduler().runTask(CustomResources.getPlugin(), () -> {
-            Location entityLoc = location.subtract(0, 1, 0);
+            Location entityLoc = location.clone().subtract(0, 1, 0);
 
             location.getWorld().spawnParticle(Particle.END_ROD, location, 50, 0, 0, 0, 1);
 
@@ -68,7 +73,7 @@ public class TownMachineManager {
                 // Wrap the remove furniture call and subsequent operations in a Bukkit runTask method call
                 Bukkit.getScheduler().runTask(CustomResources.getPlugin(), () -> {
                     center.getWorld().spawnParticle(Particle.FLASH, center, 1, 0, 0, 0, 0.1);
-                    center.getWorld().spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, center, 20, 0, 0, 0, 1);
+                    center.getWorld().spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, center, 50, 0, 0, 0, 0.6);
                     CustomFurniture.remove(entity, false);
                     removeMachineData(machine);
                 });
@@ -129,14 +134,26 @@ public class TownMachineManager {
                 removeHologram(String.valueOf(machine.getId()));
             } else {
                 // Create hologram (autoremoved) on right click
-                createHologram(machine, false);
+                createHologram(machine);
             }
         } else {
-            // Create new GUI inventory on shift right click
-            createMachineInterface(player, machine);
-            // Pass the machine instance for removal/upgrade/repair
+            // Check if the player is clicking with an already stored material
+            ItemStack item = player.getInventory().getItemInMainHand();
+            if (item.getType() != Material.AIR && machine.isStoredMaterial(item)) {
+                // Add the material to the machine and remove it from the player's inventory
+                int amount = item.getAmount();
+                if (machine.addStoredMaterial(item.getType(), amount)) {
+                    item.setAmount(item.getAmount() - amount);
+                    player.getInventory().setItemInMainHand(item);
+                }
+            } else {
+                // Create new GUI inventory on shift right click
+                createMachineInterface(player, machine);
+                // Pass the machine instance for removal/upgrade/repair
+            }
         }
     }
+
 
 
     public static void onMachineBreak(FurnitureBreakEvent event) {
@@ -162,7 +179,7 @@ public class TownMachineManager {
                 .forEach(machine -> {
                     int maxResources = MACHINES.get(machine.getType()).getTiers().get(machine.getTier()).getResourceStorage();
                     machine.incrementStoredResources(maxResources);
-                    createHologram(machine, true); // todo: throwing errors when TownNewDay is triggered
+                    createHologram(machine); // todo: throwing errors when TownNewDay is triggered
                     // TODO: Add any additional logic here that needs to be performed when setting the machine
                 });
         saveMachines();
@@ -192,5 +209,19 @@ public class TownMachineManager {
                 .forEach(machine -> {
                     machine.repair();
                 });
+    }
+
+    public static void townPayment(Resident resident, Integer cost) throws TownyException {
+
+        //Ensure the player can afford this survey
+        if (TownyEconomyHandler.isActive()) {
+            if(!resident.getAccount().canPayFromHoldings(cost)) {
+                throw new TownyException(Translatable.of("customresources.msg_err_too_expensive",
+                        TownyEconomyHandler.getFormattedBalance(cost), resident.getAccount().getHoldingFormattedBalance()));
+            }
+
+            //Pay for the survey
+            resident.getAccount().withdraw(cost, "Cost of resources survey.");
+        }
     }
 }

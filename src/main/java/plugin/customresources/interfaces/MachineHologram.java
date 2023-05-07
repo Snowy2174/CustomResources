@@ -16,6 +16,7 @@ import plugin.customresources.objects.MachineConfig;
 import plugin.customresources.objects.MachineTier;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static plugin.customresources.settings.CustomResourcesMachineConfig.MACHINES;
@@ -24,23 +25,24 @@ public class MachineHologram {
 
     private static final Map<String, Hologram> holograms = new HashMap<>();
 
-    public static void createHologram(Machine machine, Boolean ready) {
+    public static void createHologram(Machine machine) {
         String id = String.valueOf(machine.getId());
-        Location location = machine.getLocation();
+        Location location = machine.getLocation().clone().add(0.0, 2.0, 0.0);
 
         if (holograms.containsKey(id)) {
             // If a hologram with the same ID exists, stop
-            return;
         } else {
             HolographicDisplaysAPI api = HolographicDisplaysAPI.get(CustomResources.getPlugin());
-            Hologram machineHolo = api.createHologram(location.add(0.0, 3.0, 0.0));
+            Hologram machineHolo = api.createHologram(location);
 
             MachineConfig config = MACHINES.get(machine.getType());
 
             appendHologram(machineHolo, machine, config);
 
-            if (ready) {
+            if (machine.getStoredResourcesInteger() > 0) {
                 appendReadyHologram(machineHolo, machine.getTierConfig(), machine.getResourceType());
+            } else if (machine.getState() == Machine.CustomResourcesMachineState.Upgrading) {
+              appendUpgradeHologram(machineHolo, machine.getTierConfig(), machine);
             } else {
                 appendInfoHologram(machineHolo, machine.getTierConfig(), machine.getResourceType());
                 removeHologramTask(machineHolo, id);
@@ -69,6 +71,16 @@ public class MachineHologram {
 
         machineHolo.getLines().appendText(ChatColor.translateAlternateColorCodes( '&',line1));
         machineHolo.getLines().appendText(ChatColor.translateAlternateColorCodes('&', line2));
+    }
+    private static void appendUpgradeHologram(Hologram machineHolo, MachineTier tierConfig, Machine machine) {
+        String line1 = "&7Upgrading: &a" + tierConfig.getUpgradeMaterialTypes() + "&7x&a" + tierConfig.getUpgradeMaterialAmounts();
+        machineHolo.getLines().appendText(ChatColor.translateAlternateColorCodes('&', line1));
+
+        List<String> upgradeMaterials = tierConfig.getUpgradeMaterialTypes();
+        for (String material : upgradeMaterials) {
+            String line2 = "&7Remaining: &6" + material + machine.getStoredMaterialAmount(Material.valueOf(material))+ " &7/&6 " + tierConfig.getUpgradeMaterialAmount(Material.valueOf(material));
+            machineHolo.getLines().appendText(ChatColor.translateAlternateColorCodes('&', line2));
+        }
     }
 
     public static void appendReadyHologram(Hologram machineHolo, MachineTier tierConfig, Integer resource) {

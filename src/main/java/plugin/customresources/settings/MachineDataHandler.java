@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static com.palmergames.bukkit.towny.TownyMessaging.sendMsg;
+import static plugin.customresources.controllers.TownResourceDiscoveryController.discoverNewResource;
 import static plugin.customresources.controllers.TownResourceDiscoveryController.removeResource;
 import static plugin.customresources.interfaces.MachineHologram.removeHologram;
 
@@ -67,6 +68,11 @@ public class MachineDataHandler {
     public static void createMachineData(String type, String id, Location center) {
         Machine machine = new Machine(id, type, 0, center);
         machines.add(machine);
+        try {
+            discoverNewResource(machine);
+        } catch (TownyException e) {
+            throw new RuntimeException(e);
+        }
 
         saveMachines();
         sendMsg("Machine created with ID " + machine.getId());

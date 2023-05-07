@@ -207,15 +207,74 @@ public class Machine {
         return storedMaterialStrings;
     }
 
+
+    /**
+     * Check if an item's material matches one of the stored material strings.
+     *
+     * @param item The item to check.
+     * @return True if the item's material matches one of the stored material strings, false otherwise.
+     */
+    public boolean isStoredMaterial(ItemStack item) {
+        Material material = item.getType();
+        for (String storedMaterialString : storedMaterialStrings) {
+            String[] parts = storedMaterialString.split(":");
+            if (parts.length == 2) {
+                Material storedMaterial = Material.getMaterial(parts[0]);
+                if (storedMaterial != null && storedMaterial.equals(material)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if an item's material matches one of the stored material strings.
+     *
+     * @param material The item to check.
+     * @return The stored integer of a material within a machine
+     */
+    public int getStoredMaterialAmount(Material material) {
+        for (String storedMaterialString : storedMaterialStrings) {
+            String[] parts = storedMaterialString.split(":");
+            if (parts.length == 2) {
+                Material storedMaterial = Material.getMaterial(parts[0]);
+                if (storedMaterial != null && storedMaterial.equals(material)) {
+                    return Integer.parseInt(parts[1]);
+                }
+            }
+        }
+        return 0;
+    }
+
+
     /**
      * Add a material and amount to the stored materials map.
      *
      * @param material The material to add.
-     * @param amount The amount of the material to add.
+     * @param amount   The amount of the material to add.
+     * @return
      */
-    public void addStoredMaterial(String material, int amount) {
-      //Todo
+    public boolean addStoredMaterial(Material material, int amount) {
+        boolean materialFound = false;
+        for (int i = 0; i < storedMaterialStrings.size(); i++) {
+            String storedMaterial = storedMaterialStrings.get(i);
+            if (storedMaterial.startsWith(material.name() + ":")) {
+                int storedAmount = Integer.parseInt(storedMaterial.substring(material.name().length() + 1));
+                storedAmount += amount;
+                storedMaterialStrings.set(i, material.name() + ":" + storedAmount);
+                materialFound = true;
+                break;
+            }
+        }
+        if (!materialFound) {
+            String materialString = material.name() + ":" + amount;
+            storedMaterialStrings.add(materialString);
+            materialFound = true;
+        }
+        return materialFound;
     }
+
 
     /**
      * Remove a material and amount from the stored materials map.
@@ -225,10 +284,21 @@ public class Machine {
      * @return True if the removal was successful, false otherwise.
      */
     public boolean removeStoredMaterial(String material, int amount) {
-         //Todo:
-            return false;
+        for (int i = 0; i < storedMaterialStrings.size(); i++) {
+            String storedMaterial = storedMaterialStrings.get(i);
+            if (storedMaterial.startsWith(material + ":")) {
+                int storedAmount = Integer.parseInt(storedMaterial.substring(material.length() + 1));
+                storedAmount -= amount;
+                if (storedAmount > 0) {
+                    storedMaterialStrings.set(i, material + ":" + storedAmount);
+                } else {
+                    storedMaterialStrings.remove(i);
+                }
+                return true;
+            }
+        }
+        return false;
     }
-
 
 
     /**
@@ -315,6 +385,13 @@ public class Machine {
             // todo: (player feedback) notify players the machine has been upgraded (send message to members of town or create a persistent hologram on the machine's location)
         } else {
             setState(CustomResourcesMachineState.Upgrading);
+
+            //Set the machine to be ready to accept upgrade materials
+            List<String> upgradeMaterials = getTierConfig().getUpgradeMaterialTypes();
+            for (String material : upgradeMaterials) {
+                addStoredMaterial(Material.valueOf(material), 0);
+            }
+
         }
     }
 }

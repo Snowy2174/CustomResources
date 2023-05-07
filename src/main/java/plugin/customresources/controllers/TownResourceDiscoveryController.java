@@ -23,48 +23,22 @@ public class TownResourceDiscoveryController {
      * 
      * After discovery, recalculates town production
      * After discovery, recalculates nation production (if the town has an owner nation)
-     * 
-     * @param resident the resident who did the survey
-     * @param town the town
+     *
      * @param machine the machine that is constructed
-     * @param surveyCost the cost of the survey
-     * @param alreadyDiscoveredMaterials list of the town's already-discovered materials
      * @throws TownyException 
      */
-    public static void discoverNewResource(Resident resident,
-                                           Town town,
-                                           String machine,
-                                           int surveyLevel,
-                                           double surveyCost,
-                                           List<String> alreadyDiscoveredMaterials) throws TownyException{
+    public static void discoverNewResource(Machine machine) throws TownyException{
 
-        //Ensure the resource at this level has not already been discovered
-        List<String> discoveredResources = CustomResourcesGovernmentMetaDataController.getDiscoveredAsList(town);
-        if(surveyLevel <= discoveredResources.size()) {
-            throw new TownyException(Translatable.of("customresources.msg_err_level_x_resource_already_discovered", surveyLevel));
-        }
-
-        //Ensure the player can afford this survey
-        if (TownyEconomyHandler.isActive()) {
-            if(!resident.getAccount().canPayFromHoldings(surveyCost)) {
-			    throw new TownyException(Translatable.of("customresources.msg_err_survey_too_expensive",
-                    TownyEconomyHandler.getFormattedBalance(surveyCost), resident.getAccount().getHoldingFormattedBalance()));
-            }
-
-            //Pay for the survey
-            resident.getAccount().withdraw(surveyCost, "Cost of resources survey.");
-        }
+        Town town = WorldCoord.parseWorldCoord(machine.getLocation()).getTownBlock().getTown();
+        List<String> alreadyDiscoveredMaterials = CustomResourcesGovernmentMetaDataController.getDiscoveredAsList(town);
 
         //Calculate a new category and material for discovery
         List<String> discoveredMaterials = new ArrayList<>(alreadyDiscoveredMaterials);
         //Discover the resource
-        String material = MACHINES.get(machine).getTiers().get(0).getOutputMaterials().get(0);
+        String material = machine.getTierConfig().getOutputMaterials().get(machine.getResourceType());
         discoveredMaterials.add(material);
         CustomResourcesGovernmentMetaDataController.setDiscovered(town, discoveredMaterials);
         town.save();
-
-        //Recalculate Town Production
-        TownResourceProductionController.recalculateProductionForOneTown(town);
 
         //Recalculate Nation Production
         if(CustomResources.getPlugin().isSiegeWarInstalled() && TownOccupationController.isTownOccupied(town)) {
@@ -74,12 +48,9 @@ public class TownResourceDiscoveryController {
         }
 
          //Send global message
-        int levelOfNewResource = discoveredMaterials.size();
-        double productivityModifierNormalized;
-        productivityModifierNormalized = (double) CustomResourcesSettings.getProductionPercentagesPerResourceLevel().get(levelOfNewResource - 1) / 100;
-        double preTaxProduction = MACHINES.get(machine).getTiers().get(0).getOutputAmounts().get(0) * productivityModifierNormalized + 0.5;
+        double preTaxProduction = machine.getTierConfig().getOutputAmounts().get(machine.getResourceType());
         String materialName = CustomResourcesMessagingUtil.formatMaterialNameForDisplay(material);
-        CustomResourcesMessagingUtil.sendGlobalMessage(Translatable.of("customresources.discovery.success", resident.getName(), town.getName(),  materialName, preTaxProduction));
+        CustomResourcesMessagingUtil.sendGlobalMessage(Translatable.of("customresources.discovery.success", town.getName(),  materialName, preTaxProduction));
     }
 
     public static void removeResource(Machine machine) throws TownyException{
@@ -90,13 +61,10 @@ public class TownResourceDiscoveryController {
         //Calculate a new category and material for discovery
         List<String> discoveredMaterials = new ArrayList<>(alreadyDiscoveredMaterials);
         //Discover the resource
-        String material = MACHINES.get(machine.getType()).getTiers().get(0).getOutputMaterials().get(0);
+        String material = machine.getTierConfig().getOutputMaterials().get(machine.getResourceType());
         discoveredMaterials.remove(material);
         CustomResourcesGovernmentMetaDataController.setDiscovered(town, discoveredMaterials);
         town.save();
-
-        //Recalculate Town Production
-        TownResourceProductionController.recalculateProductionForOneTown(town);
 
         //Recalculate Nation Production
         if(CustomResources.getPlugin().isSiegeWarInstalled() && TownOccupationController.isTownOccupied(town)) {
@@ -104,5 +72,10 @@ public class TownResourceDiscoveryController {
         } else if (town.hasNation()) {
             TownResourceProductionController.recalculateProductionForOneNation(town.getNation());
         }
+    }
+
+    public static void reloadResource(Machine machine) throws TownyException {
+        removeResource(machine);
+        discoverNewResource(machine);
     }
 }

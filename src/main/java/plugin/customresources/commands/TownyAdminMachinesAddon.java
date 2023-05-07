@@ -146,24 +146,24 @@ public class TownyAdminMachinesAddon extends BaseCommand implements CommandExecu
 			return;
 		}
 
-		Location location = player.getEyeLocation();
+		Location location = player.getEyeLocation().clone();
+		location.setX(Math.round(location.getX()) + 0.5);
+		location.setY(Math.round(location.getY()) - 1);
+		location.setZ(Math.round(location.getZ()) + 0.5 );
+		location.setYaw(Math.round(location.getYaw() / 90) * 90);
+
 		if (args.length > 2) {
 			try {
 				double x = Math.round(Double.parseDouble(args[2]));
 				double y = Math.round(Double.parseDouble(args[3]));
 				double z = Math.round(Double.parseDouble(args[4]));
-				float yaw = Float.parseFloat(args[5]);
+				float yaw = Math.round(Float.parseFloat(args[5]) / 90) * 90;
 
-				// Round yaw to nearest cardinal direction
-				int cardinalYaw = Math.round(yaw / 90) * 90;
-
-				location = new Location(location.getWorld(), x, y, z, cardinalYaw, 0);
+				location = new Location(location.getWorld(), x, y, z, yaw, 0);
 			} catch (NumberFormatException e) {
 				throw new TownyException(Translatable.of("customresources.msg_err_coord_format"));
 			}
 		}
-
-
 
 		Town town = TownyAPI.getInstance().getTown(location);
 		//Check if there is a town here

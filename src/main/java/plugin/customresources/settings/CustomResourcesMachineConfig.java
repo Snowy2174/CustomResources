@@ -83,24 +83,21 @@ public class CustomResourcesMachineConfig {
             outputMaterialAmounts.add(entry.getValue());
         }
 
-        List<ItemStack> upgradeMaterials = config.getStringList(key + ".tiers." + tierLevel + ".upgrade_materials")
+        List<String> upgradeMaterials = config.getStringList(key + ".tiers." + tierLevel + ".upgrade_materials")
                 .stream()
                 .map(upgradeMaterialString -> upgradeMaterialString.split(" "))
-                .map(upgradeMaterialParts -> {
-                    Material upgradeMaterial = Material.getMaterial(upgradeMaterialParts[0].toUpperCase());
-                    int upgradeAmount = Integer.parseInt(upgradeMaterialParts[1]);
-                    return new ItemStack(upgradeMaterial, upgradeAmount);
-                })
+                .map(upgradeMaterialParts -> upgradeMaterialParts[0].toUpperCase() + ":" + upgradeMaterialParts[1])
                 .collect(Collectors.toList());
+
         double tierUpgradeCost = config.getInt(key + ".tiers." + tierLevel + ".upgrade_cost", 0);
 
         List<ItemStack> tierRepairMaterials = config.getStringList(key + ".tiers." + tierLevel + ".repair_materials")
                 .stream()
                 .map(upgradeMaterialString -> upgradeMaterialString.split(" "))
                 .map(upgradeMaterialParts -> {
-                    Material upgradeMaterial = Material.getMaterial(upgradeMaterialParts[0].toUpperCase());
-                    int upgradeAmount = Integer.parseInt(upgradeMaterialParts[1]);
-                    return new ItemStack(upgradeMaterial, upgradeAmount);
+                    Material repairMaterial = Material.getMaterial(upgradeMaterialParts[0].toUpperCase());
+                    int repairAmount = Integer.parseInt(upgradeMaterialParts[1]);
+                    return new ItemStack(repairMaterial, repairAmount);
                 })
                 .collect(Collectors.toList());
         double tierRepairCost = config.getInt(key + ".tiers." + tierLevel + ".repair_cost", 0);
